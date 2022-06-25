@@ -36,6 +36,7 @@
     <ClCompile Include="source\engine\function\render\RenderResource.cpp" />
     <ClCompile Include="source\engine\core\log\LogSystem.cpp" />
     <ClCompile Include="source\engine\function\render\RenderResource\MeshResource.cpp" />
+    <ClCompile Include="source\engine\function\render\RenderResource\RenderData.cpp" />
     <ClCompile Include="source\engine\function\render\RenderResource\TextureResource.cpp" />
     <ClCompile Include="source\engine\function\render\RenderSystem.cpp" />
     <ClCompile Include="source\engine\function\global\RuntimeGlobalContext.cpp" />

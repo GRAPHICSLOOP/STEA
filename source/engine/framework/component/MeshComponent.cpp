@@ -17,7 +17,7 @@ void MeshComponent::tick(float delta)
 
 	ObjectBufferData data;
 	data.mModel = tran->getModelMatrix();
-	gRuntimeGlobalContext.getRenderResource()->mObjectBufferDatas[mObject.lock()->getID()] = data;
+	gRuntimeGlobalContext.getRenderResource()->addObjectBufferResource(mObject.lock()->getID(),&data,sizeof(data));
 }
 
 void MeshComponent::TempLoadMeshAsset(std::string name, std::string path)
@@ -25,7 +25,7 @@ void MeshComponent::TempLoadMeshAsset(std::string name, std::string path)
 	std::shared_ptr<MeshAsset> asset = std::make_shared<MeshAsset>();
 	asset->initialize(name, path);
 	setMeshAsset(asset);
-	gRuntimeGlobalContext.getRenderResource()->mModelRenderResource.insert(std::make_pair(mObject.lock()->getID(),asset->getMeshResource()));
+	gRuntimeGlobalContext.getRenderResource()->mModelRenderResources.insert(std::make_pair(mObject.lock()->getID(),asset->getMeshResource()));
 }
 
 void MeshComponent::setMeshAsset(std::shared_ptr<MeshAsset> asset)

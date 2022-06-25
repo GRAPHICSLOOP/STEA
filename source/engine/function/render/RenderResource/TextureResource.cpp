@@ -20,7 +20,8 @@ void TextureResource::initialize(
 {
     mId = id;
 
-    if (gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources[mId].lock())
+    auto iter = gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources.find(mId);
+    if (iter != gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources.end() )
     {
         STEALOG_INFO("重复贴图不加载：{}", mId);
         return;

@@ -64,13 +64,10 @@ public:
 	glm::mat4 mModel;
 };
 
-struct CameraBufferResource
+class CameraBufferResource
 {
 public:
-	CameraBufferResource()
-	{
-		mData = &privateData;
-	}
+	CameraBufferResource();
 
 public:
 	void* mData;
@@ -80,19 +77,27 @@ private:
 	CameraBufferData privateData;
 };
 
-struct ObjectBufferResource
+class ObjectBufferResource
 {
 public:
-	ObjectBufferResource()
-	{
-		mData = &privateData;
-	}
+	ObjectBufferResource();
+	ObjectBufferResource(vk::DeviceSize bufferDataSize);
+	~ObjectBufferResource();
 
 public:
-	void* mData;
 	vk::Buffer mBuffer;
 	vk::DeviceMemory mMemory;
+	vk::DescriptorSet mDescriptorSet;
+
+public:
+	void updateData(void* data);
+
 private:
-	ObjectBufferData privateData;
+	void spawnBuffer(vk::DeviceSize bufferDataSize);
+	void createDescriptorSet(vk::DeviceSize bufferDataSize);
+
+private:
+	void* mData;
+	vk::DeviceSize mBufferDataSize;
 };
 

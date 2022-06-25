@@ -130,6 +130,7 @@
       <Filter>source\engine\framework\object</Filter>
     </ClCompile>
     <ClCompile Include="source\editor\SceneInputManager.cpp" />
+    <ClCompile Include="source\engine\function\render\RenderResource\RenderData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\engine\Engine.h">

@@ -54,17 +54,20 @@ void MainCameraPass::drawPass()
     gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mPipeline);
     vk::DeviceSize offset = 0;
     gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPipelineLayout, 0, 1, mDescriptorSets.data(), 0, nullptr);
-    for (const auto& iter : gRuntimeGlobalContext.getRenderResource()->mModelRenderResource)
+    for (const auto& iter : gRuntimeGlobalContext.getRenderResource()->mModelRenderResources)
     {
         // 更新模型位置
-        const ObjectBufferData& objectData = gRuntimeGlobalContext.getRenderResource()->mObjectBufferDatas[iter.first];
-        (*(ObjectBufferData*)gRuntimeGlobalContext.getRenderResource()->mObjectBufferResource.mData).mModel = objectData.mModel;
+        gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindDescriptorSets(
+            vk::PipelineBindPoint::eGraphics, mPipelineLayout,
+            1, 1, &gRuntimeGlobalContext.getRenderResource()->mObjectBufferResources[iter.first]->mDescriptorSet,
+            0, nullptr);
 
         // 绑定相关数据和绘制
         for (const auto& resource : iter.second)
         {
-            gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics,
-                mPipelineLayout, 1, 1, &resource.mTextureResource.lock()->mTextureBufferResource.mDescriptorSet, 0, nullptr);
+            gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics,mPipelineLayout,
+                2, 1, &resource.mTextureResource.lock()->mTextureBufferResource.mDescriptorSet,
+                0, nullptr);
             gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindVertexBuffers(0, 1, &resource.mMeshResource.lock()->mMeshBufferResource.mVertexBuffer, &offset);
             gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindIndexBuffer(resource.mMeshResource.lock()->mMeshBufferResource.mIndexBuffer, offset, vk::IndexType::eUint32);
             gRuntimeGlobalContext.getRHI()->mCommandBuffer.drawIndexed(resource.mMeshResource.lock()->mMeshBufferResource.mIndexCount, 1, 0, 0, 0);
@@ -286,31 +289,20 @@ void MainCameraPass::setupDescriptorSet()
     info.pSetLayouts = mDescSetLayouts.data();
     mDescriptorSets = gRuntimeGlobalContext.getRHI()->mDevice.allocateDescriptorSets(info);
 
-    vk::DescriptorBufferInfo objectBufferInfo;
-    objectBufferInfo.buffer = gRuntimeGlobalContext.getRenderResource()->mObjectBufferResource.mBuffer;
-    objectBufferInfo.offset = 0;
-    objectBufferInfo.range = sizeof(ObjectBufferData);
-
     vk::DescriptorBufferInfo cameraBufferInfo;
     cameraBufferInfo.buffer = gRuntimeGlobalContext.getRenderResource()->mCameraBufferResource.mBuffer;
     cameraBufferInfo.offset = 0;
     cameraBufferInfo.range = sizeof(CameraBufferData);
 
     // 更新描述符
-    std::array<vk::WriteDescriptorSet, 2> writeSet;
+    std::array<vk::WriteDescriptorSet, 1> writeSet;
+
     writeSet[0].dstArrayElement = 0;
-    writeSet[0].dstBinding = 0;
+    writeSet[0].dstBinding = 1;
     writeSet[0].dstSet = mDescriptorSets[DESCRIPTOR_TYPE_UNIFORM];
     writeSet[0].descriptorType = vk::DescriptorType::eUniformBuffer;
     writeSet[0].descriptorCount = 1;
-    writeSet[0].pBufferInfo = &objectBufferInfo;
-
-    writeSet[1].dstArrayElement = 0;
-    writeSet[1].dstBinding = 1;
-    writeSet[1].dstSet = mDescriptorSets[DESCRIPTOR_TYPE_UNIFORM];
-    writeSet[1].descriptorType = vk::DescriptorType::eUniformBuffer;
-    writeSet[1].descriptorCount = 1;
-    writeSet[1].pBufferInfo = &cameraBufferInfo;
+    writeSet[0].pBufferInfo = &cameraBufferInfo;
 
     gRuntimeGlobalContext.getRHI()->mDevice.updateDescriptorSets(writeSet, nullptr);
 }
