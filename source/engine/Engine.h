@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include <filesystem>
+#include "framework/level/Level.h"
+#include "../editor/SceneInputManager.h"
 
 struct EngineConfigParams
 {
@@ -25,5 +27,8 @@ protected:
 protected:
 	EngineConfigParams mInitParams;
 
+private:
+	std::shared_ptr<Level> mLevel;
+	std::shared_ptr<SceneInputManager> mScenceManager;
 };
 

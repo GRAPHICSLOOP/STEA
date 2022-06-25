@@ -27,11 +27,17 @@ void Engine::run()
 		rendererTick(deltaTime);
 		clear();
 	}
+
+	gRuntimeGlobalContext.getRHI()->mDevice.waitIdle();
+
 }
 
 void Engine::initialize()
 {
-
+	mLevel = std::make_shared<Level>();
+	mLevel->initialize();
+	mScenceManager = std::make_shared<SceneInputManager>();
+	mScenceManager->initialize();
 }
 
 void Engine::clear()
@@ -42,12 +48,13 @@ void Engine::clear()
 
 void Engine::logicalTick(float deltaTime)
 {
-
+	mLevel->tick(deltaTime);
+	mScenceManager->tick(deltaTime);
 }
 
 void Engine::rendererTick(float deltaTime)
 {
-
+	gRuntimeGlobalContext.getRenderSystem()->tick();
 }
 
 void Engine::calculateFPS(float deltaTime)

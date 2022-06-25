@@ -37,6 +37,24 @@
     <Filter Include="source\engine\core\math">
       <UniqueIdentifier>{d9ac83f2-a73e-42a0-bd79-4e9a20b93f24}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\engine\framework">
+      <UniqueIdentifier>{51032260-e215-48cb-8290-d2bde038b6da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\engine\framework\component">
+      <UniqueIdentifier>{bf61aa26-cd6a-4d32-bf43-e02057944f3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\engine\framework\inputSystem">
+      <UniqueIdentifier>{a17b3d23-6d2b-40d0-b66c-10f9e7b0eec0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\engine\framework\level">
+      <UniqueIdentifier>{b050b7a4-88d6-4df4-96e1-16993e0b46a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\engine\framework\assets">
+      <UniqueIdentifier>{e0ecbb50-8f97-4553-b04f-74a70233b59a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\engine\framework\object">
+      <UniqueIdentifier>{9e80d455-c26c-45f9-a21b-262776f632f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -81,6 +99,37 @@
     <ClCompile Include="source\engine\function\render\pass\MainCameraPass.cpp">
       <Filter>source\engine\function\render\pass</Filter>
     </ClCompile>
+    <ClCompile Include="source\engine\framework\component\Component.cpp">
+      <Filter>source\engine\framework\component</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\framework\component\MeshComponent.cpp">
+      <Filter>source\engine\framework\component</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\framework\component\NodeComponent.cpp">
+      <Filter>source\engine\framework\component</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\framework\component\TransformComponent.cpp">
+      <Filter>source\engine\framework\component</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\framework\inputSystem\InputSystem.cpp">
+      <Filter>source\engine\framework\inputSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\framework\level\Level.cpp">
+      <Filter>source\engine\framework\level</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\framework\assets\MeshAsset.cpp">
+      <Filter>source\engine\framework\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\framework\assets\Texture2D.cpp">
+      <Filter>source\engine\framework\assets</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\framework\object\Object.cpp">
+      <Filter>source\engine\framework\object</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\framework\object\ObjectIDAllocator.cpp">
+      <Filter>source\engine\framework\object</Filter>
+    </ClCompile>
+    <ClCompile Include="source\editor\SceneInputManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\engine\Engine.h">
@@ -128,6 +177,39 @@
     <ClInclude Include="source\engine\function\render\pass\MainCameraPass.h">
       <Filter>source\engine\function\render\pass</Filter>
     </ClInclude>
-    <ClInclude Include="source\engine\core\math\MathCommon.h" />
+    <ClInclude Include="source\engine\framework\component\Component.h">
+      <Filter>source\engine\framework\component</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\framework\component\MeshComponent.h">
+      <Filter>source\engine\framework\component</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\framework\component\NodeComponent.h">
+      <Filter>source\engine\framework\component</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\framework\component\TransformComponent.h">
+      <Filter>source\engine\framework\component</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\core\math\MathCommon.h">
+      <Filter>source\engine\core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\framework\inputSystem\InputSystem.h">
+      <Filter>source\engine\framework\inputSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\framework\level\Level.h">
+      <Filter>source\engine\framework\level</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\framework\assets\MeshAsset.h">
+      <Filter>source\engine\framework\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\framework\assets\Texture2D.h">
+      <Filter>source\engine\framework\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\framework\object\Object.h">
+      <Filter>source\engine\framework\object</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\framework\object\ObjectIDAllocator.h">
+      <Filter>source\engine\framework\object</Filter>
+    </ClInclude>
+    <ClInclude Include="source\editor\SceneInputManager.h" />
   </ItemGroup>
 </Project>

@@ -19,6 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\editor\SceneInputManager.cpp" />
+    <ClCompile Include="source\engine\framework\assets\MeshAsset.cpp" />
+    <ClCompile Include="source\engine\framework\assets\Texture2D.cpp" />
+    <ClCompile Include="source\engine\framework\component\Component.cpp" />
+    <ClCompile Include="source\engine\framework\component\MeshComponent.cpp" />
+    <ClCompile Include="source\engine\framework\component\NodeComponent.cpp" />
+    <ClCompile Include="source\engine\framework\component\TransformComponent.cpp" />
+    <ClCompile Include="source\engine\framework\inputSystem\InputSystem.cpp" />
+    <ClCompile Include="source\engine\framework\level\Level.cpp" />
+    <ClCompile Include="source\engine\framework\object\Object.cpp" />
+    <ClCompile Include="source\engine\framework\object\ObjectIDAllocator.cpp" />
     <ClCompile Include="source\engine\function\render\pass\MainCameraPass.cpp" />
     <ClCompile Include="source\engine\function\render\RenderPipeline.cpp" />
     <ClCompile Include="source\engine\function\render\RenderCamera.cpp" />
@@ -35,7 +46,18 @@
     <ClCompile Include="source\engine\function\render\VulkanUtil.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\editor\SceneInputManager.h" />
     <ClInclude Include="source\engine\core\math\MathCommon.h" />
+    <ClInclude Include="source\engine\framework\assets\MeshAsset.h" />
+    <ClInclude Include="source\engine\framework\assets\Texture2D.h" />
+    <ClInclude Include="source\engine\framework\component\Component.h" />
+    <ClInclude Include="source\engine\framework\component\MeshComponent.h" />
+    <ClInclude Include="source\engine\framework\component\NodeComponent.h" />
+    <ClInclude Include="source\engine\framework\component\TransformComponent.h" />
+    <ClInclude Include="source\engine\framework\inputSystem\InputSystem.h" />
+    <ClInclude Include="source\engine\framework\level\Level.h" />
+    <ClInclude Include="source\engine\framework\object\Object.h" />
+    <ClInclude Include="source\engine\framework\object\ObjectIDAllocator.h" />
     <ClInclude Include="source\engine\function\render\pass\MainCameraPass.h" />
     <ClInclude Include="source\engine\function\render\RenderPipeline.h" />
     <ClInclude Include="source\engine\function\render\RenderCamera.h" />
@@ -150,7 +172,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>F:\Jacson\Documents\Learning\STEA\source\engine;F:\Jacson\Documents\Learning\STEA\3rdparty\spdlog\include;F:\Jacson\Documents\Learning\STEA\3rdparty\assimp\include;F:\Jacson\Documents\Learning\STEA\3rdparty\glm;F:\Jacson\Documents\Learning\STEA\3rdparty\VulkanSDK\include;F:\Jacson\Documents\Learning\STEA\3rdparty\glfw\include;F:\Jacson\Documents\Learning\STEA\3rdparty\tool;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -171,7 +193,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>

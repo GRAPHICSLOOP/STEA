@@ -16,5 +16,15 @@ void RenderSystem::initialize()
 
 void RenderSystem::tick()
 {
+	// 等待上一帧渲染
+	mVulkanRHI->mDevice.waitForFences(1, &mVulkanRHI->mFence, VK_TRUE, UINT64_MAX);
+	mVulkanRHI->mDevice.resetFences(1, &mVulkanRHI->mFence);
 
+	mRenderResource->updatePerFrameBuffer(mRenderCamera);
+
+	mVulkanRHI->prepareBeforePass();
+
+	mRenderPipeline->draw();
+
+	mVulkanRHI->submitRendering();
 }
