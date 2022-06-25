@@ -53,13 +53,13 @@ void MainCameraPass::drawPass()
     gRuntimeGlobalContext.getRHI()->mCommandBuffer.beginRenderPass(passBegineInfo, vk::SubpassContents::eInline);
     gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mPipeline);
     vk::DeviceSize offset = 0;
-    gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPipelineLayout, 0, 1, mDescriptorSets.data(), 0, nullptr);
+    gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPipelineLayout, 1, 1, &mDescriptorSet, 0, nullptr);
     for (const auto& iter : gRuntimeGlobalContext.getRenderResource()->mModelRenderResources)
     {
         // 更新模型位置
         gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindDescriptorSets(
             vk::PipelineBindPoint::eGraphics, mPipelineLayout,
-            1, 1, &gRuntimeGlobalContext.getRenderResource()->mObjectBufferResources[iter.first]->mDescriptorSet,
+            0, 1, &gRuntimeGlobalContext.getRenderResource()->mObjectBufferResources[iter.first]->mDescriptorSet,
             0, nullptr);
 
         // 绑定相关数据和绘制
@@ -160,9 +160,10 @@ void MainCameraPass::setupRenderPass()
 
 void MainCameraPass::setupDescriptorSetLayout()
 {
-    mDescSetLayouts.resize(2);
-    mDescSetLayouts[DESCRIPTOR_TYPE_UNIFORM] = gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout(DESCRIPTOR_TYPE_UNIFORM);
-    mDescSetLayouts[DESCRIPTOR_TYPE_SAMPLE] = gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout(DESCRIPTOR_TYPE_SAMPLE);
+    mDescSetLayouts.resize(3);
+    mDescSetLayouts[DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_OBJECTUNIFORM] = gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout(DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_OBJECTUNIFORM);
+    mDescSetLayouts[DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_CAMERAUNIFORM] = gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout(DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_CAMERAUNIFORM);
+    mDescSetLayouts[DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_SAMPLE] = gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout(DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_SAMPLE);
 }
 
 void MainCameraPass::setupPipelines()
@@ -283,11 +284,13 @@ void MainCameraPass::setupPipelines()
 
 void MainCameraPass::setupDescriptorSet()
 {
+    vk::DescriptorSetLayout layout = gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout(DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_CAMERAUNIFORM);
+
     vk::DescriptorSetAllocateInfo info;
     info.descriptorPool = gRuntimeGlobalContext.getRHI()->mDescriptorPool;
     info.descriptorSetCount = 1;
-    info.pSetLayouts = mDescSetLayouts.data();
-    mDescriptorSets = gRuntimeGlobalContext.getRHI()->mDevice.allocateDescriptorSets(info);
+    info.pSetLayouts = &layout;
+    mDescriptorSet = gRuntimeGlobalContext.getRHI()->mDevice.allocateDescriptorSets(info)[0];
 
     vk::DescriptorBufferInfo cameraBufferInfo;
     cameraBufferInfo.buffer = gRuntimeGlobalContext.getRenderResource()->mCameraBufferResource.mBuffer;
@@ -298,8 +301,8 @@ void MainCameraPass::setupDescriptorSet()
     std::array<vk::WriteDescriptorSet, 1> writeSet;
 
     writeSet[0].dstArrayElement = 0;
-    writeSet[0].dstBinding = 1;
-    writeSet[0].dstSet = mDescriptorSets[DESCRIPTOR_TYPE_UNIFORM];
+    writeSet[0].dstBinding = 0;
+    writeSet[0].dstSet = mDescriptorSet;
     writeSet[0].descriptorType = vk::DescriptorType::eUniformBuffer;
     writeSet[0].descriptorCount = 1;
     writeSet[0].pBufferInfo = &cameraBufferInfo;

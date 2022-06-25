@@ -37,12 +37,12 @@ void ObjectBufferResource::spawnBuffer(vk::DeviceSize bufferDataSize)
 
 void ObjectBufferResource::updateData(void* data)
 {
-    mData = data;
+    memcpy(mData, data, mBufferDataSize);
 }
 
 void ObjectBufferResource::createDescriptorSet(vk::DeviceSize bufferDataSize)
 {
-    vk::DescriptorSetLayout layout = gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout(DESCRIPTOR_TYPE_UNIFORM);
+    vk::DescriptorSetLayout layout = gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout(DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_OBJECTUNIFORM);
 
     vk::DescriptorSetAllocateInfo info;
     info.descriptorPool = gRuntimeGlobalContext.getRHI()->mDescriptorPool;

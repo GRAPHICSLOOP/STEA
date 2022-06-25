@@ -138,20 +138,23 @@ void RenderResource::createDescriptorSetLayout()
     vk::DescriptorSetLayoutCreateInfo info;
 
     // mesh固定的uniform DescriptorSetLayout
-    std::array<vk::DescriptorSetLayoutBinding, 1> uniformBinding;
-    uniformBinding[0].binding = 0;
-    uniformBinding[0].descriptorCount = 1;
-    uniformBinding[0].descriptorType = vk::DescriptorType::eUniformBuffer;
-    uniformBinding[0].stageFlags = vk::ShaderStageFlagBits::eVertex;
+    vk::DescriptorSetLayoutBinding objectUniformBinding;
+    objectUniformBinding.binding = 0;
+    objectUniformBinding.descriptorCount = 1;
+    objectUniformBinding.descriptorType = vk::DescriptorType::eUniformBuffer;
+    objectUniformBinding.stageFlags = vk::ShaderStageFlagBits::eVertex;
+    info.bindingCount = 1;
+    info.pBindings = &objectUniformBinding;
+    mDescSetLayouts[DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_OBJECTUNIFORM] = gRuntimeGlobalContext.getRHI()->mDevice.createDescriptorSetLayout(info);
 
-
-    uniformBinding[1].binding = 1;
-    uniformBinding[1].descriptorCount = 1;
-    uniformBinding[1].descriptorType = vk::DescriptorType::eUniformBuffer;
-    uniformBinding[1].stageFlags = vk::ShaderStageFlagBits::eVertex;
-    info.bindingCount = 2;
-    info.pBindings = uniformBinding.data();
-    mDescSetLayouts[DESCRIPTOR_TYPE_UNIFORM] = gRuntimeGlobalContext.getRHI()->mDevice.createDescriptorSetLayout(info);
+    vk::DescriptorSetLayoutBinding cameraUniformBinding;
+    cameraUniformBinding.binding = 0;
+    cameraUniformBinding.descriptorCount = 1;
+    cameraUniformBinding.descriptorType = vk::DescriptorType::eUniformBuffer;
+    cameraUniformBinding.stageFlags = vk::ShaderStageFlagBits::eVertex;
+    info.bindingCount = 1;
+    info.pBindings = &cameraUniformBinding;
+    mDescSetLayouts[DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_CAMERAUNIFORM] = gRuntimeGlobalContext.getRHI()->mDevice.createDescriptorSetLayout(info);
 
     // 变动较多的 sample DescriptorSetLayout
     vk::DescriptorSetLayoutBinding sampleBinding;
@@ -161,5 +164,5 @@ void RenderResource::createDescriptorSetLayout()
     sampleBinding.stageFlags = vk::ShaderStageFlagBits::eFragment;
     info.bindingCount = 1;
     info.pBindings = &sampleBinding;
-    mDescSetLayouts[DESCRIPTOR_TYPE_SAMPLE] = gRuntimeGlobalContext.getRHI()->mDevice.createDescriptorSetLayout(info);
+    mDescSetLayouts[DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_SAMPLE] = gRuntimeGlobalContext.getRHI()->mDevice.createDescriptorSetLayout(info);
 }

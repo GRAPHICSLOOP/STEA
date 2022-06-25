@@ -5,12 +5,18 @@
 
 void Level::initialize()
 {
-	std::shared_ptr<Object> newObject = createObject();
-	std::shared_ptr<MeshComponent> meshComponent = std::make_shared<MeshComponent>(newObject);
-	std::shared_ptr<TransformComponent> transformComponent = std::make_shared<TransformComponent>(newObject);
-	meshComponent->attachToComponent(newObject->mRootComponent);
-	transformComponent->attachToComponent(newObject->mRootComponent);
-	newObject->showMeshTemp();
+	for (uint32_t i = 0; i < 2; i++)
+	{
+		std::shared_ptr<Object> newObject = createObject();
+		std::shared_ptr<MeshComponent> meshComponent = std::make_shared<MeshComponent>(newObject);
+		std::shared_ptr<TransformComponent> transformComponent = std::make_shared<TransformComponent>(newObject);
+		meshComponent->attachToComponent(newObject->mRootComponent);
+		transformComponent->attachToComponent(newObject->mRootComponent);
+		newObject->showMeshTemp();
+
+		transformComponent->setScale(glm::vec3(0.1f + i * 0.1f, 0.1f + i * 0.1f, 0.1f + i * 0.1f));
+	}
+
 }
 
 void Level::tick(float delta)

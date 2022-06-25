@@ -10,7 +10,7 @@ layout(set = 0 , binding = 0) uniform ObjectBuffer {
     mat4 model;
 }ubo;
 
-layout(set = 0 , binding = 1) uniform CameraBuffer {
+layout(set = 1 , binding = 0) uniform CameraBuffer {
     mat4 view;
     mat4 proj;
 	mat4 porjView;

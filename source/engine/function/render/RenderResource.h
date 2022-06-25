@@ -35,6 +35,6 @@ private:
 	void createDescriptorSetLayout();
 
 private:
-	std::array<vk::DescriptorSetLayout, 2> mDescSetLayouts;
+	std::array<vk::DescriptorSetLayout, 3> mDescSetLayouts;
 };
 
