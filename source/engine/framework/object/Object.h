@@ -3,17 +3,15 @@
 #include "../inputSystem/InputSystem.h"
 #include "ObjectIDAllocator.h"
 
-class Object : public InputSystem , public std::enable_shared_from_this<Object>
+class Object : public std::enable_shared_from_this<Object>
 {
 public:
 	Object(ObjectID id);
 	~Object();
 	void tick(float delta);
+	void showMeshTemp();
 
 	size_t getID();
-
-protected:
-	void onKey(int key, int scancode, int action, int mods);
 
 public:
 	std::shared_ptr<NodeComponent> mRootComponent;

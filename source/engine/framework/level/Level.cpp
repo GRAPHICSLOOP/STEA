@@ -10,6 +10,7 @@ void Level::initialize()
 	std::shared_ptr<TransformComponent> transformComponent = std::make_shared<TransformComponent>(newObject);
 	meshComponent->attachToComponent(newObject->mRootComponent);
 	transformComponent->attachToComponent(newObject->mRootComponent);
+	newObject->showMeshTemp();
 }
 
 void Level::tick(float delta)
