@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="source">
+      <UniqueIdentifier>{36eb8389-ee8f-4f0f-a1be-a5a328d0e17f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\engine">
+      <UniqueIdentifier>{82791c7d-62ea-4444-9f1c-5d6655240532}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\editor">
+      <UniqueIdentifier>{403e723d-897b-4c2a-93f0-f187131c082a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\engine\function">
+      <UniqueIdentifier>{344f016a-e6a0-4ccc-baf0-c6ef74789768}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\engine\function\render">
+      <UniqueIdentifier>{9b4b3f4c-b5d8-4e66-883d-49c67c90ede9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\engine\function\global">
+      <UniqueIdentifier>{565d7510-d07e-43f5-a194-280dc63fd630}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\engine\core">
+      <UniqueIdentifier>{531242a9-c03b-477b-aeca-fed321578554}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\engine\core\log">
+      <UniqueIdentifier>{c0021bf4-7482-4e60-a188-7f320d6e9f2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\engine\core\base">
+      <UniqueIdentifier>{9d177f24-6825-436d-a90a-7d456c397978}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\engine\function\render\renderReource">
+      <UniqueIdentifier>{e298f2d2-c7d0-4aa1-b10e-945e2199628b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\engine\function\render\pass">
+      <UniqueIdentifier>{3cb7283e-b47a-428b-bb7c-325c099a7f2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\engine\core\math">
+      <UniqueIdentifier>{d9ac83f2-a73e-42a0-bd79-4e9a20b93f24}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\Engine.cpp">
+      <Filter>source\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\function\render\WindowSystem.cpp">
+      <Filter>source\engine\function\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\function\render\RenderSystem.cpp">
+      <Filter>source\engine\function\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\function\global\RuntimeGlobalContext.cpp">
+      <Filter>source\engine\function\global</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\core\log\LogSystem.cpp">
+      <Filter>source\engine\core\log</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\function\render\RenderCamera.cpp">
+      <Filter>source\engine\function\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\function\render\RenderResource.cpp">
+      <Filter>source\engine\function\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\function\render\VulkanRHI.cpp">
+      <Filter>source\engine\function\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\function\render\RenderResource\MeshResource.cpp">
+      <Filter>source\engine\function\render\renderReource</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\function\render\RenderResource\TextureResource.cpp">
+      <Filter>source\engine\function\render\renderReource</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\function\render\RenderPipeline.cpp">
+      <Filter>source\engine\function\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\function\render\VulkanUtil.cpp">
+      <Filter>source\engine\function\render</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\function\render\pass\MainCameraPass.cpp">
+      <Filter>source\engine\function\render\pass</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\engine\Engine.h">
+      <Filter>source\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\render\WindowSystem.h">
+      <Filter>source\engine\function\render</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\render\RenderSystem.h">
+      <Filter>source\engine\function\render</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\global\RuntimeGlobalContext.h">
+      <Filter>source\engine\function\global</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\core\log\LogSystem.h">
+      <Filter>source\engine\core\log</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\core\base\macro.h">
+      <Filter>source\engine\core\base</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\render\RenderCamera.h">
+      <Filter>source\engine\function\render</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\render\RenderResource.h">
+      <Filter>source\engine\function\render</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\render\VulkanRHI.h">
+      <Filter>source\engine\function\render</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\render\RenderResource\MeshResource.h">
+      <Filter>source\engine\function\render\renderReource</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\render\RenderResource\RenderData.h">
+      <Filter>source\engine\function\render\renderReource</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\render\RenderResource\TextureResource.h">
+      <Filter>source\engine\function\render\renderReource</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\render\RenderPipeline.h">
+      <Filter>source\engine\function\render</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\render\VulkanUtil.h">
+      <Filter>source\engine\function\render</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\render\pass\MainCameraPass.h">
+      <Filter>source\engine\function\render\pass</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\core\math\MathCommon.h" />
+  </ItemGroup>
+</Project>
