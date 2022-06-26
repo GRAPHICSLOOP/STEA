@@ -25,7 +25,7 @@ public:
 	vk::DescriptorSetLayout getDescriptorSetLayout(DESCRIPTOR_TYPE type);
 
 public:
-	CameraBufferResource mCameraBufferResource;
+	std::shared_ptr<CameraBufferResource> mCameraBufferResource;
 	std::unordered_map<size_t, std::shared_ptr<ObjectBufferResource>> mObjectBufferResources;
 	std::unordered_map<size_t, std::vector<ModelRenderResource>> mModelRenderResources;
 	std::unordered_map<size_t, std::weak_ptr<TextureResource>> mGlobalTextureResources;

@@ -69,13 +69,25 @@ class CameraBufferResource
 {
 public:
 	CameraBufferResource();
+	CameraBufferResource(vk::DeviceSize bufferDataSize);
+	~CameraBufferResource();
 
 public:
-	void* mData;
+	void updateData(void* data);
+
+public:
 	vk::Buffer mBuffer;
 	vk::DeviceMemory mMemory;
+	vk::DescriptorSet mDescriptorSet;
+
 private:
-	CameraBufferData privateData;
+	void spawnBuffer(vk::DeviceSize bufferDataSize);
+	void createDescriptorSet(vk::DeviceSize bufferDataSize);
+
+private:
+	void* mData;
+	vk::DeviceSize mBufferDataSize;
+
 };
 
 class ObjectBufferResource

@@ -10,16 +10,12 @@ RenderResource::~RenderResource()
     {
         gRuntimeGlobalContext.getRHI()->mDevice.destroyDescriptorSetLayout(mDescSetLayouts[i]);
     }
-
-    vkUnmapMemory(gRuntimeGlobalContext.getRHI()->mDevice, mCameraBufferResource.mMemory);
-    gRuntimeGlobalContext.getRHI()->mDevice.destroyBuffer(mCameraBufferResource.mBuffer);
-    gRuntimeGlobalContext.getRHI()->mDevice.freeMemory(mCameraBufferResource.mMemory);
 }
 
 void RenderResource::initialize()
 {
-    createBufferResource();
     createDescriptorSetLayout();
+    createBufferResource();
 }
 
 void RenderResource::createVertexBuffer(MeshBufferResource& bufferResouce, const void* VerticesData, uint32_t count)
@@ -90,10 +86,16 @@ void RenderResource::createIndexBuffer(MeshBufferResource& bufferResouce, const 
 
 void RenderResource::updatePerFrameBuffer(std::shared_ptr<RenderCamera> camera)
 {
-    (*(CameraBufferData*)mCameraBufferResource.mData).mView = camera->getViewMatrix();
-    (*(CameraBufferData*)mCameraBufferResource.mData).mProj = glm::perspectiveRH(glm::radians(45.f), gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.width / (float)gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.height, 0.1f, 10.f);
-    (*(CameraBufferData*)mCameraBufferResource.mData).mProj[1][1] *= -1;
-    (*(CameraBufferData*)mCameraBufferResource.mData).mViewPorj = (*(CameraBufferData*)mCameraBufferResource.mData).mProj * (*(CameraBufferData*)mCameraBufferResource.mData).mView;
+    CameraBufferData data;
+    data.mView = camera->getViewMatrix();
+    data.mProj = glm::perspectiveRH(glm::radians(45.f),
+        gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.width / (float)gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.height,
+        0.1f,
+        100.f);
+    data.mProj[1][1] *= -1;
+    data.mViewPorj = data.mProj * data.mView;
+
+    mCameraBufferResource->updateData(&data);
 }
 
 void RenderResource::addObjectBufferResource(size_t objectID, void* data, vk::DeviceSize dataSize)
@@ -118,19 +120,7 @@ vk::DescriptorSetLayout RenderResource::getDescriptorSetLayout(DESCRIPTOR_TYPE t
 
 void RenderResource::createBufferResource()
 {
-    vk::DeviceSize bufferSize = sizeof(ObjectBufferData);
-
-    bufferSize = sizeof(CameraBufferData);
-    VulkanUtil::createBuffer(
-        bufferSize,
-        vk::BufferUsageFlagBits::eUniformBuffer,
-        vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
-        mCameraBufferResource.mBuffer,
-        mCameraBufferResource.mMemory
-    );
-
-    // 不立马解除映射 销毁RenderResource的时候才解除
-    vkMapMemory(gRuntimeGlobalContext.getRHI()->mDevice, mCameraBufferResource.mMemory, 0, sizeof(CameraBufferData), 0, &mCameraBufferResource.mData);
+    mCameraBufferResource =std::make_shared<CameraBufferResource>(sizeof(CameraBufferData));
 }
 
 void RenderResource::createDescriptorSetLayout()

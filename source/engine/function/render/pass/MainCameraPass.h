@@ -47,7 +47,6 @@ private:
 	std::vector<vk::DescriptorSetLayout> mDescSetLayouts;
 	vk::PipelineLayout mPipelineLayout;
 	vk::Pipeline mPipeline;
-	vk::DescriptorSet mDescriptorSet;
 	Frame mFrame;
 
 	CameraBufferData cameraData;

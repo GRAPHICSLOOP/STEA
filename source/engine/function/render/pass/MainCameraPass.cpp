@@ -53,7 +53,11 @@ void MainCameraPass::drawPass()
     gRuntimeGlobalContext.getRHI()->mCommandBuffer.beginRenderPass(passBegineInfo, vk::SubpassContents::eInline);
     gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mPipeline);
     vk::DeviceSize offset = 0;
-    gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPipelineLayout, 1, 1, &mDescriptorSet, 0, nullptr);
+
+    gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindDescriptorSets(
+        vk::PipelineBindPoint::eGraphics,mPipelineLayout,
+        1, 1, &gRuntimeGlobalContext.getRenderResource()->mCameraBufferResource->mDescriptorSet,
+        0, nullptr);
     for (const auto& iter : gRuntimeGlobalContext.getRenderResource()->mModelRenderResources)
     {
         // 更新模型位置
@@ -284,30 +288,6 @@ void MainCameraPass::setupPipelines()
 
 void MainCameraPass::setupDescriptorSet()
 {
-    vk::DescriptorSetLayout layout = gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout(DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_CAMERAUNIFORM);
-
-    vk::DescriptorSetAllocateInfo info;
-    info.descriptorPool = gRuntimeGlobalContext.getRHI()->mDescriptorPool;
-    info.descriptorSetCount = 1;
-    info.pSetLayouts = &layout;
-    mDescriptorSet = gRuntimeGlobalContext.getRHI()->mDevice.allocateDescriptorSets(info)[0];
-
-    vk::DescriptorBufferInfo cameraBufferInfo;
-    cameraBufferInfo.buffer = gRuntimeGlobalContext.getRenderResource()->mCameraBufferResource.mBuffer;
-    cameraBufferInfo.offset = 0;
-    cameraBufferInfo.range = sizeof(CameraBufferData);
-
-    // 更新描述符
-    std::array<vk::WriteDescriptorSet, 1> writeSet;
-
-    writeSet[0].dstArrayElement = 0;
-    writeSet[0].dstBinding = 0;
-    writeSet[0].dstSet = mDescriptorSet;
-    writeSet[0].descriptorType = vk::DescriptorType::eUniformBuffer;
-    writeSet[0].descriptorCount = 1;
-    writeSet[0].pBufferInfo = &cameraBufferInfo;
-
-    gRuntimeGlobalContext.getRHI()->mDevice.updateDescriptorSets(writeSet, nullptr);
 }
 
 void MainCameraPass::setupSwapchainFramebuffers()
