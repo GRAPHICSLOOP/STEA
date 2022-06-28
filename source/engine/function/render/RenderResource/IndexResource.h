@@ -17,6 +17,6 @@ public:
 	vk::DeviceMemory mBufferMemory;
 
 public:
-	static std::shared_ptr<IndexResource> create(const void* indicesData, uint32_t count);
+	static std::shared_ptr<IndexResource> create(const void* indicesData, uint32_t count, size_t step);
 };
 

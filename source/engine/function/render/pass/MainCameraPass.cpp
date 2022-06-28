@@ -73,8 +73,8 @@ void MainCameraPass::drawPass()
                 2, 1, &resource.mTextureResource.lock()->mTextureBufferResource.mDescriptorSet,
                 0, nullptr);
             gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindVertexBuffers(0, 1, &resource.mMeshResource.lock()->mMeshBufferResource.mVertexBuffer, &offset);
-            gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindIndexBuffer(resource.mMeshResource.lock()->mMeshBufferResource.mIndexBuffer, offset, vk::IndexType::eUint32);
-            gRuntimeGlobalContext.getRHI()->mCommandBuffer.drawIndexed(resource.mMeshResource.lock()->mMeshBufferResource.mIndexCount, 1, 0, 0, 0);
+            gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindIndexBuffer(resource.mMeshResource.lock()->mMeshBufferResource.mIndexResource->mBuffer, offset, vk::IndexType::eUint32);
+            gRuntimeGlobalContext.getRHI()->mCommandBuffer.drawIndexed(resource.mMeshResource.lock()->mMeshBufferResource.mIndexResource->mIndexCount, 1, 0, 0, 0);
         }
 
     }

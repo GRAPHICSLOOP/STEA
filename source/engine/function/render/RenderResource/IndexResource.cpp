@@ -8,14 +8,14 @@ IndexResource::~IndexResource()
     gRuntimeGlobalContext.getRHI()->mDevice.freeMemory(mBufferMemory);
 }
 
-std::shared_ptr<IndexResource> IndexResource::create(const void* indicesData, uint32_t count)
+std::shared_ptr<IndexResource> IndexResource::create(const void* indicesData, uint32_t count,size_t step)
 {
     struct make_shared_enabler : public IndexResource {};
     std::shared_ptr<IndexResource> indexResource = std::make_shared< make_shared_enabler>();
     //std::shared_ptr<IndexResource> indexResource{new IndexResource()};
 
     indexResource->mIndexCount = count;
-    size_t size = count * sizeof(uint32_t);
+    size_t size = count * step;
 
     vk::Buffer stagingBuffer;
     vk::DeviceMemory stagingBufferMemory;

@@ -51,39 +51,6 @@ void RenderResource::createVertexBuffer(MeshBufferResource& bufferResouce, const
     gRuntimeGlobalContext.getRHI()->mDevice.freeMemory(stagingBufferMemory);
 }
 
-void RenderResource::createIndexBuffer(MeshBufferResource& bufferResouce, const void* indicesData, uint32_t count)
-{
-    bufferResouce.mIndexCount = count;
-    size_t size = count * sizeof(uint32_t);
-
-    vk::Buffer stagingBuffer;
-    vk::DeviceMemory stagingBufferMemory;
-    VulkanUtil::createBuffer(
-        size,
-        vk::BufferUsageFlagBits::eTransferSrc,
-        vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
-        stagingBuffer,
-        stagingBufferMemory);
-
-
-    void* data;
-    vkMapMemory(gRuntimeGlobalContext.getRHI()->mDevice, stagingBufferMemory, 0, size, 0, &data);
-    memcpy(data, indicesData, size);
-    vkUnmapMemory(gRuntimeGlobalContext.getRHI()->mDevice, stagingBufferMemory);
-
-    VulkanUtil::createBuffer(
-        size,
-        vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eIndexBuffer,
-        vk::MemoryPropertyFlagBits::eDeviceLocal,
-        bufferResouce.mIndexBuffer,
-        bufferResouce.mIndexBufferMemory);
-
-    VulkanUtil::copyBuffer(stagingBuffer, bufferResouce.mIndexBuffer, size);
-
-    gRuntimeGlobalContext.getRHI()->mDevice.destroyBuffer(stagingBuffer);
-    gRuntimeGlobalContext.getRHI()->mDevice.freeMemory(stagingBufferMemory);
-}
-
 void RenderResource::updatePerFrameBuffer(std::shared_ptr<RenderCamera> camera)
 {
     CameraBufferData data;

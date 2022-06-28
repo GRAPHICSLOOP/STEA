@@ -19,7 +19,6 @@ public:
 	~RenderResource();
 	void initialize();
 	void createVertexBuffer(struct MeshBufferResource& bufferResouce, const void* VerticesData, uint32_t count);
-	void createIndexBuffer(struct MeshBufferResource& bufferResouce, const void* indicesData, uint32_t count);
 	void updatePerFrameBuffer(std::shared_ptr<RenderCamera> camera);
 	void addObjectBufferResource(size_t objectID, void* data, vk::DeviceSize dataSize);
 	vk::DescriptorSetLayout getDescriptorSetLayout(DESCRIPTOR_TYPE type);

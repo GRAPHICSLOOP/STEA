@@ -7,12 +7,9 @@ struct MeshBufferResource
 {
 public:
 	uint32_t mVertexCount;
-	uint32_t mIndexCount;
 	vk::Buffer mVertexBuffer;
 	vk::DeviceMemory mVertexBufferMemory;
-	//std::shared_ptr<IndexResource> mIndexResource;
-	vk::Buffer mIndexBuffer;
-	vk::DeviceMemory mIndexBufferMemory;
+	std::shared_ptr<IndexResource> mIndexResource;
 };
 
 class MeshResource
