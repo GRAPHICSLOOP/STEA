@@ -19,6 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="3rdparty\imgui\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="3rdparty\imgui\backends\imgui_impl_vulkan.cpp" />
+    <ClCompile Include="3rdparty\imgui\imgui.cpp" />
+    <ClCompile Include="3rdparty\imgui\imgui_demo.cpp" />
+    <ClCompile Include="3rdparty\imgui\imgui_draw.cpp" />
+    <ClCompile Include="3rdparty\imgui\imgui_tables.cpp" />
+    <ClCompile Include="3rdparty\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="source\engine\function\render\RenderResource\IndexResource.cpp" />
+    <ClCompile Include="source\engine\function\render\pass\RenderPassBase.cpp" />
     <ClCompile Include="source\editor\SceneInputManager.cpp" />
     <ClCompile Include="source\engine\framework\assets\MeshAsset.cpp" />
     <ClCompile Include="source\engine\framework\assets\Texture2D.cpp" />
@@ -45,8 +54,19 @@
     <ClCompile Include="source\engine\function\render\WindowSystem.cpp" />
     <ClCompile Include="source\engine\function\render\VulkanRHI.cpp" />
     <ClCompile Include="source\engine\function\render\VulkanUtil.cpp" />
+    <ClCompile Include="source\engine\function\render\pass\UIPass.cpp" />
+    <ClCompile Include="source\engine\function\render\RenderResource\VertexResource.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="3rdparty\imgui\backends\imgui_impl_glfw.h" />
+    <ClInclude Include="3rdparty\imgui\backends\imgui_impl_vulkan.h" />
+    <ClInclude Include="3rdparty\imgui\imgui.h" />
+    <ClInclude Include="3rdparty\imgui\imgui_internal.h" />
+    <ClInclude Include="3rdparty\imgui\imstb_rectpack.h" />
+    <ClInclude Include="3rdparty\imgui\imstb_textedit.h" />
+    <ClInclude Include="3rdparty\imgui\imstb_truetype.h" />
+    <ClInclude Include="source\engine\function\render\RenderResource\IndexResource.h" />
+    <ClInclude Include="source\engine\function\render\pass\RenderPassBase.h" />
     <ClInclude Include="source\editor\SceneInputManager.h" />
     <ClInclude Include="source\engine\core\math\MathCommon.h" />
     <ClInclude Include="source\engine\framework\assets\MeshAsset.h" />
@@ -74,6 +94,8 @@
     <ClInclude Include="source\engine\function\render\WindowSystem.h" />
     <ClInclude Include="source\engine\function\render\VulkanRHI.h" />
     <ClInclude Include="source\engine\function\render\VulkanUtil.h" />
+    <ClInclude Include="source\engine\function\render\pass\UIPass.h" />
+    <ClInclude Include="source\engine\function\render\RenderResource\VertexResource.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -176,7 +198,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>F:\Jacson\Documents\Learning\STEA\source\engine;F:\Jacson\Documents\Learning\STEA\3rdparty\spdlog\include;F:\Jacson\Documents\Learning\STEA\3rdparty\assimp\include;F:\Jacson\Documents\Learning\STEA\3rdparty\glm;F:\Jacson\Documents\Learning\STEA\3rdparty\VulkanSDK\include;F:\Jacson\Documents\Learning\STEA\3rdparty\glfw\include;F:\Jacson\Documents\Learning\STEA\3rdparty\tool;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\Jacson\Documents\Learning\STEA\3rdparty\imgui;F:\Jacson\Documents\Learning\STEA\source\engine;F:\Jacson\Documents\Learning\STEA\3rdparty\spdlog\include;F:\Jacson\Documents\Learning\STEA\3rdparty\assimp\include;F:\Jacson\Documents\Learning\STEA\3rdparty\glm;F:\Jacson\Documents\Learning\STEA\3rdparty\VulkanSDK\include;F:\Jacson\Documents\Learning\STEA\3rdparty\glfw\include;F:\Jacson\Documents\Learning\STEA\3rdparty\tool;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

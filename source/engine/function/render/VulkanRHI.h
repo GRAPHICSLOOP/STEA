@@ -45,31 +45,32 @@ public:
 	const uint32_t getNextImageIndex() const;
 
 public:
+	vk::Instance mInstance;
 	vk::PhysicalDevice mPhyDevice;
 	vk::Device mDevice;
 	vk::DescriptorPool mDescriptorPool;
 	std::vector<vk::Image> mSwapchainImages;
 	std::vector<vk::ImageView> mSwapchainImageViews;
 
+	vk::CommandPool mCommandPool;
 	vk::CommandBuffer mCommandBuffer;
 
 	vk::Semaphore mImageAvailableSemaphore;
 	vk::Semaphore mRenderFinishedSemaphore;
 	vk::Fence mFence;
+	vk::Queue mGraphicsQueue;
+	vk::Queue mPresentQueue;
 
 	SwapchainSupportDetails mSwapchainSupportDetails;
+	QueueFamilyIndices mQueueFamilyIndices;
+
 private:
 	std::array<const char*, 1> mEnableLayerNames = { "VK_LAYER_KHRONOS_validation" };
-	QueueFamilyIndices mQueueFamilyIndices;
 	uint32_t nextImageIndex;
 
 private:
-	vk::Instance mInstance;
 	VkSurfaceKHR mSurfaceKHR;
-	vk::CommandPool mCommandPool;
 	vk::SwapchainKHR mSwapchain;
-	vk::Queue mGraphicsQueue;
-	vk::Queue mPresentQueue;
 
 
 private:

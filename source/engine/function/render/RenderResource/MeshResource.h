@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <vector>
 #include "RenderData.h"
+#include "IndexResource.h"
 
 struct MeshBufferResource
 {
@@ -9,6 +10,7 @@ public:
 	uint32_t mIndexCount;
 	vk::Buffer mVertexBuffer;
 	vk::DeviceMemory mVertexBufferMemory;
+	//std::shared_ptr<IndexResource> mIndexResource;
 	vk::Buffer mIndexBuffer;
 	vk::DeviceMemory mIndexBufferMemory;
 };

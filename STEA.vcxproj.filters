@@ -28,9 +28,6 @@
     <Filter Include="source\engine\core\base">
       <UniqueIdentifier>{9d177f24-6825-436d-a90a-7d456c397978}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\engine\function\render\renderReource">
-      <UniqueIdentifier>{e298f2d2-c7d0-4aa1-b10e-945e2199628b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="source\engine\function\render\pass">
       <UniqueIdentifier>{3cb7283e-b47a-428b-bb7c-325c099a7f2e}</UniqueIdentifier>
     </Filter>
@@ -54,6 +51,15 @@
     </Filter>
     <Filter Include="source\engine\framework\object">
       <UniqueIdentifier>{9e80d455-c26c-45f9-a21b-262776f632f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{b057e93b-5b72-40a8-a5ad-d5eb50c251a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\engine\function\render\RHI">
+      <UniqueIdentifier>{b8bdc968-b2e9-47ab-9e79-e0ec3fa2dad9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\engine\function\render\renderResource">
+      <UniqueIdentifier>{e298f2d2-c7d0-4aa1-b10e-945e2199628b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -85,10 +91,10 @@
       <Filter>source\engine\function\render</Filter>
     </ClCompile>
     <ClCompile Include="source\engine\function\render\RenderResource\MeshResource.cpp">
-      <Filter>source\engine\function\render\renderReource</Filter>
+      <Filter>source\engine\function\render\renderResource</Filter>
     </ClCompile>
     <ClCompile Include="source\engine\function\render\RenderResource\TextureResource.cpp">
-      <Filter>source\engine\function\render\renderReource</Filter>
+      <Filter>source\engine\function\render\renderResource</Filter>
     </ClCompile>
     <ClCompile Include="source\engine\function\render\RenderPipeline.cpp">
       <Filter>source\engine\function\render</Filter>
@@ -129,8 +135,45 @@
     <ClCompile Include="source\engine\framework\object\ObjectIDAllocator.cpp">
       <Filter>source\engine\framework\object</Filter>
     </ClCompile>
-    <ClCompile Include="source\editor\SceneInputManager.cpp" />
-    <ClCompile Include="source\engine\function\render\RenderResource\RenderData.cpp" />
+    <ClCompile Include="source\engine\function\render\pass\UIPass.cpp">
+      <Filter>source\engine\function\render\pass</Filter>
+    </ClCompile>
+    <ClCompile Include="source\editor\SceneInputManager.cpp">
+      <Filter>source\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\function\render\RenderResource\RenderData.cpp">
+      <Filter>source\engine\function\render\renderResource</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\function\render\pass\RenderPassBase.cpp">
+      <Filter>source\engine\function\render\pass</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\imgui\imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\imgui\imgui_demo.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\imgui\imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\imgui\backends\imgui_impl_glfw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\imgui\backends\imgui_impl_vulkan.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\imgui\imgui_tables.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\imgui\imgui_widgets.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\function\render\RenderResource\IndexResource.cpp">
+      <Filter>source\engine\function\render\renderResource</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\function\render\RenderResource\VertexResource.cpp">
+      <Filter>source\engine\function\render\renderResource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\engine\Engine.h">
@@ -161,13 +204,13 @@
       <Filter>source\engine\function\render</Filter>
     </ClInclude>
     <ClInclude Include="source\engine\function\render\RenderResource\MeshResource.h">
-      <Filter>source\engine\function\render\renderReource</Filter>
+      <Filter>source\engine\function\render\renderResource</Filter>
     </ClInclude>
     <ClInclude Include="source\engine\function\render\RenderResource\RenderData.h">
-      <Filter>source\engine\function\render\renderReource</Filter>
+      <Filter>source\engine\function\render\renderResource</Filter>
     </ClInclude>
     <ClInclude Include="source\engine\function\render\RenderResource\TextureResource.h">
-      <Filter>source\engine\function\render\renderReource</Filter>
+      <Filter>source\engine\function\render\renderResource</Filter>
     </ClInclude>
     <ClInclude Include="source\engine\function\render\RenderPipeline.h">
       <Filter>source\engine\function\render</Filter>
@@ -211,6 +254,41 @@
     <ClInclude Include="source\engine\framework\object\ObjectIDAllocator.h">
       <Filter>source\engine\framework\object</Filter>
     </ClInclude>
-    <ClInclude Include="source\editor\SceneInputManager.h" />
+    <ClInclude Include="source\engine\function\render\pass\UIPass.h">
+      <Filter>source\engine\function\render\pass</Filter>
+    </ClInclude>
+    <ClInclude Include="source\editor\SceneInputManager.h">
+      <Filter>source\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\render\pass\RenderPassBase.h">
+      <Filter>source\engine\function\render\pass</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\imgui\imgui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\imgui\backends\imgui_impl_glfw.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\imgui\backends\imgui_impl_vulkan.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\imgui\imgui_internal.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\imgui\imstb_rectpack.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\imgui\imstb_textedit.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\imgui\imstb_truetype.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\render\RenderResource\IndexResource.h">
+      <Filter>source\engine\function\render\renderResource</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\render\RenderResource\VertexResource.h">
+      <Filter>source\engine\function\render\renderResource</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

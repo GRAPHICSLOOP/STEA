@@ -1,6 +1,6 @@
 ﻿#pragma once
+#include "RenderPassBase.h"
 #include <unordered_map>
-#include <vulkan/vulkan.hpp>
 #include "function/render/RenderResource/RenderData.h"
 
 enum class ATTACHMENT_TYPE : uint8_t
@@ -36,12 +36,13 @@ public:
 	}
 };
 
-class MainCameraPass
+class MainCameraPass : public RenderPassBase
 {
 public:
 	~MainCameraPass();
-	void initialize();
-	void drawPass();
+	void initialize() override;
+	void drawPass() override;
+	vk::RenderPass getRenderPass();
 
 private:
 	std::vector<vk::DescriptorSetLayout> mDescSetLayouts;

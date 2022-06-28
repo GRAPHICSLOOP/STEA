@@ -78,7 +78,12 @@ void MainCameraPass::drawPass()
         }
 
     }
-    gRuntimeGlobalContext.getRHI()->mCommandBuffer.endRenderPass();
+    //gRuntimeGlobalContext.getRHI()->mCommandBuffer.endRenderPass();
+}
+
+vk::RenderPass MainCameraPass::getRenderPass()
+{
+    return mFrame.mRenderPass;
 }
 
 void MainCameraPass::setupAttachments()
