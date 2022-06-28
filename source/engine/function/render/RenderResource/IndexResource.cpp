@@ -2,11 +2,6 @@
 #include "../VulkanUtil.h"
 #include "../../global/RuntimeGlobalContext.h"
 
-IndexResource::IndexResource()
-{
-    mIndexCount = 0;
-}
-
 IndexResource::~IndexResource()
 {
     gRuntimeGlobalContext.getRHI()->mDevice.destroyBuffer(mBuffer);
@@ -15,7 +10,9 @@ IndexResource::~IndexResource()
 
 std::shared_ptr<IndexResource> IndexResource::create(const void* indicesData, uint32_t count)
 {
-    std::shared_ptr<IndexResource> indexResource = std::make_shared<IndexResource>();
+    struct make_shared_enabler : public IndexResource {};
+    std::shared_ptr<IndexResource> indexResource = std::make_shared< make_shared_enabler>();
+    //std::shared_ptr<IndexResource> indexResource{new IndexResource()};
 
     indexResource->mIndexCount = count;
     size_t size = count * sizeof(uint32_t);

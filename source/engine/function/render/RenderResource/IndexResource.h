@@ -4,8 +4,9 @@
 
 class IndexResource
 {
+
 private:
-	IndexResource();
+	IndexResource() {};
 
 public:
 	~IndexResource();
