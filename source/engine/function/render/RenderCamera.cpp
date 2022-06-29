@@ -54,3 +54,8 @@ glm::vec3 RenderCamera::getForwardVector()
 {
 	return mForwradVector;
 }
+
+glm::vec3 RenderCamera::getPosition()
+{
+	return mPosition;
+}

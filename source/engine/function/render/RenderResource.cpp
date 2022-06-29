@@ -28,6 +28,10 @@ void RenderResource::updatePerFrameBuffer(std::shared_ptr<RenderCamera> camera)
         100.f);
     data.mProj[1][1] *= -1;
     data.mViewPorj = data.mProj * data.mView;
+    data.mLightPos = glm::vec3(1.f);
+    data.mEyePos = camera->getPosition();
+    data.mPaddingPow = 32.f;
+    data.mPaddingSpecularStrengthl = 0.5f;
 
     mCameraBufferResource->updateData(&data);
 }
@@ -75,7 +79,7 @@ void RenderResource::createDescriptorSetLayout()
     cameraUniformBinding.binding = 0;
     cameraUniformBinding.descriptorCount = 1;
     cameraUniformBinding.descriptorType = vk::DescriptorType::eUniformBuffer;
-    cameraUniformBinding.stageFlags = vk::ShaderStageFlagBits::eVertex;
+    cameraUniformBinding.stageFlags = vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment;
     info.bindingCount = 1;
     info.pBindings = &cameraUniformBinding;
     mDescSetLayouts[DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_CAMERAUNIFORM] = gRuntimeGlobalContext.getRHI()->mDevice.createDescriptorSetLayout(info);

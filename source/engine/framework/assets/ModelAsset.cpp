@@ -1,18 +1,17 @@
-﻿#include "MeshAsset.h"
+﻿#include "ModelAsset.h"
 #include "core/base/macro.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include "core/base/macro.h"
 
-void MeshAsset::initialize(std::string name, std::string path)
+ModelAsset::ModelAsset(std::string name, std::string path)
 {
 	mName = name;
 	mSourcePath = path;
-    loadModel();
 }
 
-std::vector<ModelRenderResource> MeshAsset::getMeshResource()
+std::vector<ModelRenderResource> ModelAsset::getMeshResource()
 {
 	std::vector<ModelRenderResource> modelRenderResource;
 	for (const auto& mesh : mMeshParts)
@@ -25,7 +24,7 @@ std::vector<ModelRenderResource> MeshAsset::getMeshResource()
 	return modelRenderResource;
 }
 
-void MeshAsset::loadModel()
+void ModelAsset::loadModel()
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(mSourcePath, aiProcess_Triangulate | aiProcess_FlipUVs);
@@ -40,7 +39,7 @@ void MeshAsset::loadModel()
 	processNode(scene->mRootNode, scene);
 }
 
-void MeshAsset::processNode(aiNode* node, const aiScene* scene)
+void ModelAsset::processNode(aiNode* node, const aiScene* scene)
 {
 	// 先Node处理
 	for (uint32_t i = 0; i < node->mNumMeshes; i++)
@@ -56,7 +55,7 @@ void MeshAsset::processNode(aiNode* node, const aiScene* scene)
 	}
 }
 
-void MeshAsset::processMesh(aiMesh* mesh, const aiScene* scene)
+void ModelAsset::processMesh(aiMesh* mesh, const aiScene* scene)
 {
 	MeshPart meshPart;
 	std::vector<VertexBufferData> vertices;
@@ -74,7 +73,9 @@ void MeshAsset::processMesh(aiMesh* mesh, const aiScene* scene)
 			vertex.mPosition.z = mesh->mVertices[i].z;
 			vertex.mTexCoord.x = mesh->mTextureCoords[0][i].x;
 			vertex.mTexCoord.y = mesh->mTextureCoords[0][i].y;
-			vertex.mColor = glm::vec3(1.f);
+			vertex.mNormal.x = mesh->mNormals[i].x;
+			vertex.mNormal.y = mesh->mNormals[i].y;
+			vertex.mNormal.z = mesh->mNormals[i].z;
 			vertices[i] = vertex;
 		}
 	}
@@ -87,7 +88,9 @@ void MeshAsset::processMesh(aiMesh* mesh, const aiScene* scene)
 			vertex.mPosition.y = mesh->mVertices[i].y;
 			vertex.mPosition.z = mesh->mVertices[i].z;
 			vertex.mTexCoord = glm::vec2(0.f);
-			vertex.mColor = glm::vec3(1.f);
+			vertex.mNormal.x = mesh->mNormals[i].x;
+			vertex.mNormal.y = mesh->mNormals[i].y;
+			vertex.mNormal.z = mesh->mNormals[i].z;
 			vertices[i] = vertex;
 		}
 	}
@@ -118,7 +121,7 @@ void MeshAsset::processMesh(aiMesh* mesh, const aiScene* scene)
 	mMeshParts.push_back(meshPart);
 }
 
-std::shared_ptr<Texture2D> MeshAsset::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
+std::shared_ptr<Texture2D> ModelAsset::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
 {
 	aiString str;
 	mat->GetTexture(type, 0, &str);

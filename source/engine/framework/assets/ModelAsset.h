@@ -10,18 +10,18 @@ struct MeshPart
 	std::shared_ptr<Texture2D> mTexture2D;
 };
 
-class MeshAsset
+class ModelAsset
 {
 public:
-	void initialize(std::string name, std::string path);
+	ModelAsset(std::string name, std::string path);
 	std::vector<struct ModelRenderResource> getMeshResource();
+	void loadModel();
 
 public:
 	std::string mName;
 	std::string mSourcePath;
 
 private:
-	void loadModel();
 	void processNode(struct aiNode* node,const struct aiScene* scene);
 	void processMesh(struct aiMesh* mesh, const struct aiScene* scene);
 	std::shared_ptr<class Texture2D> loadMaterialTextures(struct aiMaterial* mat,enum aiTextureType type, std::string typeName);

@@ -29,7 +29,7 @@
     <ClCompile Include="source\engine\function\render\RenderResource\IndexResource.cpp" />
     <ClCompile Include="source\engine\function\render\pass\RenderPassBase.cpp" />
     <ClCompile Include="source\editor\SceneInputManager.cpp" />
-    <ClCompile Include="source\engine\framework\assets\MeshAsset.cpp" />
+    <ClCompile Include="source\engine\framework\assets\ModelAsset.cpp" />
     <ClCompile Include="source\engine\framework\assets\Texture2D.cpp" />
     <ClCompile Include="source\engine\framework\component\Component.cpp" />
     <ClCompile Include="source\engine\framework\component\MeshComponent.cpp" />
@@ -69,7 +69,7 @@
     <ClInclude Include="source\engine\function\render\pass\RenderPassBase.h" />
     <ClInclude Include="source\editor\SceneInputManager.h" />
     <ClInclude Include="source\engine\core\math\MathCommon.h" />
-    <ClInclude Include="source\engine\framework\assets\MeshAsset.h" />
+    <ClInclude Include="source\engine\framework\assets\ModelAsset.h" />
     <ClInclude Include="source\engine\framework\assets\Texture2D.h" />
     <ClInclude Include="source\engine\framework\component\Component.h" />
     <ClInclude Include="source\engine\framework\component\MeshComponent.h" />

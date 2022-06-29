@@ -123,7 +123,7 @@
     <ClCompile Include="source\engine\framework\level\Level.cpp">
       <Filter>source\engine\framework\level</Filter>
     </ClCompile>
-    <ClCompile Include="source\engine\framework\assets\MeshAsset.cpp">
+    <ClCompile Include="source\engine\framework\assets\ModelAsset.cpp">
       <Filter>source\engine\framework\assets</Filter>
     </ClCompile>
     <ClCompile Include="source\engine\framework\assets\Texture2D.cpp">
@@ -242,7 +242,7 @@
     <ClInclude Include="source\engine\framework\level\Level.h">
       <Filter>source\engine\framework\level</Filter>
     </ClInclude>
-    <ClInclude Include="source\engine\framework\assets\MeshAsset.h">
+    <ClInclude Include="source\engine\framework\assets\ModelAsset.h">
       <Filter>source\engine\framework\assets</Filter>
     </ClInclude>
     <ClInclude Include="source\engine\framework\assets\Texture2D.h">

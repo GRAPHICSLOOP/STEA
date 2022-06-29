@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <string>
 #include "Component.h"
-#include "../assets/MeshAsset.h"
+#include "../assets/ModelAsset.h"
 
 class MeshComponent : public Component
 {
@@ -11,10 +11,10 @@ public:
 	virtual void tick(float delta);
 
 	void TempLoadMeshAsset(std::string name, std::string path);
-	void setMeshAsset(std::shared_ptr<MeshAsset> asset);
+	void setMeshAsset(std::shared_ptr<ModelAsset> asset);
 
 private:
-	std::shared_ptr<MeshAsset> mMeshAsset;
+	std::shared_ptr<ModelAsset> mMeshAsset;
 };
 
 
