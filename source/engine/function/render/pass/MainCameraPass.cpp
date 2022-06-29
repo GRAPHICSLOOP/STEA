@@ -2,6 +2,7 @@
 #include "core/base/macro.h"
 #include "function/global/RuntimeGlobalContext.h"
 #include "../VulkanUtil.h"
+#include "../RenderResource/VertexResource.h"
 
 MainCameraPass::~MainCameraPass()
 {
@@ -72,7 +73,7 @@ void MainCameraPass::drawPass()
             gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics,mPipelineLayout,
                 2, 1, &resource.mTextureResource.lock()->mTextureBufferResource.mDescriptorSet,
                 0, nullptr);
-            gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindVertexBuffers(0, 1, &resource.mMeshResource.lock()->mMeshBufferResource.mVertexBuffer, &offset);
+            gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindVertexBuffers(0, 1, &resource.mMeshResource.lock()->mMeshBufferResource.mVertexResource->mBuffer, &offset);
             gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindIndexBuffer(resource.mMeshResource.lock()->mMeshBufferResource.mIndexResource->mBuffer, offset, vk::IndexType::eUint32);
             gRuntimeGlobalContext.getRHI()->mCommandBuffer.drawIndexed(resource.mMeshResource.lock()->mMeshBufferResource.mIndexResource->mIndexCount, 1, 0, 0, 0);
         }
@@ -179,10 +180,12 @@ void MainCameraPass::setupPipelines()
 {
     // vertex Descriptions
     vk::PipelineVertexInputStateCreateInfo vertexInfo;
-    vertexInfo.vertexAttributeDescriptionCount = 3;
-    vertexInfo.vertexBindingDescriptionCount = 1;
-    vertexInfo.pVertexAttributeDescriptions = VertexBufferData::getAttributeDescription().data();
-    vertexInfo.pVertexBindingDescriptions = VertexBufferData::getBindingDescription().data();
+    auto VertexAttributeDescriptions = VertexResource::getInputAttributes({ VertexAttribute::VA_Position,VertexAttribute::VA_Color,VertexAttribute::VA_UV0 });
+    auto VertexBindingDescriptions = VertexResource::getBindingDescription({ VertexAttribute::VA_Position,VertexAttribute::VA_Color,VertexAttribute::VA_UV0 });
+    vertexInfo.vertexAttributeDescriptionCount = VertexAttributeDescriptions.size();
+    vertexInfo.vertexBindingDescriptionCount = VertexBindingDescriptions.size();
+    vertexInfo.pVertexAttributeDescriptions = VertexAttributeDescriptions.data();
+    vertexInfo.pVertexBindingDescriptions = VertexBindingDescriptions.data();
 
     // input assembler
     vk::PipelineInputAssemblyStateCreateInfo inputInfo;

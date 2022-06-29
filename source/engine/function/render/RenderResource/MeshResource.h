@@ -2,13 +2,12 @@
 #include <vector>
 #include "RenderData.h"
 #include "IndexResource.h"
+#include "VertexResource.h"
 
 struct MeshBufferResource
 {
 public:
-	uint32_t mVertexCount;
-	vk::Buffer mVertexBuffer;
-	vk::DeviceMemory mVertexBufferMemory;
+	std::shared_ptr<VertexResource> mVertexResource;
 	std::shared_ptr<IndexResource> mIndexResource;
 };
 

@@ -18,39 +18,6 @@ void RenderResource::initialize()
     createBufferResource();
 }
 
-void RenderResource::createVertexBuffer(MeshBufferResource& bufferResouce, const void* VerticesData, uint32_t count)
-{
-    bufferResouce.mVertexCount = count;
-    size_t size = count * sizeof(VertexBufferData);
-
-    vk::Buffer stagingBuffer;
-    vk::DeviceMemory stagingBufferMemory;
-    VulkanUtil::createBuffer(
-        size,
-        vk::BufferUsageFlagBits::eTransferSrc,
-        vk::MemoryPropertyFlagBits::eHostVisible | vk::MemoryPropertyFlagBits::eHostCoherent,
-        stagingBuffer,
-        stagingBufferMemory);
-
-
-    void* data;
-    vkMapMemory(gRuntimeGlobalContext.getRHI()->mDevice, stagingBufferMemory, 0, size, 0, &data);
-    memcpy(data, VerticesData, size);
-    vkUnmapMemory(gRuntimeGlobalContext.getRHI()->mDevice, stagingBufferMemory);
-
-    VulkanUtil::createBuffer(
-        size,
-        vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eVertexBuffer,
-        vk::MemoryPropertyFlagBits::eDeviceLocal,
-        bufferResouce.mVertexBuffer,
-        bufferResouce.mVertexBufferMemory);
-
-    VulkanUtil::copyBuffer(stagingBuffer, bufferResouce.mVertexBuffer, size);
-
-    gRuntimeGlobalContext.getRHI()->mDevice.destroyBuffer(stagingBuffer);
-    gRuntimeGlobalContext.getRHI()->mDevice.freeMemory(stagingBufferMemory);
-}
-
 void RenderResource::updatePerFrameBuffer(std::shared_ptr<RenderCamera> camera)
 {
     CameraBufferData data;
