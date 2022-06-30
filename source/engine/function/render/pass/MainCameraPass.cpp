@@ -3,6 +3,7 @@
 #include "function/global/RuntimeGlobalContext.h"
 #include "../VulkanUtil.h"
 #include "../RenderResource/VertexResource.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 MainCameraPass::~MainCameraPass()
 {
@@ -37,21 +38,7 @@ void MainCameraPass::initialize()
 
 void MainCameraPass::drawPass()
 {
-    vk::RenderPassBeginInfo passBegineInfo;
-    passBegineInfo.renderPass = mFrame.mRenderPass;
-    passBegineInfo.framebuffer = mFrame.mFramebuffer[gRuntimeGlobalContext.getRHI()->getNextImageIndex()];
-    vk::Rect2D area;
-    area.offset = 0;
-    area.extent = gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D;
-    passBegineInfo.setRenderArea(area);
 
-    std::array<vk::ClearValue, 2> clearValues;
-    clearValues[0].color = std::array<float, 4>{0, 0, 0, 1.f};
-    clearValues[1].depthStencil = 1.f;
-    passBegineInfo.pClearValues = clearValues.data();
-    passBegineInfo.clearValueCount = 2;
-
-    gRuntimeGlobalContext.getRHI()->mCommandBuffer.beginRenderPass(passBegineInfo, vk::SubpassContents::eInline);
     gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, mPipeline);
     vk::DeviceSize offset = 0;
 
@@ -59,8 +46,16 @@ void MainCameraPass::drawPass()
         vk::PipelineBindPoint::eGraphics,mPipelineLayout,
         1, 1, &gRuntimeGlobalContext.getRenderResource()->mCameraBufferResource->mDescriptorSet,
         0, nullptr);
+
+    float count = 0;
     for (const auto& iter : gRuntimeGlobalContext.getRenderResource()->mModelRenderResources)
     {
+        ObjectBufferData model;
+        model.mModel = glm::translate(glm::mat4(1.f), glm::vec3(count++));
+        gRuntimeGlobalContext.getRHI()->mCommandBuffer.pushConstants(
+            mPipelineLayout, vk::ShaderStageFlagBits::eVertex, 0,sizeof(ObjectBufferData),
+            &model);
+
         // 更新模型位置
         gRuntimeGlobalContext.getRHI()->mCommandBuffer.bindDescriptorSets(
             vk::PipelineBindPoint::eGraphics, mPipelineLayout,
@@ -85,6 +80,11 @@ void MainCameraPass::drawPass()
 vk::RenderPass MainCameraPass::getRenderPass()
 {
     return mFrame.mRenderPass;
+}
+
+vk::Framebuffer MainCameraPass::getFrameBuffer(uint32_t index)
+{
+    return mFrame.mFramebuffer[index];
 }
 
 void MainCameraPass::setupAttachments()
@@ -171,9 +171,9 @@ void MainCameraPass::setupRenderPass()
 void MainCameraPass::setupDescriptorSetLayout()
 {
     mDescSetLayouts.resize(3);
-    mDescSetLayouts[DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_OBJECTUNIFORM] = gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout(DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_OBJECTUNIFORM);
-    mDescSetLayouts[DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_CAMERAUNIFORM] = gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout(DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_CAMERAUNIFORM);
-    mDescSetLayouts[DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_SAMPLE] = gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout(DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_SAMPLE);
+    mDescSetLayouts[DESCRIPTOR_TYPE::DT_ObjectUniform] = gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout(DESCRIPTOR_TYPE::DT_ObjectUniform);
+    mDescSetLayouts[DESCRIPTOR_TYPE::DT_CamearUniform] = gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout(DESCRIPTOR_TYPE::DT_CamearUniform);
+    mDescSetLayouts[DESCRIPTOR_TYPE::DT_Sample] = gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout(DESCRIPTOR_TYPE::DT_Sample);
 }
 
 void MainCameraPass::setupPipelines()
@@ -210,6 +210,7 @@ void MainCameraPass::setupPipelines()
     vk::Rect2D scissors;
     scissors.offset = 0;
     scissors.extent = gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D;
+
     vk::Viewport viewport;
     viewport.height = (float)gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.height;
     viewport.width = (float)gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.width;
@@ -266,13 +267,22 @@ void MainCameraPass::setupPipelines()
 
     // dynamic state
 
+    // pushConstants
+    vk::PushConstantRange pushRange;
+    pushRange.offset = 0;
+    pushRange.size = sizeof(ObjectBufferData);
+    pushRange.stageFlags = vk::ShaderStageFlagBits::eVertex;
+
     // pipeline layout
     vk::PipelineLayoutCreateInfo pipelineLayoutInfo;
     pipelineLayoutInfo.setLayoutCount = (uint32_t)mDescSetLayouts.size();
     pipelineLayoutInfo.pSetLayouts = mDescSetLayouts.data();
+    pipelineLayoutInfo.pPushConstantRanges = &pushRange;
+    pipelineLayoutInfo.pushConstantRangeCount = 1;
     mPipelineLayout = gRuntimeGlobalContext.getRHI()->mDevice.createPipelineLayout(pipelineLayoutInfo);
 
     // pipeline RenderPass
+    //setupRenderPass();
 
     vk::GraphicsPipelineCreateInfo info;
     info.pVertexInputState = &vertexInfo;

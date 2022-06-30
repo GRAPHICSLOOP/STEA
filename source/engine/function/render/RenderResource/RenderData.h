@@ -6,10 +6,11 @@
 
 enum DESCRIPTOR_TYPE
 {
-	DESCRIPTOR_TYPE_OBJECTUNIFORM = 0,
-	DESCRIPTOR_TYPE_CAMERAUNIFORM = 1,
-	DESCRIPTOR_TYPE_SAMPLE = 2,
-	DESCRIPTOR_TYPE_COUNT = 3
+	DT_ObjectUniform = 0,
+	DT_CamearUniform = 1,
+	DT_Sample = 2,
+	DT_PushConstantsUniform = 3,
+	DT_Count = 4
 };
 
 struct VertexBufferData

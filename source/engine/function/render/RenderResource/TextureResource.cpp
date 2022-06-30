@@ -74,7 +74,7 @@ vk::Sampler TextureResource::createTextureSampler(uint32_t mipLevels)
 
 void TextureResource::createDescriptorSet()
 {
-    vk::DescriptorSetLayout setLayout = gRuntimeGlobalContext.getRenderSystem()->mRenderResource->getDescriptorSetLayout(DESCRIPTOR_TYPE_SAMPLE);
+    vk::DescriptorSetLayout setLayout = gRuntimeGlobalContext.getRenderSystem()->mRenderResource->getDescriptorSetLayout(DT_Sample);
 
     vk::DescriptorSetAllocateInfo info;
     info.descriptorPool = gRuntimeGlobalContext.getRHI()->mDescriptorPool;

@@ -63,6 +63,7 @@ void RenderResource::createBufferResource()
 
 void RenderResource::createDescriptorSetLayout()
 {
+    mDescSetLayouts.resize(DESCRIPTOR_TYPE::DT_Count);
     vk::DescriptorSetLayoutCreateInfo info;
 
     // mesh固定的uniform DescriptorSetLayout
@@ -73,8 +74,9 @@ void RenderResource::createDescriptorSetLayout()
     objectUniformBinding.stageFlags = vk::ShaderStageFlagBits::eVertex;
     info.bindingCount = 1;
     info.pBindings = &objectUniformBinding;
-    mDescSetLayouts[DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_OBJECTUNIFORM] = gRuntimeGlobalContext.getRHI()->mDevice.createDescriptorSetLayout(info);
+    mDescSetLayouts[DESCRIPTOR_TYPE::DT_ObjectUniform] = gRuntimeGlobalContext.getRHI()->mDevice.createDescriptorSetLayout(info);
 
+    // 相机观察中不变的buffer
     vk::DescriptorSetLayoutBinding cameraUniformBinding;
     cameraUniformBinding.binding = 0;
     cameraUniformBinding.descriptorCount = 1;
@@ -82,7 +84,7 @@ void RenderResource::createDescriptorSetLayout()
     cameraUniformBinding.stageFlags = vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment;
     info.bindingCount = 1;
     info.pBindings = &cameraUniformBinding;
-    mDescSetLayouts[DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_CAMERAUNIFORM] = gRuntimeGlobalContext.getRHI()->mDevice.createDescriptorSetLayout(info);
+    mDescSetLayouts[DESCRIPTOR_TYPE::DT_CamearUniform] = gRuntimeGlobalContext.getRHI()->mDevice.createDescriptorSetLayout(info);
 
     // 变动较多的 sample DescriptorSetLayout
     vk::DescriptorSetLayoutBinding sampleBinding;
@@ -92,5 +94,6 @@ void RenderResource::createDescriptorSetLayout()
     sampleBinding.stageFlags = vk::ShaderStageFlagBits::eFragment;
     info.bindingCount = 1;
     info.pBindings = &sampleBinding;
-    mDescSetLayouts[DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_SAMPLE] = gRuntimeGlobalContext.getRHI()->mDevice.createDescriptorSetLayout(info);
+    mDescSetLayouts[DESCRIPTOR_TYPE::DT_Sample] = gRuntimeGlobalContext.getRHI()->mDevice.createDescriptorSetLayout(info);
+
 }

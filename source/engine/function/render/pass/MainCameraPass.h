@@ -43,6 +43,7 @@ public:
 	void initialize() override;
 	void drawPass() override;
 	vk::RenderPass getRenderPass();
+	vk::Framebuffer getFrameBuffer(uint32_t index);
 
 private:
 	std::vector<vk::DescriptorSetLayout> mDescSetLayouts;

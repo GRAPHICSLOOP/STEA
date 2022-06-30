@@ -42,7 +42,7 @@ void ObjectBufferResource::updateData(void* data)
 
 void ObjectBufferResource::createDescriptorSet(vk::DeviceSize bufferDataSize)
 {
-    vk::DescriptorSetLayout layout = gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout(DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_OBJECTUNIFORM);
+    vk::DescriptorSetLayout layout = gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout(DESCRIPTOR_TYPE::DT_ObjectUniform);
 
     vk::DescriptorSetAllocateInfo info;
     info.descriptorPool = gRuntimeGlobalContext.getRHI()->mDescriptorPool;
@@ -109,7 +109,7 @@ void CameraBufferResource::spawnBuffer(vk::DeviceSize bufferDataSize)
 
 void CameraBufferResource::createDescriptorSet(vk::DeviceSize bufferDataSize)
 {
-    vk::DescriptorSetLayout layout = gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout(DESCRIPTOR_TYPE::DESCRIPTOR_TYPE_CAMERAUNIFORM);
+    vk::DescriptorSetLayout layout = gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout(DESCRIPTOR_TYPE::DT_CamearUniform);
 
     vk::DescriptorSetAllocateInfo info;
     info.descriptorPool = gRuntimeGlobalContext.getRHI()->mDescriptorPool;
