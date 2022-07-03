@@ -8,7 +8,7 @@ layout(location = 2) in vec3 fragPos;
 
 layout(location = 0) out vec4 outColor;
 
-layout(set = 1 , binding = 0) uniform CameraBuffer {
+layout(set = 0 , binding = 0) uniform CameraBuffer {
     mat4 view;
     mat4 proj;
 	mat4 porjView;
@@ -18,7 +18,7 @@ layout(set = 1 , binding = 0) uniform CameraBuffer {
 	float padding_pow;
 }cmo;
 
-layout(set = 2, binding = 0) uniform sampler2D texSampler;
+layout(set = 1, binding = 0) uniform sampler2D texSampler;
 
 
 
@@ -39,5 +39,5 @@ void main() {
     vec3 diffuse = vec3(diff);
 
     vec3 result = texDiffuse.rgb * (ambient + diffuse + specular) ;
-    outColor = vec4(result, 1.0);
+    outColor = texDiffuse;
 }

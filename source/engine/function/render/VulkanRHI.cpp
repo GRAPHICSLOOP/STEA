@@ -228,14 +228,16 @@ void VulkanRHI::createCommandBuffers()
 
 void VulkanRHI::createDescriptorPool()
 {
-    std::array<vk::DescriptorPoolSize, 2> poolSize;
+    std::array<vk::DescriptorPoolSize, 3> poolSize;
     poolSize[0].descriptorCount = DESCRIPTORMAXCOUNT_BUFFER;
     poolSize[0].type = vk::DescriptorType::eUniformBuffer;
     poolSize[1].descriptorCount = DESCRIPTORMAXCOUNT_SAMPLE;
     poolSize[1].type = vk::DescriptorType::eCombinedImageSampler;
+    poolSize[2].descriptorCount = 1;
+    poolSize[2].type = vk::DescriptorType::eUniformBufferDynamic;
 
     vk::DescriptorPoolCreateInfo info;
-    info.poolSizeCount = 2;
+    info.poolSizeCount = poolSize.size();
     info.pPoolSizes = poolSize.data();
     info.maxSets = DESCRIPTORMAXCOUNT_BUFFER + DESCRIPTORMAXCOUNT_SAMPLE;
     info.flags = vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet;

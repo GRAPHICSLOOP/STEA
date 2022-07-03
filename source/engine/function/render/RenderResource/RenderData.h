@@ -39,6 +39,30 @@ public:
 	glm::mat4 mModel;
 };
 
+struct BufferData
+{
+public:
+	BufferData()
+	{
+
+	}
+
+	BufferData(void* data, size_t size)
+		:mData(data), mSize(size)
+	{
+
+	}
+
+	void updateData(void* data)
+	{
+		memcpy(mData, data, mSize);
+	}
+
+public:
+	void* mData;
+	size_t mSize;
+};
+
 class CameraBufferResource
 {
 public:

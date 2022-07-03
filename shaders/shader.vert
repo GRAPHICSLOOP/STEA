@@ -8,11 +8,11 @@ layout(location = 0) out vec3 fragNormal;
 layout(location = 1) out vec2 fragTexCoord;
 layout(location = 2) out vec3 fragPos;
 
-layout(set = 0 , binding = 0) uniform ObjectBuffer {
+layout(set = 0 , binding = 1) uniform ObjectBuffer {
     mat4 model;
 }ubo;
 
-layout(set = 1 , binding = 0) uniform CameraBuffer {
+layout(set = 0 , binding = 0) uniform CameraBuffer {
     mat4 view;
     mat4 proj;
 	mat4 porjView;
@@ -29,8 +29,9 @@ layout(push_constant) uniform PushConsts {
 void main()
 {
 
-    gl_Position = cmo.porjView * pushConsts.modelMatrix * ubo.model * vec4(inPos, 1.0f);
-	fragNormal = normalize(mat3(transpose(inverse(ubo.model))) * inNormal);
+    gl_Position = cmo.porjView * pushConsts.modelMatrix * vec4(inPos, 1.0f);
+	//fragNormal = normalize(mat3(transpose(inverse(ubo.model))) * inNormal);
+	fragNormal = normalize(inNormal);
 	fragTexCoord = inTexCoord;
-    fragPos = vec3(ubo.model * vec4(inPos, 1.0f));
+    //fragPos = vec3(ubo.model * vec4(inPos, 1.0f));
 }

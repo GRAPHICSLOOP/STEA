@@ -38,16 +38,16 @@ void RenderResource::updatePerFrameBuffer(std::shared_ptr<RenderCamera> camera)
 
 void RenderResource::addObjectBufferResource(size_t objectID, void* data, vk::DeviceSize dataSize)
 {
-    auto iter = mObjectBufferResources.find(objectID);
-    if (iter == mObjectBufferResources.end())
-    {
-        std::shared_ptr<ObjectBufferResource> resource = std::make_shared<ObjectBufferResource>(dataSize);
-        resource->updateData(data);
-        mObjectBufferResources[objectID] = resource;
-        return;
-    }
+    //auto iter = mObjectBufferResources.find(objectID);
+    //if (iter == mObjectBufferResources.end())
+    //{
+    //    std::shared_ptr<BufferData> resource = std::make_shared<BufferData>(dataSize);
+    //    resource->updateData(data);
+    //    mObjectBufferResources[objectID] = resource;
+    //    return;
+    //}
 
-    iter->second->updateData(data);
+    //iter->second->updateData(data);
 }
 
 vk::DescriptorSetLayout RenderResource::getDescriptorSetLayout(DESCRIPTOR_TYPE type)
@@ -58,7 +58,11 @@ vk::DescriptorSetLayout RenderResource::getDescriptorSetLayout(DESCRIPTOR_TYPE t
 
 void RenderResource::createBufferResource()
 {
-    mCameraBufferResource =std::make_shared<CameraBufferResource>(sizeof(CameraBufferData));
+    mUniformResource = BufferResource::create({
+        BufferAttributes(UNIFORMBUFFERTYPE::UBT_Camera, 1, sizeof(CameraBufferData), vk::DescriptorType::eUniformBuffer, vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment),
+        BufferAttributes(UNIFORMBUFFERTYPE::UBT_Object, 2, sizeof(ObjectBufferData), vk::DescriptorType::eUniformBufferDynamic, vk::ShaderStageFlagBits::eVertex)
+        });
+    mCameraBufferResource =std::make_shared<BufferData>(mUniformResource->getData(UNIFORMBUFFERTYPE::UBT_Camera),sizeof(CameraBufferData));
 }
 
 void RenderResource::createDescriptorSetLayout()
