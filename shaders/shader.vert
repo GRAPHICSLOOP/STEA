@@ -29,9 +29,9 @@ layout(push_constant) uniform PushConsts {
 void main()
 {
 
-    gl_Position = cmo.porjView * pushConsts.modelMatrix * vec4(inPos, 1.0f);
-	//fragNormal = normalize(mat3(transpose(inverse(ubo.model))) * inNormal);
+    gl_Position = cmo.porjView * pushConsts.modelMatrix * ubo.model * vec4(inPos, 1.0f);
+	fragNormal = normalize(mat3(transpose(inverse(ubo.model))) * inNormal);
 	fragNormal = normalize(inNormal);
 	fragTexCoord = inTexCoord;
-    //fragPos = vec3(ubo.model * vec4(inPos, 1.0f));
+    fragPos = vec3(ubo.model * vec4(inPos, 1.0f));
 }

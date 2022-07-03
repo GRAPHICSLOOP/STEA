@@ -39,5 +39,5 @@ void main() {
     vec3 diffuse = vec3(diff);
 
     vec3 result = texDiffuse.rgb * (ambient + diffuse + specular) ;
-    outColor = texDiffuse;
+    outColor = vec4(result,1.f);
 }
