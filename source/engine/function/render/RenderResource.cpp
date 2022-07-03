@@ -20,34 +20,31 @@ void RenderResource::initialize()
 
 void RenderResource::updatePerFrameBuffer(std::shared_ptr<RenderCamera> camera)
 {
-    CameraBufferData data;
-    data.mView = camera->getViewMatrix();
-    data.mProj = glm::perspectiveRH(glm::radians(45.f),
+    mCameraBufferData.mView = camera->getViewMatrix();
+    mCameraBufferData.mProj = glm::perspectiveRH(glm::radians(45.f),
         gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.width / (float)gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.height,
         0.1f,
         100.f);
-    data.mProj[1][1] *= -1;
-    data.mViewPorj = data.mProj * data.mView;
-    data.mLightPos = glm::vec3(1.f);
-    data.mEyePos = camera->getPosition();
-    data.mPaddingPow = 32.f;
-    data.mPaddingSpecularStrengthl = 0.5f;
+    mCameraBufferData.mProj[1][1] *= -1;
+    mCameraBufferData.mViewPorj = mCameraBufferData.mProj * mCameraBufferData.mView;
+    mCameraBufferData.mLightPos = glm::vec3(1.f);
+    mCameraBufferData.mEyePos = camera->getPosition();
+    mCameraBufferData.mPaddingPow = 32.f;
+    mCameraBufferData.mPaddingSpecularStrengthl = 0.5f;
 
-    mCameraBufferResource->updateData(&data);
+    updateUniformBuffer();
 }
 
 void RenderResource::addObjectBufferResource(size_t objectID, void* data, vk::DeviceSize dataSize)
 {
-    //auto iter = mObjectBufferResources.find(objectID);
-    //if (iter == mObjectBufferResources.end())
-    //{
-    //    std::shared_ptr<BufferData> resource = std::make_shared<BufferData>(dataSize);
-    //    resource->updateData(data);
-    //    mObjectBufferResources[objectID] = resource;
-    //    return;
-    //}
+    auto iter = mObjectBufferData.find(objectID);
+    if (iter == mObjectBufferData.end())
+    {
+        mObjectBufferData[objectID] = *(ObjectBufferData*)data;
+        return;
+    }
 
-    //iter->second->updateData(data);
+    mObjectBufferData[objectID] = *(ObjectBufferData*)data;
 }
 
 vk::DescriptorSetLayout RenderResource::getDescriptorSetLayout(DESCRIPTOR_TYPE type)
@@ -62,7 +59,6 @@ void RenderResource::createBufferResource()
         BufferAttributes(UNIFORMBUFFERTYPE::UBT_Camera, 1, sizeof(CameraBufferData), vk::DescriptorType::eUniformBuffer, vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment),
         BufferAttributes(UNIFORMBUFFERTYPE::UBT_Object, 2, sizeof(ObjectBufferData), vk::DescriptorType::eUniformBufferDynamic, vk::ShaderStageFlagBits::eVertex)
         });
-    mCameraBufferResource =std::make_shared<BufferData>(mUniformResource->getData(UNIFORMBUFFERTYPE::UBT_Camera),sizeof(CameraBufferData));
 }
 
 void RenderResource::createDescriptorSetLayout()
@@ -100,4 +96,20 @@ void RenderResource::createDescriptorSetLayout()
     info.pBindings = &sampleBinding;
     mDescSetLayouts[DESCRIPTOR_TYPE::DT_Sample] = gRuntimeGlobalContext.getRHI()->mDevice.createDescriptorSetLayout(info);
 
+}
+
+void RenderResource::updateUniformBuffer()
+{
+    void* cameraData = mUniformResource->getData(UNIFORMBUFFERTYPE::UBT_Camera);
+    memcpy(cameraData, &mCameraBufferData, sizeof(CameraBufferData));
+    
+    
+    ObjectBufferData* bufferData = (ObjectBufferData*)mUniformResource->getData(UNIFORMBUFFERTYPE::UBT_Object);
+    uint32_t count = 0;
+    for (const auto& iter : mObjectBufferData)
+    {
+        bufferData += count;
+        *bufferData = mObjectBufferData[iter.first];
+        count++;
+    }
 }

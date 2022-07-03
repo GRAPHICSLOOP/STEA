@@ -7,6 +7,7 @@
 #include "function/render/RenderCamera.h"
 #include "RenderResource/BufferResource.h"
 
+
 struct ModelRenderResource
 {
 public:
@@ -24,8 +25,8 @@ public:
 	vk::DescriptorSetLayout getDescriptorSetLayout(DESCRIPTOR_TYPE type);
 
 public:
-	std::shared_ptr<BufferData> mCameraBufferResource;
-	std::unordered_map<size_t, std::shared_ptr<BufferData>> mObjectBufferResources;
+	CameraBufferData mCameraBufferData;
+	std::unordered_map<size_t, ObjectBufferData> mObjectBufferData;
 	std::unordered_map<size_t, std::vector<ModelRenderResource>> mModelRenderResources;
 	std::unordered_map<size_t, std::weak_ptr<TextureResource>> mGlobalTextureResources;
 	std::shared_ptr<BufferResource> mUniformResource;
@@ -33,6 +34,7 @@ public:
 private:
 	void createBufferResource();
 	void createDescriptorSetLayout();
+	void updateUniformBuffer();
 
 private:
 	std::vector<vk::DescriptorSetLayout> mDescSetLayouts;
