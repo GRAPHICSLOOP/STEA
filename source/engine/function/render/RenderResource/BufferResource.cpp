@@ -83,6 +83,11 @@ void BufferResource::setUpAlignment()
 
 }
 
+void BufferResource::allocateMemory()
+{
+
+}
+
 void BufferResource::createDescriptorLayout()
 {
     // DynamicUniform DescriptorSetLayout

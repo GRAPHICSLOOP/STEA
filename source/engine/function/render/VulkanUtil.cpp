@@ -31,13 +31,14 @@ void VulkanUtil::createImage(
     vk::Image& image,
     vk::DeviceMemory& imageMemory,
     uint32_t mipLevel,
-    vk::SampleCountFlagBits numSamples)
+    vk::SampleCountFlagBits numSamples,
+    uint32_t layerLevels)
 {
     vk::PhysicalDevice phyDevice = gRuntimeGlobalContext.getRHI()->mPhyDevice;
     vk::Device device = gRuntimeGlobalContext.getRHI()->mDevice;
 
     vk::ImageCreateInfo imageInfo;
-    imageInfo.arrayLayers = 1;
+    imageInfo.arrayLayers = layerLevels;
     imageInfo.mipLevels = mipLevel;
     imageInfo.samples = numSamples;
     imageInfo.extent = vk::Extent3D(imageWidth, imageHeight, 1);
@@ -162,7 +163,8 @@ void VulkanUtil::transitionImageLayout(
     vk::Format format,
     vk::ImageLayout oldLayout,
     vk::ImageLayout newLayout,
-    uint32_t mipLevel)
+    uint32_t mipLevel,
+    uint32_t layerLevels)
 {
     VulkanRHI* vulkanRHI = gRuntimeGlobalContext.getRHI();
 
@@ -180,10 +182,10 @@ void VulkanUtil::transitionImageLayout(
         range.aspectMask = vk::ImageAspectFlagBits::eColor;
 
     }
-    range.setLayerCount(1);
-    range.setBaseArrayLayer(0);
-    range.setLevelCount(mipLevel);
-    range.setBaseMipLevel(0);
+    range.layerCount = layerLevels;
+    range.baseArrayLayer = 0;
+    range.levelCount = mipLevel;
+    range.baseMipLevel = 0;
 
     vk::ImageMemoryBarrier barrier;
     barrier.setOldLayout(oldLayout);
@@ -261,7 +263,8 @@ TextureBufferResource VulkanUtil::createTextureBufferResource(
     uint32_t height,
     void* pixels,
     PIXEL_FORMAT pixelFormat,
-    uint32_t miplevels)
+    uint32_t miplevels,
+    uint32_t layerLevels)
 {
     VulkanRHI* vulkanRHI = gRuntimeGlobalContext.getRHI();
 
@@ -272,31 +275,31 @@ TextureBufferResource VulkanUtil::createTextureBufferResource(
     switch (pixelFormat)
     {
     case PIXEL_FORMAT::PIXEL_FORMAT_R8G8B8_UNORM:
-        pixelSize = (size_t)width * height * 3;
+        pixelSize = (size_t)width * height * 3 * layerLevels;
         vulkanImageFormat = vk::Format::eR8G8B8Unorm;
         break;
     case PIXEL_FORMAT::PIXEL_FORMAT_R8G8B8_SRGB:
-        pixelSize = (size_t)width * height * 3;
+        pixelSize = (size_t)width * height * 3 * layerLevels;
         vulkanImageFormat = vk::Format::eR8G8B8Srgb;
         break;
     case PIXEL_FORMAT::PIXEL_FORMAT_R8G8B8A8_UNORM:
-        pixelSize = (size_t)width * height * 4;
+        pixelSize = (size_t)width * height * 4 * layerLevels;
         vulkanImageFormat = vk::Format::eR8G8B8A8Unorm;
         break;
     case PIXEL_FORMAT::PIXEL_FORMAT_R8G8B8A8_SRGB:
-        pixelSize = (size_t)width * height * 4;
+        pixelSize = (size_t)width * height * 4 * layerLevels;
         vulkanImageFormat = vk::Format::eR8G8B8A8Srgb;
         break;
     case PIXEL_FORMAT::PIXEL_FORMAT_R32G32_FLOAT:
-        pixelSize = (size_t)width * height * 4 * 2;
+        pixelSize = (size_t)width * height * 4 * 2 * layerLevels;
         vulkanImageFormat = vk::Format::eR32G32Sfloat;
         break;
     case PIXEL_FORMAT::PIXEL_FORMAT_R32G32B32_FLOAT:
-        pixelSize = (size_t)width * height * 4 * 3;
+        pixelSize = (size_t)width * height * 4 * 3 * layerLevels;
         vulkanImageFormat = vk::Format::eR32G32B32Sfloat;
         break;
     case PIXEL_FORMAT::PIXEL_FORMAT_R32G32B32A32_FLOAT:
-        pixelSize = (size_t)width * height * 4 * 4;
+        pixelSize = (size_t)width * height * 4 * 4 * layerLevels;
         vulkanImageFormat = vk::Format::eR32G32B32A32Sfloat;
         break;
     default:
@@ -360,10 +363,10 @@ void VulkanUtil::copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t 
     VulkanRHI* vulkanRHI = gRuntimeGlobalContext.getRHI();
 
     vk::ImageSubresourceLayers subresource;
-    subresource.setAspectMask(vk::ImageAspectFlagBits::eColor);
-    subresource.setLayerCount(1);
-    subresource.setBaseArrayLayer(0);
-    subresource.setMipLevel(0);
+    subresource.aspectMask = vk::ImageAspectFlagBits::eColor;
+    subresource.layerCount = 1;
+    subresource.baseArrayLayer = 0;
+    subresource.mipLevel = 0;
 
     vk::CommandBuffer commandBuffer = vulkanRHI->beginSingleTimeBuffer();
     vk::BufferImageCopy region;

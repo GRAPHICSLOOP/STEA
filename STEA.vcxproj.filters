@@ -177,6 +177,7 @@
     <ClCompile Include="source\engine\function\render\RenderResource\BufferResource.cpp">
       <Filter>source\engine\function\render\renderResource</Filter>
     </ClCompile>
+    <ClCompile Include="source\engine\function\render\RenderResource\TextureArrayResource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\engine\Engine.h">
@@ -296,5 +297,6 @@
     <ClInclude Include="source\engine\function\render\RenderResource\BufferResource.h">
       <Filter>source\engine\function\render\renderResource</Filter>
     </ClInclude>
+    <ClInclude Include="source\engine\function\render\RenderResource\TextureArrayResource.h" />
   </ItemGroup>
 </Project>
