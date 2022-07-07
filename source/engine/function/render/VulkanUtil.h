@@ -19,8 +19,7 @@ public:
         vk::Image& image,
         vk::DeviceMemory& imageMemory,
         uint32_t mipLevel = 1,
-        vk::SampleCountFlagBits numSamples = vk::SampleCountFlagBits::e1,
-        uint32_t layerLevels = 1);
+        vk::SampleCountFlagBits numSamples = vk::SampleCountFlagBits::e1);
 
     static vk::ImageView createImageView(
         vk::ImageAspectFlags aspectMask,
@@ -45,8 +44,7 @@ public:
         vk::Format format,
         vk::ImageLayout oldLayout,
         vk::ImageLayout newLayout,
-        uint32_t mipLevel,
-        uint32_t layerLevels = 1);
+        uint32_t mipLevel);
 
     static void copyBuffer(
         vk::Buffer srcBuffer,
@@ -58,8 +56,7 @@ public:
         uint32_t height,
         void* pixels,
         PIXEL_FORMAT pixelFormat,
-        uint32_t miplevels,
-        uint32_t layerLevels = 1);
+        uint32_t miplevels);
 
     static void copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height);
 

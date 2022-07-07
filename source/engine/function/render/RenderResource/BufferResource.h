@@ -51,6 +51,7 @@ public:
 	static std::shared_ptr<BufferResource> create(const std::vector<BufferAttributes>& bufferAttributes);
 	void* getData(UNIFORMBUFFERTYPE type);
 	void getDynamicOffsets(std::vector<uint32_t>& offset,const uint32_t index);
+
 public:
 	vk::DescriptorSet mDescriptorSet;
 	vk::DescriptorSetLayout mDescSetLayout;
@@ -58,7 +59,6 @@ public:
 	std::vector<BufferAttributes> mBufferAttributes;
 private:
 	void setUpAlignment();
-	void allocateMemory();
 	void createDescriptorLayout();
 	void createDescriptorSet();
 

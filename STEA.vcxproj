@@ -47,6 +47,7 @@
     <ClCompile Include="source\engine\core\log\LogSystem.cpp" />
     <ClCompile Include="source\engine\function\render\RenderResource\MeshResource.cpp" />
     <ClCompile Include="source\engine\function\render\RenderResource\RenderData.cpp" />
+    <ClCompile Include="source\engine\function\render\RenderResource\TextureArrayResource.cpp" />
     <ClCompile Include="source\engine\function\render\RenderResource\TextureResource.cpp" />
     <ClCompile Include="source\engine\function\render\RenderSystem.cpp" />
     <ClCompile Include="source\engine\function\global\RuntimeGlobalContext.cpp" />
@@ -57,7 +58,6 @@
     <ClCompile Include="source\engine\function\render\VulkanUtil.cpp" />
     <ClCompile Include="source\engine\function\render\pass\UIPass.cpp" />
     <ClCompile Include="source\engine\function\render\RenderResource\VertexResource.cpp" />
-    <ClCompile Include="source\engine\function\render\RenderResource\TextureArrayResource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rdparty\imgui\backends\imgui_impl_glfw.h" />
@@ -90,6 +90,7 @@
     <ClInclude Include="source\engine\core\log\LogSystem.h" />
     <ClInclude Include="source\engine\function\render\RenderResource\MeshResource.h" />
     <ClInclude Include="source\engine\function\render\RenderResource\RenderData.h" />
+    <ClInclude Include="source\engine\function\render\RenderResource\TextureArrayResource.h" />
     <ClInclude Include="source\engine\function\render\RenderResource\TextureResource.h" />
     <ClInclude Include="source\engine\function\render\RenderSystem.h" />
     <ClInclude Include="source\engine\function\global\RuntimeGlobalContext.h" />
@@ -99,7 +100,6 @@
     <ClInclude Include="source\engine\function\render\VulkanUtil.h" />
     <ClInclude Include="source\engine\function\render\pass\UIPass.h" />
     <ClInclude Include="source\engine\function\render\RenderResource\VertexResource.h" />
-    <ClInclude Include="source\engine\function\render\RenderResource\TextureArrayResource.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
