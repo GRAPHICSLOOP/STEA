@@ -6,6 +6,7 @@
 #include "RenderResource/TextureResource.h"
 #include "function/render/RenderCamera.h"
 #include "RenderResource/BufferResource.h"
+#include "RenderResource/TextureArrayResource.h"
 
 
 struct ModelRenderResource

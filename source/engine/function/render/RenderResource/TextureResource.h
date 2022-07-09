@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "RenderData.h"
 
+
 class TextureResource : public std::enable_shared_from_this<TextureResource>
 {
 public:
