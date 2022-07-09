@@ -237,7 +237,7 @@ void VulkanRHI::createDescriptorPool()
     poolSize[2].type = vk::DescriptorType::eUniformBufferDynamic;
 
     vk::DescriptorPoolCreateInfo info;
-    info.poolSizeCount = poolSize.size();
+    info.poolSizeCount = (uint32_t)poolSize.size();
     info.pPoolSizes = poolSize.data();
     info.maxSets = DESCRIPTORMAXCOUNT_BUFFER + DESCRIPTORMAXCOUNT_SAMPLE;
     info.flags = vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet;

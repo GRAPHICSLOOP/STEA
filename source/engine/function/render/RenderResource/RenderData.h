@@ -59,3 +59,17 @@ public:
 	vk::Sampler mTextureSampler;
 	vk::DescriptorSet mDescriptorSet;
 };
+
+enum class IMAGE_LAYOUT_BARRIER
+{
+	Undefined,
+	TransferDest,
+	ColorAttachment,
+	DepthStencilAttachment,
+	TransferSource,
+	Present,
+	PixelShaderRead,
+	PixelDepthStencilRead,
+	ComputeGeneralRW,
+	PixelGeneralRW,
+};

@@ -19,7 +19,8 @@ public:
         vk::Image& image,
         vk::DeviceMemory& imageMemory,
         uint32_t mipLevel = 1,
-        vk::SampleCountFlagBits numSamples = vk::SampleCountFlagBits::e1);
+        vk::SampleCountFlagBits numSamples = vk::SampleCountFlagBits::e1,
+        uint32_t layerLevel = 1);
 
     static vk::ImageView createImageView(
         vk::ImageAspectFlags aspectMask,
@@ -61,5 +62,10 @@ public:
     static void copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height);
 
     static void generateMipmaps(vk::Image image, uint32_t width, uint32_t hegith, uint32_t miplevels);
+
+    static void imagePipelineBarrier(vk::CommandBuffer commandbuffer, vk::Image image, IMAGE_LAYOUT_BARRIER source, IMAGE_LAYOUT_BARRIER dest, const vk::ImageSubresourceRange& subresourceRange);
+
+    static void setImageBarrierInfo(IMAGE_LAYOUT_BARRIER target, vk::AccessFlags& accessFlags, vk::ImageLayout& layout, vk::PipelineStageFlags& stages);
+
 };
 

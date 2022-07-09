@@ -31,13 +31,14 @@ void VulkanUtil::createImage(
     vk::Image& image,
     vk::DeviceMemory& imageMemory,
     uint32_t mipLevel,
-    vk::SampleCountFlagBits numSamples)
+    vk::SampleCountFlagBits numSamples,
+    uint32_t layerLevel)
 {
     vk::PhysicalDevice phyDevice = gRuntimeGlobalContext.getRHI()->mPhyDevice;
     vk::Device device = gRuntimeGlobalContext.getRHI()->mDevice;
 
     vk::ImageCreateInfo imageInfo;
-    imageInfo.arrayLayers = 1;
+    imageInfo.arrayLayers = layerLevel;
     imageInfo.mipLevels = mipLevel;
     imageInfo.samples = numSamples;
     imageInfo.extent = vk::Extent3D(imageWidth, imageHeight, 1);
@@ -47,17 +48,14 @@ void VulkanUtil::createImage(
     imageInfo.initialLayout = vk::ImageLayout::eUndefined;
     imageInfo.usage = usage;
     imageInfo.sharingMode = vk::SharingMode::eExclusive;
-
     image = device.createImage(imageInfo);
     CHECK_NULL(image);
 
     vk::MemoryRequirements memRequirements;
     device.getImageMemoryRequirements(image, &memRequirements);
-
     vk::MemoryAllocateInfo allocInfo;
-    allocInfo.setAllocationSize(memRequirements.size);
+    allocInfo.allocationSize = memRequirements.size;
     allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
-
     vk::Result result = device.allocateMemory(&allocInfo, nullptr, &imageMemory);
     CHECK_NULL(imageMemory);
 
@@ -455,3 +453,72 @@ void VulkanUtil::generateMipmaps(vk::Image image, uint32_t width, uint32_t hegit
 
     vulkanRHI->endSingleTimeBuffer(commandBuffer);
 }
+
+void VulkanUtil::imagePipelineBarrier(vk::CommandBuffer commandbuffer, vk::Image image, IMAGE_LAYOUT_BARRIER source, IMAGE_LAYOUT_BARRIER dest, const vk::ImageSubresourceRange& subresourceRange)
+{
+    vk::ImageMemoryBarrier imageBarrier;
+    imageBarrier.image = image;
+    imageBarrier.subresourceRange = subresourceRange;
+    imageBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    imageBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    vk::PipelineStageFlags srcStage;
+    vk::PipelineStageFlags dstStage;
+    setImageBarrierInfo(source, imageBarrier.srcAccessMask, imageBarrier.oldLayout, srcStage);
+    setImageBarrierInfo(dest, imageBarrier.dstAccessMask, imageBarrier.newLayout, dstStage);
+
+    vk::DependencyFlags dependencyFlags;
+    commandbuffer.pipelineBarrier(
+        srcStage, dstStage,
+        dependencyFlags,
+        0, nullptr,
+        0, nullptr,
+        1, &imageBarrier);
+}
+
+void VulkanUtil::setImageBarrierInfo(IMAGE_LAYOUT_BARRIER target, vk::AccessFlags& accessFlags, vk::ImageLayout& layout, vk::PipelineStageFlags& stages)
+{
+    switch (target)
+    {
+    case IMAGE_LAYOUT_BARRIER::Undefined:
+        accessFlags = vk::AccessFlagBits::eNone;
+        layout = vk::ImageLayout::eUndefined;
+        stages = vk::PipelineStageFlagBits::eTopOfPipe;
+        break;
+    case IMAGE_LAYOUT_BARRIER::TransferDest:
+        accessFlags = vk::AccessFlagBits::eTransferWrite;
+        layout = vk::ImageLayout::eTransferDstOptimal;
+        stages = vk::PipelineStageFlagBits::eTransfer;
+        break;
+    case IMAGE_LAYOUT_BARRIER::ColorAttachment:
+        accessFlags = vk::AccessFlagBits::eColorAttachmentWrite;
+        layout = vk::ImageLayout::eColorAttachmentOptimal;
+        stages = vk::PipelineStageFlagBits::eColorAttachmentOutput;
+        break;
+    case IMAGE_LAYOUT_BARRIER::DepthStencilAttachment:
+        STEALOG_WARN("未定义！");
+        break;
+    case IMAGE_LAYOUT_BARRIER::TransferSource:
+        STEALOG_WARN("未定义！");
+        break;
+    case IMAGE_LAYOUT_BARRIER::Present:
+        STEALOG_WARN("未定义！");
+        break;
+    case IMAGE_LAYOUT_BARRIER::PixelShaderRead:
+        STEALOG_WARN("未定义！");
+        break;
+    case IMAGE_LAYOUT_BARRIER::PixelDepthStencilRead:
+        STEALOG_WARN("未定义！");
+        break;
+    case IMAGE_LAYOUT_BARRIER::ComputeGeneralRW:
+        STEALOG_WARN("未定义！");
+        break;
+    case IMAGE_LAYOUT_BARRIER::PixelGeneralRW:
+        STEALOG_WARN("未定义！");
+        break;
+    default:
+        STEALOG_WARN("未定义！");
+        break;
+    }
+}
+
+

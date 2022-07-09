@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "RenderData.h"
-
+typedef unsigned char uint8;
 
 class TextureArrayResource
 {
@@ -11,10 +11,25 @@ public:
 	void initialize(
 		uint32_t width,
 		uint32_t height,
-		void* pixels,
 		PIXEL_FORMAT pixelFormat,
-		uint32_t miplevels,
-		uint32_t layerLevels);
+		bool mipLevels,
+		uint32_t maxLayerLevels);
 
+	void uploadData(uint8* data, uint32_t dataCount);
+
+public:
+	TextureBufferResource mTextureBufferResource;
+
+private:
+	TextureBufferResource createTextureBufferResource();
+	void createDescriptorSet();
+
+private:
+	uint32_t mWidth;
+	uint32_t mHeight;
+	PIXEL_FORMAT mPixelFormat;
+	uint32_t mMipLevels;
+	uint32_t mMaxLayerLevels;
+	VkDeviceSize mMemoryOffset;
 };
 
