@@ -7,6 +7,7 @@ layout(location = 1) in vec2 fragTexCoord;
 layout(location = 2) in vec3 fragPos;
 
 layout(location = 0) out vec4 outColor;
+layout(location = 1) out vec4 outNormal;
 
 layout(set = 0 , binding = 0) uniform CameraBuffer {
     mat4 view;
@@ -19,8 +20,6 @@ layout(set = 0 , binding = 0) uniform CameraBuffer {
 }cmo;
 
 layout(set = 1, binding = 0) uniform sampler2D texSampler;
-
-
 
 void main() {
 	vec4 texDiffuse = texture(texSampler,fragTexCoord);
@@ -40,4 +39,5 @@ void main() {
 
     vec3 result = texDiffuse.rgb * (ambient + diffuse + specular) ;
     outColor = vec4(result,1.f);
+	outNormal = vec4(norm,1.f);
 }

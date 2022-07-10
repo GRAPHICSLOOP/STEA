@@ -10,6 +10,20 @@ TextureResource::TextureResource()
     mInit = false;
 }
 
+TextureResource::~TextureResource()
+{
+    if (!mInit)
+        return;
+
+    auto iter = gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources.find(mId);
+    gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources.erase(iter);
+
+    gRuntimeGlobalContext.getRHI()->mDevice.destroyImage(mTextureBufferResource.mImage);
+    gRuntimeGlobalContext.getRHI()->mDevice.destroyImageView(mTextureBufferResource.mImageView);
+    gRuntimeGlobalContext.getRHI()->mDevice.freeMemory(mTextureBufferResource.mMemory);
+    gRuntimeGlobalContext.getRHI()->mDevice.destroySampler(mTextureBufferResource.mTextureSampler);
+}
+
 void TextureResource::initialize(
     size_t id,
     uint32_t width,
@@ -31,20 +45,6 @@ void TextureResource::initialize(
     mTextureBufferResource.mTextureSampler = createTextureSampler(miplevels);
     createDescriptorSet();
     mInit = true;
-}
-
-TextureResource::~TextureResource()
-{
-    if (!mInit)
-        return;
-
-    auto iter = gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources.find(mId);
-    gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources.erase(iter);
-
-    gRuntimeGlobalContext.getRHI()->mDevice.destroyImage(mTextureBufferResource.mImage);
-    gRuntimeGlobalContext.getRHI()->mDevice.destroyImageView(mTextureBufferResource.mImageView);
-    gRuntimeGlobalContext.getRHI()->mDevice.freeMemory(mTextureBufferResource.mMemory);
-    gRuntimeGlobalContext.getRHI()->mDevice.destroySampler(mTextureBufferResource.mTextureSampler);
 }
 
 vk::Sampler TextureResource::createTextureSampler(uint32_t mipLevels)

@@ -59,6 +59,8 @@ public:
         PIXEL_FORMAT pixelFormat,
         uint32_t miplevels);
 
+    static vk::Sampler createTextureSampler(uint32_t mipLevels);
+
     static void copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height);
 
     static void generateMipmaps(vk::Image image, uint32_t width, uint32_t hegith, uint32_t miplevels);

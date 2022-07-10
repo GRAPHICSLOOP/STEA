@@ -74,10 +74,19 @@ RenderPassBase::~RenderPassBase()
 vk::Pipeline RenderPassBase::initialize(
     const vk::PipelineVertexInputStateCreateInfo& vertexInfo,
     const std::vector<vk::PipelineShaderStageCreateInfo>& shaderStatus,
-    const vk::PipelineLayout pipelineLayout,
+    std::vector<vk::DescriptorSetLayout> descriptorSetLayout,
     const vk::RenderPass renderPass)
 {
-    mPipelineLayout = pipelineLayout;
+    mDescSetLayout = descriptorSetLayout;
+
+    // pipeline layout
+    vk::PipelineLayoutCreateInfo pipelineLayoutInfo;
+    pipelineLayoutInfo.setLayoutCount = (uint32_t)mDescSetLayout.size();
+    pipelineLayoutInfo.pSetLayouts = mDescSetLayout.data();
+    pipelineLayoutInfo.pPushConstantRanges = mPushRange.data();
+    pipelineLayoutInfo.pushConstantRangeCount = (uint32_t)mPushRange.size();
+    mPipelineLayout = gRuntimeGlobalContext.getRHI()->mDevice.createPipelineLayout(pipelineLayoutInfo);
+
     mBlendInfo.attachmentCount = mColorBlendAttachmentCount;
     mBlendInfo.pAttachments = mColorBlendAttachmentState.data();
     mBlendInfo.blendConstants[0] = 0.f;
@@ -98,15 +107,16 @@ vk::Pipeline RenderPassBase::initialize(
     info.pDepthStencilState = &mDepthInfo;
     info.pColorBlendState = &mBlendInfo;
     info.pDynamicState = nullptr;
-    info.layout = pipelineLayout;
+    info.layout = mPipelineLayout;
     info.renderPass = renderPass;
+    info.subpass = mSubpassIndex;
     mPipeline = gRuntimeGlobalContext.getRHI()->mDevice.createGraphicsPipeline(VK_NULL_HANDLE, info).value;
     CHECK_NULL(mPipeline);
 
     return mPipeline;
 }
 
-void RenderPassBase::drawPass()
+void RenderPassBase::drawPass(vk::CommandBuffer cmdBuffer)
 {
 
 }

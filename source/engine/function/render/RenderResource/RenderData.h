@@ -53,6 +53,7 @@ enum class PIXEL_FORMAT : uint8_t
 struct TextureBufferResource
 {
 public:
+	vk::Format mFormat;
 	vk::Image mImage;
 	vk::ImageView mImageView;
 	vk::DeviceMemory mMemory;
@@ -72,4 +73,38 @@ enum class IMAGE_LAYOUT_BARRIER
 	PixelDepthStencilRead,
 	ComputeGeneralRW,
 	PixelGeneralRW,
+};
+
+struct AttachmentBufferResource
+{
+	vk::Format mFormat;
+	vk::Image mImage;
+	vk::ImageView mImageView;
+	vk::DeviceMemory mMemory;
+};
+
+enum class ATTACHMENT_TYPE : uint8_t
+{
+	Depth,
+	Color,
+	Normal
+};
+
+struct Frame
+{
+public:
+	std::vector<vk::Framebuffer> mFramebuffer;
+	vk::RenderPass mRenderPass;
+	std::unordered_map<ATTACHMENT_TYPE, AttachmentBufferResource> mAttachments;
+public:
+	std::vector<AttachmentBufferResource> getAttachments()
+	{
+		std::vector<AttachmentBufferResource> result;
+		for (const auto& attachment : mAttachments)
+		{
+			result.push_back(attachment.second);
+		}
+
+		return result;
+	}
 };

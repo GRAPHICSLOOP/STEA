@@ -344,6 +344,7 @@ TextureBufferResource VulkanUtil::createTextureBufferResource(
     generateMipmaps(textureBufferResource.mImage, width, height, miplevels);
 
     textureBufferResource.mImageView = createImageView(vk::ImageAspectFlagBits::eColor, vulkanImageFormat, textureBufferResource.mImage);
+    textureBufferResource.mFormat = vulkanImageFormat;
 
     // check
     CHECK_NULL(textureBufferResource.mImage);
@@ -351,6 +352,31 @@ TextureBufferResource VulkanUtil::createTextureBufferResource(
     CHECK_NULL(textureBufferResource.mMemory);
 
     return textureBufferResource;
+}
+
+vk::Sampler VulkanUtil::createTextureSampler(uint32_t mipLevels)
+{
+    vk::SamplerCreateInfo info;
+    info.minFilter = vk::Filter::eLinear;
+    info.magFilter = vk::Filter::eLinear;
+    info.addressModeU = vk::SamplerAddressMode::eRepeat;
+    info.addressModeV = vk::SamplerAddressMode::eRepeat;
+    info.addressModeW = vk::SamplerAddressMode::eRepeat;
+    info.anisotropyEnable = VK_FALSE;
+    info.maxAnisotropy = 1;
+    info.borderColor = vk::BorderColor::eIntOpaqueBlack;
+    info.unnormalizedCoordinates = VK_FALSE;
+    info.compareEnable = VK_FALSE;
+    info.compareOp = vk::CompareOp::eAlways;
+    info.mipmapMode = vk::SamplerMipmapMode::eLinear;
+    info.mipLodBias = 0;
+    info.minLod = 0;
+    info.maxLod = (float)mipLevels;
+
+    vk::Sampler sample = gRuntimeGlobalContext.getRHI()->mDevice.createSampler(info);
+    CHECK_NULL(sample);
+
+    return sample;
 }
 
 void VulkanUtil::copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height)

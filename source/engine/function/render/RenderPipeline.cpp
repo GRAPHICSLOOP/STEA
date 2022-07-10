@@ -31,21 +31,20 @@ void RenderPipeline::initialize()
         descSetLayouts[0] = gRuntimeGlobalContext.getRenderResource()->mUniformResource->mDescSetLayout;
         descSetLayouts[1] = gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout(DESCRIPTOR_TYPE::DT_Sample);
 
-
         // vertex Descriptions
         vk::PipelineVertexInputStateCreateInfo vertexInfo;
         auto VertexAttributeDescriptions = VertexResource::getInputAttributes({ VertexAttribute::VA_Position,VertexAttribute::VA_Color,VertexAttribute::VA_UV0 });
         auto VertexBindingDescriptions = VertexResource::getBindingDescription({ VertexAttribute::VA_Position,VertexAttribute::VA_Color,VertexAttribute::VA_UV0 });
-        vertexInfo.vertexAttributeDescriptionCount = VertexAttributeDescriptions.size();
-        vertexInfo.vertexBindingDescriptionCount = VertexBindingDescriptions.size();
+        vertexInfo.vertexAttributeDescriptionCount = (uint32_t)VertexAttributeDescriptions.size();
+        vertexInfo.vertexBindingDescriptionCount = (uint32_t)VertexBindingDescriptions.size();
         vertexInfo.pVertexAttributeDescriptions = VertexAttributeDescriptions.data();
         vertexInfo.pVertexBindingDescriptions = VertexBindingDescriptions.data();
 
         // shaderStatus
         std::vector<vk::PipelineShaderStageCreateInfo> shaderStatus(2);
         vk::PipelineShaderStageCreateInfo& vertexShader = shaderStatus[0];
-        vk::ShaderModule vertShaderModule = VulkanUtil::loadShaderModuleFromFile("shaders/vert.spv");
-        vk::ShaderModule fragShaderModule = VulkanUtil::loadShaderModuleFromFile("shaders/frag.spv");
+        vk::ShaderModule vertShaderModule = VulkanUtil::loadShaderModuleFromFile("shaders/obj.vspv");
+        vk::ShaderModule fragShaderModule = VulkanUtil::loadShaderModuleFromFile("shaders/obj.fspv");
         vertexShader.module = vertShaderModule;
         vertexShader.pName = "main";
         vertexShader.stage = vk::ShaderStageFlagBits::eVertex;
@@ -60,33 +59,91 @@ void RenderPipeline::initialize()
         pushRange.size = sizeof(ObjectBufferData);
         pushRange.stageFlags = vk::ShaderStageFlagBits::eVertex;
 
-        // pipeline layout
-        vk::PipelineLayoutCreateInfo pipelineLayoutInfo;
-        pipelineLayoutInfo.setLayoutCount = (uint32_t)descSetLayouts.size();
-        pipelineLayoutInfo.pSetLayouts = descSetLayouts.data();
-        pipelineLayoutInfo.pPushConstantRanges = &pushRange;
-        pipelineLayoutInfo.pushConstantRangeCount = 1;
-        vk::PipelineLayout pipelineLayout = gRuntimeGlobalContext.getRHI()->mDevice.createPipelineLayout(pipelineLayoutInfo);
-
         mCameraPass = std::make_shared<MainCameraPass>();
-        mCameraPass->mColorBlendAttachmentCount = 1;
-        mCameraPass->initialize(vertexInfo, shaderStatus, pipelineLayout, mFrame.mRenderPass);
+        mCameraPass->mColorBlendAttachmentCount = 2;
+        mCameraPass->mPushRange.push_back(pushRange);
+        mCameraPass->initialize(vertexInfo, shaderStatus, descSetLayouts, mFrame.mRenderPass);
+
+        gRuntimeGlobalContext.getRHI()->mDevice.destroyShaderModule(vertShaderModule);
+        gRuntimeGlobalContext.getRHI()->mDevice.destroyShaderModule(fragShaderModule);
+    }
+
+    // postprocesspass
+    {
+        // layout
+        vk::DescriptorSetLayoutCreateInfo descriptorSetLayoutInfo;
+        std::array<vk::DescriptorSetLayoutBinding, 3> bindings;
+        for (uint32_t i = 0; i < 3; i++)
+        {
+            bindings[i].binding = i;
+            bindings[i].descriptorCount = 1;
+            bindings[i].descriptorType = vk::DescriptorType::eInputAttachment;
+            bindings[i].stageFlags = vk::ShaderStageFlagBits::eFragment;
+
+        }
+        descriptorSetLayoutInfo.bindingCount = (uint32_t)bindings.size();
+        descriptorSetLayoutInfo.pBindings = bindings.data();
+        std::vector<vk::DescriptorSetLayout> descSetLayouts = {
+            gRuntimeGlobalContext.getRHI()->mDevice.createDescriptorSetLayout(descriptorSetLayoutInfo) 
+        };
+
+        // vertex Descriptions
+        vk::PipelineVertexInputStateCreateInfo vertexInfo;
+        auto VertexAttributeDescriptions = VertexResource::getInputAttributes({ VertexAttribute::VA_Position,VertexAttribute::VA_UV0 });
+        auto VertexBindingDescriptions = VertexResource::getBindingDescription({ VertexAttribute::VA_Position,VertexAttribute::VA_UV0 });
+        vertexInfo.vertexAttributeDescriptionCount = (uint32_t)VertexAttributeDescriptions.size();
+        vertexInfo.vertexBindingDescriptionCount = (uint32_t)VertexBindingDescriptions.size();
+        vertexInfo.pVertexAttributeDescriptions = VertexAttributeDescriptions.data();
+        vertexInfo.pVertexBindingDescriptions = VertexBindingDescriptions.data();
+
+        // shaderStatus
+        std::vector<vk::PipelineShaderStageCreateInfo> shaderStatus(2);
+        vk::PipelineShaderStageCreateInfo& vertexShader = shaderStatus[0];
+        vk::ShaderModule vertShaderModule = VulkanUtil::loadShaderModuleFromFile("shaders/quad.vspv");
+        vk::ShaderModule fragShaderModule = VulkanUtil::loadShaderModuleFromFile("shaders/quad.fspv");
+        vertexShader.module = vertShaderModule;
+        vertexShader.pName = "main";
+        vertexShader.stage = vk::ShaderStageFlagBits::eVertex;
+        vk::PipelineShaderStageCreateInfo& fragShader = shaderStatus[1];
+        fragShader.module = fragShaderModule;
+        fragShader.pName = "main";
+        fragShader.stage = vk::ShaderStageFlagBits::eFragment;
+
+        mPostProcessPass = std::make_shared<PostProcessPass>();
+        mPostProcessPass->mSubpassIndex = 1;
+        mPostProcessPass->mDepthInfo.depthTestEnable = VK_FALSE;
+        mPostProcessPass->mDepthInfo.depthWriteEnable = VK_FALSE;
+        mPostProcessPass->mDepthInfo.stencilTestEnable = VK_FALSE;
+        mPostProcessPass->initialize(vertexInfo, shaderStatus, descSetLayouts, mFrame.mRenderPass);
+        mPostProcessPass->createDescriptorSet(mFrame);
 
         gRuntimeGlobalContext.getRHI()->mDevice.destroyShaderModule(vertShaderModule);
         gRuntimeGlobalContext.getRHI()->mDevice.destroyShaderModule(fragShaderModule);
     }
 	
+    // 待优化项
+    // 
+    /*
+    * DescriptorSetLayout 是否可以优化一下框架，目前是分散销毁，创建。
+    * 可能得通过SPIRV编译器在Editor中对Shader进行编译，然后获得相关的信息，因此得统一管理shader
+    */
+    // image 的创建管理 ，目前是texture是带有数据然后有的是不带数据上传的 例如attachment
+    // image 的 imagelayout 管理，image创建的时候默认是underfine的，然后会根据场景调整。但是我们需要是可以及时记录正确的imagelayout给后面使用
+    // 然后得产出两篇文章，一篇是SPIRV编译器自动化生成各种信息的，一篇是subpass的理解笔记
 
-	mUIPass = std::make_shared<UIPass>();
-	mUIPass->initialize(UIPassConfigParam(mFrame.mRenderPass));
+	//mUIPass = std::make_shared<UIPass>();
+	//mUIPass->initialize(UIPassConfigParam(mFrame.mRenderPass));
 }
 
 void RenderPipeline::draw()
 {
     beginDraw();
+    vk::CommandBuffer cmdBuffer = gRuntimeGlobalContext.getRHI()->mCommandBuffer;
 
-	mCameraPass->drawPass();
-	mUIPass->drawPass();
+	mCameraPass->drawPass(cmdBuffer);
+    cmdBuffer.nextSubpass(vk::SubpassContents::eInline);
+    mPostProcessPass->drawPass(cmdBuffer);
+	//mUIPass->drawPass();
     
     endDraw();
 }
@@ -107,7 +164,7 @@ void RenderPipeline::beginDraw()
     clearValues[2].color = std::array<float, 4>{0, 0, 0, 0};
     clearValues[3].depthStencil = 1.f;
     passBegineInfo.pClearValues = clearValues.data();
-    passBegineInfo.clearValueCount = clearValues.size();
+    passBegineInfo.clearValueCount = (uint32_t)clearValues.size();
 
 
     gRuntimeGlobalContext.getRHI()->mCommandBuffer.beginRenderPass(passBegineInfo, vk::SubpassContents::eInline);
@@ -121,7 +178,7 @@ void RenderPipeline::endDraw()
 
 void RenderPipeline::createAttachment()
 {
-    FrameBufferAttachment depthFrameBufferAttachment;
+    AttachmentBufferResource depthFrameBufferAttachment;
     depthFrameBufferAttachment.mFormat = vk::Format::eD24UnormS8Uint;
     VulkanUtil::createImage(
         gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.width,
@@ -137,7 +194,7 @@ void RenderPipeline::createAttachment()
         depthFrameBufferAttachment.mFormat,
         depthFrameBufferAttachment.mImage);
 
-    FrameBufferAttachment colorFrameBufferAttachment;
+    AttachmentBufferResource colorFrameBufferAttachment;
     colorFrameBufferAttachment.mFormat = gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mFormat.format;
     VulkanUtil::createImage(
         gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.width,
@@ -154,7 +211,7 @@ void RenderPipeline::createAttachment()
         colorFrameBufferAttachment.mFormat,
         colorFrameBufferAttachment.mImage);
 
-    FrameBufferAttachment normalFrameBufferAttachment;
+    AttachmentBufferResource normalFrameBufferAttachment;
     normalFrameBufferAttachment.mFormat = vk::Format::eR8G8B8A8Unorm;
     VulkanUtil::createImage(
         gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.width,
@@ -170,7 +227,6 @@ void RenderPipeline::createAttachment()
         vk::ImageAspectFlagBits::eColor,
         normalFrameBufferAttachment.mFormat ,
         normalFrameBufferAttachment.mImage);
-
 
     mFrame.mAttachments[ATTACHMENT_TYPE::Depth] = depthFrameBufferAttachment;
     mFrame.mAttachments[ATTACHMENT_TYPE::Color] = colorFrameBufferAttachment;
@@ -247,52 +303,32 @@ void RenderPipeline::createRenderPass()
     inputAttachmentRef[2].attachment = 3;
     inputAttachmentRef[2].layout = vk::ImageLayout::eShaderReadOnlyOptimal;
 
-    //std::vector<vk::SubpassDescription> subpassDesc(2);
-    //subpassDesc[0].pipelineBindPoint = vk::PipelineBindPoint::eGraphics;
-    //subpassDesc[0].colorAttachmentCount = 2;
-    //subpassDesc[0].pColorAttachments = colorAttachmentRef;
-    //subpassDesc[0].pDepthStencilAttachment = depthAttachmentRef;
+    std::vector<vk::SubpassDescription> subpassDesc(2);
+    subpassDesc[0].pipelineBindPoint = vk::PipelineBindPoint::eGraphics;
+    subpassDesc[0].colorAttachmentCount = 2;
+    subpassDesc[0].pColorAttachments = colorAttachmentRef;
+    subpassDesc[0].pDepthStencilAttachment = depthAttachmentRef;
 
-    //subpassDesc[1].pipelineBindPoint = vk::PipelineBindPoint::eGraphics;
-    //subpassDesc[1].colorAttachmentCount = 1;
-    //subpassDesc[1].pColorAttachments = swapAttachmentRef;
-    //subpassDesc[1].inputAttachmentCount = 3;
-    //subpassDesc[1].pInputAttachments = inputAttachmentRef;
+    subpassDesc[1].pipelineBindPoint = vk::PipelineBindPoint::eGraphics;
+    subpassDesc[1].colorAttachmentCount = 1;
+    subpassDesc[1].pColorAttachments = swapAttachmentRef;
+    subpassDesc[1].inputAttachmentCount = 3;
+    subpassDesc[1].pInputAttachments = inputAttachmentRef;
 
-    //std::vector<vk::SubpassDependency> subpassDependency(2);
-    //subpassDependency[0].srcSubpass = VK_SUBPASS_EXTERNAL; // 因为我们不依赖任何subpass
-    //subpassDependency[0].dstSubpass = 0;
-    //subpassDependency[0].srcStageMask = vk::PipelineStageFlagBits::eTopOfPipe;
-    //subpassDependency[0].dstStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
-    //subpassDependency[0].srcAccessMask = vk::AccessFlagBits::eNone;
-    //subpassDependency[0].dstAccessMask = vk::AccessFlagBits::eColorAttachmentWrite;
+    std::vector<vk::SubpassDependency> subpassDependency(2);
+    subpassDependency[0].srcSubpass = VK_SUBPASS_EXTERNAL; // 因为我们不依赖任何subpass
+    subpassDependency[0].dstSubpass = 0;
+    subpassDependency[0].srcStageMask = vk::PipelineStageFlagBits::eTopOfPipe;
+    subpassDependency[0].dstStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
+    subpassDependency[0].srcAccessMask = vk::AccessFlagBits::eNone;
+    subpassDependency[0].dstAccessMask = vk::AccessFlagBits::eColorAttachmentWrite;
 
-    //subpassDependency[1].srcSubpass = 0; // 因为我们不依赖任何subpass
-    //subpassDependency[1].dstSubpass = 1;
-    //subpassDependency[1].srcStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
-    //subpassDependency[1].dstStageMask = vk::PipelineStageFlagBits::eFragmentShader;
-    //subpassDependency[1].srcAccessMask = vk::AccessFlagBits::eColorAttachmentWrite;
-    //subpassDependency[1].dstAccessMask = vk::AccessFlagBits::eShaderRead;
-
-    vk::AttachmentReference attachmentRef[2];
-    attachmentRef[0].attachment = 0;
-    attachmentRef[0].layout = vk::ImageLayout::eColorAttachmentOptimal;
-    attachmentRef[1].attachment = 3;
-    attachmentRef[1].layout = vk::ImageLayout::eDepthStencilAttachmentOptimal;
-
-    vk::SubpassDescription subpassDesc;
-    subpassDesc.colorAttachmentCount = 1;
-    subpassDesc.pColorAttachments = &attachmentRef[0];
-    subpassDesc.pDepthStencilAttachment = &attachmentRef[1];
-    subpassDesc.pipelineBindPoint = vk::PipelineBindPoint::eGraphics;
-
-    vk::SubpassDependency subpassDependency;
-    subpassDependency.srcSubpass = VK_SUBPASS_EXTERNAL; // 因为我们不依赖任何subpass
-    subpassDependency.dstSubpass = 0;
-    subpassDependency.srcStageMask = vk::PipelineStageFlagBits::eTopOfPipe;
-    subpassDependency.dstStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
-    subpassDependency.srcAccessMask = vk::AccessFlagBits::eNone;
-    subpassDependency.dstAccessMask = vk::AccessFlagBits::eColorAttachmentWrite;
+    subpassDependency[1].srcSubpass = 0; // 因为我们不依赖任何subpass
+    subpassDependency[1].dstSubpass = 1;
+    subpassDependency[1].srcStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
+    subpassDependency[1].dstStageMask = vk::PipelineStageFlagBits::eFragmentShader;
+    subpassDependency[1].srcAccessMask = vk::AccessFlagBits::eColorAttachmentWrite;
+    subpassDependency[1].dstAccessMask = vk::AccessFlagBits::eShaderRead;
 
     vk::RenderPassCreateInfo info;
     info.setAttachments(attachmentDesces);

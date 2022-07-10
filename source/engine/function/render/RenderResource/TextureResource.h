@@ -6,6 +6,7 @@ class TextureResource : public std::enable_shared_from_this<TextureResource>
 {
 public:
 	TextureResource();
+	~TextureResource();
 	void initialize(
 		size_t id,
 		uint32_t width,
@@ -14,7 +15,6 @@ public:
 		PIXEL_FORMAT pixelFormat,
 		uint32_t miplevels);
 
-	~TextureResource();
 
 public:
 	TextureBufferResource mTextureBufferResource;
