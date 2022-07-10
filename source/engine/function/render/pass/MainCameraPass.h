@@ -3,11 +3,6 @@
 #include <unordered_map>
 #include "function/render/RenderResource/RenderData.h"
 
-enum class ATTACHMENT_TYPE : uint8_t
-{
-	TYPE_DEPTH
-};
-
 struct FrameBufferAttachment
 {
 public:
@@ -15,6 +10,13 @@ public:
 	vk::ImageView mImageView;
 	vk::DeviceMemory mMemory;
 	vk::Format mFormat;
+};
+
+enum class ATTACHMENT_TYPE : uint8_t
+{
+	Depth,
+	Color,
+	Normal
 };
 
 struct Frame
@@ -39,25 +41,5 @@ public:
 class MainCameraPass : public RenderPassBase
 {
 public:
-	~MainCameraPass();
-	void initialize() override;
 	void drawPass() override;
-	vk::RenderPass getRenderPass();
-	vk::Framebuffer getFrameBuffer(uint32_t index);
-
-private:
-	std::vector<vk::DescriptorSetLayout> mDescSetLayouts;
-	vk::PipelineLayout mPipelineLayout;
-	vk::Pipeline mPipeline;
-	Frame mFrame;
-
-	CameraBufferData cameraData;
-
-private:
-	void setupAttachments();
-	void setupRenderPass();
-	void setupDescriptorSetLayout();
-	void setupPipelines();
-	void setupDescriptorSet();
-	void setupSwapchainFramebuffers();
 };

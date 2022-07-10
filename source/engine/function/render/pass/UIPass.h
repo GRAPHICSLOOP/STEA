@@ -21,12 +21,12 @@ public:
 	vk::RenderPass mRenderPass;
 };
 
-class UIPass : public RenderPassBase
+class UIPass 
 {
 public:
 	~UIPass();
 	void initialize(const UIPassConfigParam& config);
-	void drawPass() override;
+	void drawPass();
 
 public:
 	UIPassConfigParam mConfig;
