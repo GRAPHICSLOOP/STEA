@@ -16,7 +16,7 @@ public:
 
 
 public:
-	TextureBufferResource mTextureBufferResource;
+	ImageBufferResource mTextureBufferResource;
 	
 private:
 	vk::Sampler createTextureSampler(uint32_t mipLevels);

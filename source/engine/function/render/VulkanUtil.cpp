@@ -254,7 +254,7 @@ void VulkanUtil::copyBuffer(
     vulkanRHI->endSingleTimeBuffer(buffer);
 }
 
-TextureBufferResource VulkanUtil::createTextureBufferResource(
+ImageBufferResource VulkanUtil::createTextureBufferResource(
     uint32_t width,
     uint32_t height,
     void* pixels,
@@ -263,7 +263,7 @@ TextureBufferResource VulkanUtil::createTextureBufferResource(
 {
     VulkanRHI* vulkanRHI = gRuntimeGlobalContext.getRHI();
 
-    TextureBufferResource textureBufferResource;
+    ImageBufferResource textureBufferResource;
 
     size_t pixelSize = 0;
     vk::Format vulkanImageFormat;

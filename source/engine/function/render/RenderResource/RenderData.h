@@ -50,7 +50,7 @@ enum class PIXEL_FORMAT : uint8_t
 	PIXEL_FORMAT_R32G32B32A32_FLOAT
 };
 
-struct TextureBufferResource
+struct ImageBufferResource
 {
 public:
 	vk::Format mFormat;

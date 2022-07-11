@@ -160,9 +160,9 @@ void TextureArrayResource::uploadData(uint8* data, uint32_t dataCount)
     gRuntimeGlobalContext.getRHI()->mDevice.freeMemory(stagingBufferMemory);
 }
 
-TextureBufferResource TextureArrayResource::createTextureBufferResource()
+ImageBufferResource TextureArrayResource::createTextureBufferResource()
 {
-    TextureBufferResource textureBufferResource;
+    ImageBufferResource textureBufferResource;
 
     // 确定总体要分配大多的texturearray
     size_t pixelSize = 0;

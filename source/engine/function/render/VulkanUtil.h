@@ -52,7 +52,7 @@ public:
         vk::Buffer dstBuffer,
         vk::DeviceSize size);
 
-    static struct TextureBufferResource createTextureBufferResource(
+    static struct ImageBufferResource createTextureBufferResource(
         uint32_t width,
         uint32_t height,
         void* pixels,

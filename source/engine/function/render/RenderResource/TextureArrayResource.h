@@ -18,10 +18,10 @@ public:
 	void uploadData(uint8* data, uint32_t dataCount);
 
 public:
-	TextureBufferResource mTextureBufferResource;
+	ImageBufferResource mTextureBufferResource;
 
 private:
-	TextureBufferResource createTextureBufferResource();
+	ImageBufferResource createTextureBufferResource();
 	void createDescriptorSet();
 
 private:
