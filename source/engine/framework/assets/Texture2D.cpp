@@ -7,6 +7,13 @@
 #include "function/render/RenderResource.h"
 #include <stdlib.h>
 
+Texture2D::~Texture2D()
+{
+    auto iter = gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources.find(mId);
+    if(iter != gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources.end())
+        gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources.erase(iter);
+}
+
 void Texture2D::initialize(std::string path)
 {
 	std::hash<std::string> hash_fn;
@@ -29,20 +36,29 @@ void Texture2D::loadTexture()
     mHeight = texHeight;
     mMiplevels = miplevels;
 
-    mTextureResource = std::make_shared<TextureResource>();
-    mTextureResource->initialize(
-        mId,
-        mWidth,
-        mHeight,
-        pixels, 
-        mFormat,
-        mMiplevels);
+    // 检查是否有重复资源
+    auto iter = gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources.find(mId);
+    if (iter != gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources.end())
+    {
+        STEALOG_INFO("重复贴图不加载：{}", mId);
+    }
+    else
+    {
+        mTextureResource = std::make_shared<ImageResource>();
+        mTextureResource->initialize(
+            mWidth,
+            mHeight,
+            pixels,
+            mFormat,
+            mMiplevels);
+        gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources[mId] = mTextureResource;
+    }
 
     stbi_image_free(pixels);
     return;
 }
 
-std::shared_ptr<TextureResource> Texture2D::getTextureResource()
+std::shared_ptr<ImageResource> Texture2D::getTextureResource()
 {
     return gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources[mId].lock();
 }

@@ -1,53 +1,34 @@
-﻿#include "TextureResource.h"
+﻿#include "ImageResource.h"
 #include "function/global/RuntimeGlobalContext.h"
 #include "function/render/VulkanRHI.h"
 #include "function/render/VulkanUtil.h"
 #include "core/base/macro.h"
 
-TextureResource::TextureResource()
+ImageResource::ImageResource()
 {
-    mId = 0;
-    mInit = false;
 }
 
-TextureResource::~TextureResource()
+ImageResource::~ImageResource()
 {
-    if (!mInit)
-        return;
-
-    auto iter = gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources.find(mId);
-    gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources.erase(iter);
-
     gRuntimeGlobalContext.getRHI()->mDevice.destroyImage(mTextureBufferResource.mImage);
     gRuntimeGlobalContext.getRHI()->mDevice.destroyImageView(mTextureBufferResource.mImageView);
     gRuntimeGlobalContext.getRHI()->mDevice.freeMemory(mTextureBufferResource.mMemory);
     gRuntimeGlobalContext.getRHI()->mDevice.destroySampler(mTextureBufferResource.mTextureSampler);
 }
 
-void TextureResource::initialize(
-    size_t id,
+void ImageResource::initialize(
     uint32_t width,
     uint32_t height,
     void* pixels,
     PIXEL_FORMAT pixelFormat,
     uint32_t miplevels)
 {
-    mId = id;
-
-    auto iter = gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources.find(mId);
-    if (iter != gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources.end() )
-    {
-        STEALOG_INFO("重复贴图不加载：{}", mId);
-        return;
-    }
-    gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources[mId] = shared_from_this();
     mTextureBufferResource = VulkanUtil::createTextureBufferResource(width, height, pixels, pixelFormat, miplevels);
     mTextureBufferResource.mTextureSampler = createTextureSampler(miplevels);
     createDescriptorSet();
-    mInit = true;
 }
 
-vk::Sampler TextureResource::createTextureSampler(uint32_t mipLevels)
+vk::Sampler ImageResource::createTextureSampler(uint32_t mipLevels)
 {
     vk::SamplerCreateInfo info;
     info.minFilter = vk::Filter::eLinear;
@@ -72,7 +53,7 @@ vk::Sampler TextureResource::createTextureSampler(uint32_t mipLevels)
     return sample;
 }
 
-void TextureResource::createDescriptorSet()
+void ImageResource::createDescriptorSet()
 {
     vk::DescriptorSetLayout setLayout = gRuntimeGlobalContext.getRenderSystem()->mRenderResource->getDescriptorSetLayout(DT_Sample);
 

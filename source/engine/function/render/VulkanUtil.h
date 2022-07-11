@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <vulkan/vulkan.hpp>
-#include "RenderResource/TextureResource.h"
+#include "RenderResource/ImageResource.h"
 
 class VulkanUtil
 {

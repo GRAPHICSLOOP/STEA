@@ -2,13 +2,12 @@
 #include "RenderData.h"
 
 
-class TextureResource : public std::enable_shared_from_this<TextureResource>
+class ImageResource
 {
 public:
-	TextureResource();
-	~TextureResource();
+	ImageResource();
+	~ImageResource();
 	void initialize(
-		size_t id,
 		uint32_t width,
 		uint32_t height,
 		void* pixels,
@@ -22,10 +21,6 @@ public:
 private:
 	vk::Sampler createTextureSampler(uint32_t mipLevels);
 	void createDescriptorSet();
-
-private:
-	size_t mId;
-	bool mInit;
 };
 
 
