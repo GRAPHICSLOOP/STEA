@@ -343,12 +343,12 @@ ImageBufferResource VulkanUtil::createTextureBufferResource(
 
     generateMipmaps(textureBufferResource.mImage, width, height, miplevels);
 
-    textureBufferResource.mImageView = createImageView(vk::ImageAspectFlagBits::eColor, vulkanImageFormat, textureBufferResource.mImage);
+    textureBufferResource.mImageInfo.imageView = createImageView(vk::ImageAspectFlagBits::eColor, vulkanImageFormat, textureBufferResource.mImage);
     textureBufferResource.mFormat = vulkanImageFormat;
 
     // check
     CHECK_NULL(textureBufferResource.mImage);
-    CHECK_NULL(textureBufferResource.mImageView);
+    CHECK_NULL(textureBufferResource.mImageInfo.imageView);
     CHECK_NULL(textureBufferResource.mMemory);
 
     return textureBufferResource;

@@ -233,8 +233,8 @@ ImageBufferResource TextureArrayResource::createTextureBufferResource()
     samplerInfo.mipLodBias = 0;
     samplerInfo.minLod = 0;
     samplerInfo.maxLod = (float)mMipLevels;
-    textureBufferResource.mTextureSampler = gRuntimeGlobalContext.getRHI()->mDevice.createSampler(samplerInfo);
-    CHECK_NULL(textureBufferResource.mTextureSampler);
+    textureBufferResource.mImageInfo.sampler = gRuntimeGlobalContext.getRHI()->mDevice.createSampler(samplerInfo);
+    CHECK_NULL(textureBufferResource.mImageInfo.sampler);
 
     vk::ImageSubresourceRange range;
     range.aspectMask = vk::ImageAspectFlagBits::eColor;
@@ -249,8 +249,8 @@ ImageBufferResource TextureArrayResource::createTextureBufferResource()
     imageViewInfo.viewType = vk::ImageViewType::e2DArray;
     imageViewInfo.subresourceRange = range;
 
-    textureBufferResource.mImageView = gRuntimeGlobalContext.getRHI()->mDevice.createImageView(imageViewInfo);
-    CHECK_NULL(textureBufferResource.mImageView);
+    textureBufferResource.mImageInfo.imageView = gRuntimeGlobalContext.getRHI()->mDevice.createImageView(imageViewInfo);
+    CHECK_NULL(textureBufferResource.mImageInfo.imageView);
 
     return textureBufferResource;
 }
@@ -267,8 +267,8 @@ void TextureArrayResource::createDescriptorSet()
 
     vk::DescriptorImageInfo imageInfo;
     imageInfo.imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal;
-    imageInfo.imageView = mTextureBufferResource.mImageView;
-    imageInfo.sampler = mTextureBufferResource.mTextureSampler;
+    imageInfo.imageView = mTextureBufferResource.mImageInfo.imageView;
+    imageInfo.sampler = mTextureBufferResource.mImageInfo.sampler;
 
     // 更新描述符
     std::array<vk::WriteDescriptorSet, 1> writeSet;

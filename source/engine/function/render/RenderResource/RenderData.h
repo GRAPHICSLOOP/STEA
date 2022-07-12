@@ -55,9 +55,8 @@ struct ImageBufferResource
 public:
 	vk::Format mFormat;
 	vk::Image mImage;
-	vk::ImageView mImageView;
 	vk::DeviceMemory mMemory;
-	vk::Sampler mTextureSampler;
+	vk::DescriptorImageInfo mImageInfo;
 	vk::DescriptorSet mDescriptorSet;
 };
 

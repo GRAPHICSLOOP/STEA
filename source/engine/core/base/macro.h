@@ -16,3 +16,5 @@
 	{ \
 		throw std::runtime_error(#i "is null!"); \
 	}
+
+

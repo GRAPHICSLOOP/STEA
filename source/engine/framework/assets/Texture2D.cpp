@@ -44,13 +44,22 @@ void Texture2D::loadTexture()
     }
     else
     {
-        mTextureResource = std::make_shared<ImageResource>();
-        mTextureResource->initialize(
+        //mTextureResource = std::make_shared<ImageResource>();
+        //mTextureResource->initialize(
+        //    mWidth,
+        //    mHeight,
+        //    pixels,
+        //    mFormat,
+        //    mMiplevels);
+        mTextureResource = ImageResource::createTextureResource(
             mWidth,
             mHeight,
+            vk::ImageUsageFlagBits::eSampled,
             pixels,
             mFormat,
-            mMiplevels);
+            true
+        );
+
         gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources[mId] = mTextureResource;
     }
 
