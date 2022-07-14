@@ -20,45 +20,44 @@ void ImageResource::initialize(
     uint32_t width,
     uint32_t height,
     void* pixels,
-    PIXEL_FORMAT pixelFormat,
+    vk::Format pixelFormat,
     uint32_t miplevels)
 {
-    mImageBufferResource = VulkanUtil::createTextureBufferResource(width, height, pixels, pixelFormat, miplevels);
-    mImageBufferResource.mImageInfo.sampler = createTextureSampler(miplevels);
-    createDescriptorSet();
+    //mImageBufferResource = VulkanUtil::createTextureBufferResource(width, height, pixels, pixelFormat, miplevels);
+    //mImageBufferResource.mImageInfo.sampler = createTextureSampler(miplevels);
+    //createDescriptorSet();
 }
 
-void ImageResource::getPixelInfo(const PIXEL_FORMAT pixelFormat, const uint32_t width, const uint32_t height, size_t& pixelSize, vk::Format& vulkanImageFormat)
+void ImageResource::getPixelInfo(const vk::Format pixelFormat, const uint32_t width, const uint32_t height, size_t& pixelSize)
 {
     switch (pixelFormat)
     {
-    case PIXEL_FORMAT::PIXEL_FORMAT_R8G8B8_UNORM:
+    case vk::Format::eR8G8B8Unorm:
         pixelSize = (size_t)width * height * 3;
-        vulkanImageFormat = vk::Format::eR8G8B8Unorm;
         break;
-    case PIXEL_FORMAT::PIXEL_FORMAT_R8G8B8_SRGB:
+    case vk::Format::eB8G8R8A8Unorm:
+        pixelSize = (size_t)width * height * 4;
+        break;
+    case vk::Format::eR8G8B8Srgb:
         pixelSize = (size_t)width * height * 3;
-        vulkanImageFormat = vk::Format::eR8G8B8Srgb;
         break;
-    case PIXEL_FORMAT::PIXEL_FORMAT_R8G8B8A8_UNORM:
+    case vk::Format::eR8G8B8A8Unorm:
         pixelSize = (size_t)width * height * 4;
-        vulkanImageFormat = vk::Format::eR8G8B8A8Unorm;
         break;
-    case PIXEL_FORMAT::PIXEL_FORMAT_R8G8B8A8_SRGB:
+    case vk::Format::eR8G8B8A8Srgb:
         pixelSize = (size_t)width * height * 4;
-        vulkanImageFormat = vk::Format::eR8G8B8A8Srgb;
         break;
-    case PIXEL_FORMAT::PIXEL_FORMAT_R32G32_FLOAT:
+    case vk::Format::eR32G32Sfloat:
         pixelSize = (size_t)width * height * 4 * 2;
-        vulkanImageFormat = vk::Format::eR32G32Sfloat;
         break;
-    case PIXEL_FORMAT::PIXEL_FORMAT_R32G32B32_FLOAT:
+    case vk::Format::eR32G32B32Sfloat:
         pixelSize = (size_t)width * height * 4 * 3;
-        vulkanImageFormat = vk::Format::eR32G32B32Sfloat;
         break;
-    case PIXEL_FORMAT::PIXEL_FORMAT_R32G32B32A32_FLOAT:
+    case vk::Format::eR32G32B32A32Sfloat:
         pixelSize = (size_t)width * height * 4 * 4;
-        vulkanImageFormat = vk::Format::eR32G32B32A32Sfloat;
+        break;
+    case vk::Format::eD24UnormS8Uint:
+        pixelSize = (size_t)width * height * 4;
         break;
     default:
         throw std::runtime_error("invalid pixelSize");
@@ -154,7 +153,7 @@ std::shared_ptr<ImageResource> ImageResource::createTextureResource(
     uint32_t height, 
     vk::ImageUsageFlags usage, 
     void* pixels, 
-    PIXEL_FORMAT pixelFormat, 
+    vk::Format pixelFormat, 
     bool miplevel)
 {
     // 确定是否需要mipmap
@@ -165,8 +164,7 @@ std::shared_ptr<ImageResource> ImageResource::createTextureResource(
     std::shared_ptr<ImageResource> imageResource = std::make_shared<ImageResource>();
     ImageBufferResource& imageBufferResource = imageResource->mImageBufferResource;
     size_t pixelSize = 0;
-    vk::Format vulkanImageFormat;
-    getPixelInfo(pixelFormat, width, height, pixelSize, vulkanImageFormat);
+    getPixelInfo(pixelFormat, width, height, pixelSize);
 
     vk::Buffer stagingBuffer;
     vk::DeviceMemory stagingBufferMemory;
@@ -199,7 +197,7 @@ std::shared_ptr<ImageResource> ImageResource::createTextureResource(
         // 创建image
         vk::ImageCreateInfo imageCreateInfo;
         imageCreateInfo.imageType = vk::ImageType::e2D;
-        imageCreateInfo.format = vulkanImageFormat;
+        imageCreateInfo.format = pixelFormat;
         imageCreateInfo.mipLevels = miplevels;
         imageCreateInfo.arrayLayers = 1;
         imageCreateInfo.samples = vk::SampleCountFlagBits::e1;
@@ -331,7 +329,7 @@ std::shared_ptr<ImageResource> ImageResource::createTextureResource(
         vk::ImageViewCreateInfo viewInfo;
         viewInfo.image = imageBufferResource.mImage;
         viewInfo.viewType = vk::ImageViewType::e2D;
-        viewInfo.format = vulkanImageFormat;
+        viewInfo.format = pixelFormat;
         viewInfo.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
         viewInfo.subresourceRange.aspectMask = vk::ImageAspectFlagBits::eColor;
         viewInfo.subresourceRange.layerCount = 1;
@@ -350,29 +348,78 @@ std::shared_ptr<ImageResource> ImageResource::createTextureResource(
     return imageResource;
 }
 
-vk::Sampler ImageResource::createTextureSampler(uint32_t mipLevels)
+std::shared_ptr<ImageResource> ImageResource::createAttachment(uint32_t width, uint32_t height, vk::ImageUsageFlags usage, vk::ImageAspectFlags aspectFlags, vk::Format pixelFormat)
 {
-    vk::SamplerCreateInfo info;
-    info.minFilter = vk::Filter::eLinear;
-    info.magFilter = vk::Filter::eLinear;
-    info.addressModeU = vk::SamplerAddressMode::eRepeat;
-    info.addressModeV = vk::SamplerAddressMode::eRepeat;
-    info.addressModeW = vk::SamplerAddressMode::eRepeat;
-    info.anisotropyEnable = VK_FALSE;
-    info.maxAnisotropy = 1;
-    info.borderColor = vk::BorderColor::eIntOpaqueBlack;
-    info.unnormalizedCoordinates = VK_FALSE;
-    info.compareEnable = VK_FALSE;
-    info.compareOp = vk::CompareOp::eAlways;
-    info.mipmapMode = vk::SamplerMipmapMode::eLinear;
-    info.mipLodBias = 0;
-    info.minLod = 0;
-    info.maxLod = (float)mipLevels;
+    uint32_t miplevels = 1;
+    std::shared_ptr<ImageResource> imageResource = std::make_shared<ImageResource>();
+    ImageBufferResource& imageBufferResource = imageResource->mImageBufferResource;
+    size_t pixelSize = 0;
+    getPixelInfo(pixelFormat, width, height, pixelSize);
 
-    vk::Sampler sample = gRuntimeGlobalContext.getRHI()->mDevice.createSampler(info);
-    CHECK_NULL(sample);
+    // 创建Image
+    {
+        vk::ImageCreateInfo imageCreateInfo;
+        imageCreateInfo.imageType = vk::ImageType::e2D;
+        imageCreateInfo.format = pixelFormat;
+        imageCreateInfo.mipLevels = miplevels;
+        imageCreateInfo.arrayLayers = 1;
+        imageCreateInfo.samples = vk::SampleCountFlagBits::e1;
+        imageCreateInfo.tiling = vk::ImageTiling::eOptimal;
+        imageCreateInfo.sharingMode = vk::SharingMode::eExclusive;
+        imageCreateInfo.initialLayout = vk::ImageLayout::eUndefined;
+        imageCreateInfo.extent = vk::Extent3D(width, height, 1);
+        imageCreateInfo.usage = usage;
+        imageBufferResource.mImage = gRuntimeGlobalContext.getRHI()->mDevice.createImage(imageCreateInfo);
 
-    return sample;
+        // bind image buffer
+        vk::MemoryRequirements memRequirements;
+        gRuntimeGlobalContext.getRHI()->mDevice.getImageMemoryRequirements(imageBufferResource.mImage, &memRequirements);
+        vk::MemoryAllocateInfo allocInfo;
+        allocInfo.allocationSize = memRequirements.size;
+        allocInfo.memoryTypeIndex = VulkanUtil::findMemoryType(memRequirements.memoryTypeBits, vk::MemoryPropertyFlagBits::eDeviceLocal);
+        vk::Result result = gRuntimeGlobalContext.getRHI()->mDevice.allocateMemory(&allocInfo, nullptr, &imageBufferResource.mMemory);
+        CHECK_NULL(imageBufferResource.mMemory);
+        gRuntimeGlobalContext.getRHI()->mDevice.bindImageMemory(imageBufferResource.mImage, imageBufferResource.mMemory, 0);
+    }
+
+    // sample
+    {
+        vk::SamplerCreateInfo info;
+        info.minFilter = vk::Filter::eLinear;
+        info.magFilter = vk::Filter::eLinear;
+        info.addressModeU = vk::SamplerAddressMode::eRepeat;
+        info.addressModeV = vk::SamplerAddressMode::eRepeat;
+        info.addressModeW = vk::SamplerAddressMode::eRepeat;
+        info.anisotropyEnable = VK_FALSE;
+        info.maxAnisotropy = 1;
+        info.borderColor = vk::BorderColor::eIntOpaqueBlack;
+        info.unnormalizedCoordinates = VK_FALSE;
+        info.compareEnable = VK_FALSE;
+        info.compareOp = vk::CompareOp::eAlways;
+        info.mipmapMode = vk::SamplerMipmapMode::eLinear;
+        info.mipLodBias = 0;
+        info.minLod = 0;
+        info.maxLod = (float)miplevels;
+        imageBufferResource.mImageInfo.sampler = gRuntimeGlobalContext.getRHI()->mDevice.createSampler(info);
+        CHECK_NULL(imageBufferResource.mImageInfo.sampler);
+    }
+
+    // imageview
+    {
+        vk::ImageViewCreateInfo viewInfo;
+        viewInfo.image = imageBufferResource.mImage;
+        viewInfo.viewType = vk::ImageViewType::e2D;
+        viewInfo.format = pixelFormat;
+        viewInfo.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
+        viewInfo.subresourceRange.aspectMask = aspectFlags;
+        viewInfo.subresourceRange.layerCount = 1;
+        viewInfo.subresourceRange.levelCount = miplevels;
+        imageBufferResource.mImageInfo.imageView = gRuntimeGlobalContext.getRHI()->mDevice.createImageView(viewInfo);
+        CHECK_NULL(imageBufferResource.mImageInfo.imageView);
+    }
+
+    imageBufferResource.mFormat = pixelFormat;
+    return imageResource;
 }
 
 void ImageResource::createDescriptorSet()

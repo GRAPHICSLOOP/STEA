@@ -31,7 +31,7 @@ void Texture2D::loadTexture()
     vk::DeviceSize DeviceSize = (uint64_t)texWidth * texHeight * 4;
     uint32_t miplevels = (uint32_t)std::floor(std::log2(std::max(texWidth, texHeight))) + 1;
     
-    mFormat = PIXEL_FORMAT::PIXEL_FORMAT_R8G8B8A8_UNORM;
+    mFormat = vk::Format::eR8G8B8A8Unorm;
     mWidth = texWidth;
     mHeight = texHeight;
     mMiplevels = miplevels;

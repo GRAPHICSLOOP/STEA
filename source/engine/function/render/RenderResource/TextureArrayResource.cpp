@@ -12,7 +12,7 @@ TextureArrayResource::~TextureArrayResource()
 {
 }
 
-void TextureArrayResource::initialize(uint32_t width, uint32_t height, PIXEL_FORMAT pixelFormat, bool mipLevels, uint32_t maxLayerLevels)
+void TextureArrayResource::initialize(uint32_t width, uint32_t height, vk::Format pixelFormat, bool mipLevels, uint32_t maxLayerLevels)
 {
     mWidth = width;
     mHeight = height;
@@ -36,31 +36,31 @@ void TextureArrayResource::uploadData(uint8* data, uint32_t dataCount)
     vk::Format vulkanImageFormat;
     switch (mPixelFormat)
     {
-    case PIXEL_FORMAT::PIXEL_FORMAT_R8G8B8_UNORM:
+    case vk::Format::PIXEL_FORMAT_R8G8B8_UNORM:
         pixelSize = (size_t)mWidth * mHeight * 3;
         vulkanImageFormat = vk::Format::eR8G8B8Unorm;
         break;
-    case PIXEL_FORMAT::PIXEL_FORMAT_R8G8B8_SRGB:
+    case vk::Format::PIXEL_FORMAT_R8G8B8_SRGB:
         pixelSize = (size_t)mWidth * mHeight * 3;
         vulkanImageFormat = vk::Format::eR8G8B8Srgb;
         break;
-    case PIXEL_FORMAT::PIXEL_FORMAT_R8G8B8A8_UNORM:
+    case vk::Format::PIXEL_FORMAT_R8G8B8A8_UNORM:
         pixelSize = (size_t)mWidth * mHeight * 4;
         vulkanImageFormat = vk::Format::eR8G8B8A8Unorm;
         break;
-    case PIXEL_FORMAT::PIXEL_FORMAT_R8G8B8A8_SRGB:
+    case vk::Format::PIXEL_FORMAT_R8G8B8A8_SRGB:
         pixelSize = (size_t)mWidth * mHeight * 4;
         vulkanImageFormat = vk::Format::eR8G8B8A8Srgb;
         break;
-    case PIXEL_FORMAT::PIXEL_FORMAT_R32G32_FLOAT:
+    case vk::Format::PIXEL_FORMAT_R32G32_FLOAT:
         pixelSize = (size_t)mWidth * mHeight * 4 * 2;
         vulkanImageFormat = vk::Format::eR32G32Sfloat;
         break;
-    case PIXEL_FORMAT::PIXEL_FORMAT_R32G32B32_FLOAT:
+    case vk::Format::PIXEL_FORMAT_R32G32B32_FLOAT:
         pixelSize = (size_t)mWidth * mHeight * 4 * 3;
         vulkanImageFormat = vk::Format::eR32G32B32Sfloat;
         break;
-    case PIXEL_FORMAT::PIXEL_FORMAT_R32G32B32A32_FLOAT:
+    case vk::Format::PIXEL_FORMAT_R32G32B32A32_FLOAT:
         pixelSize = (size_t)mWidth * mHeight * 4 * 4;
         vulkanImageFormat = vk::Format::eR32G32B32A32Sfloat;
         break;
@@ -169,31 +169,31 @@ ImageBufferResource TextureArrayResource::createTextureBufferResource()
     vk::Format vulkanImageFormat;
     switch (mPixelFormat)
     {
-    case PIXEL_FORMAT::PIXEL_FORMAT_R8G8B8_UNORM:
+    case vk::Format::PIXEL_FORMAT_R8G8B8_UNORM:
         pixelSize = (size_t)mWidth * mHeight * 3 * mMipLevels;
         vulkanImageFormat = vk::Format::eR8G8B8Unorm;
         break;
-    case PIXEL_FORMAT::PIXEL_FORMAT_R8G8B8_SRGB:
+    case vk::Format::PIXEL_FORMAT_R8G8B8_SRGB:
         pixelSize = (size_t)mWidth * mHeight * 3 * mMipLevels;
         vulkanImageFormat = vk::Format::eR8G8B8Srgb;
         break;
-    case PIXEL_FORMAT::PIXEL_FORMAT_R8G8B8A8_UNORM:
+    case vk::Format::PIXEL_FORMAT_R8G8B8A8_UNORM:
         pixelSize = (size_t)mWidth * mHeight * 4 * mMipLevels;
         vulkanImageFormat = vk::Format::eR8G8B8A8Unorm;
         break;
-    case PIXEL_FORMAT::PIXEL_FORMAT_R8G8B8A8_SRGB:
+    case vk::Format::PIXEL_FORMAT_R8G8B8A8_SRGB:
         pixelSize = (size_t)mWidth * mHeight * 4 * mMipLevels;
         vulkanImageFormat = vk::Format::eR8G8B8A8Srgb;
         break;
-    case PIXEL_FORMAT::PIXEL_FORMAT_R32G32_FLOAT:
+    case vk::Format::PIXEL_FORMAT_R32G32_FLOAT:
         pixelSize = (size_t)mWidth * mHeight * 4 * 2 * mMipLevels;
         vulkanImageFormat = vk::Format::eR32G32Sfloat;
         break;
-    case PIXEL_FORMAT::PIXEL_FORMAT_R32G32B32_FLOAT:
+    case vk::Format::PIXEL_FORMAT_R32G32B32_FLOAT:
         pixelSize = (size_t)mWidth * mHeight * 4 * 3 * mMipLevels;
         vulkanImageFormat = vk::Format::eR32G32B32Sfloat;
         break;
-    case PIXEL_FORMAT::PIXEL_FORMAT_R32G32B32A32_FLOAT:
+    case vk::Format::PIXEL_FORMAT_R32G32B32A32_FLOAT:
         pixelSize = (size_t)mWidth * mHeight * 4 * 4 * mMipLevels;
         vulkanImageFormat = vk::Format::eR32G32B32A32Sfloat;
         break;

@@ -1,6 +1,15 @@
 ﻿#pragma once
 #include <vulkan/vulkan.hpp>
 #include "../RenderResource/RenderData.h"
+#include "../RenderResource/ImageResource.h"
+
+struct Frame
+{
+public:
+	std::vector<vk::Framebuffer> mFramebuffer;
+	vk::RenderPass mRenderPass;
+	std::vector<std::shared_ptr<ImageResource>> mAttachments;
+};
 
 class RenderPassBase
 {

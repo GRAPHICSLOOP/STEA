@@ -17,7 +17,7 @@ private:
 	std::shared_ptr<ImageResource> mTextureResource;
 	std::string mPath;
 	uint32_t mMiplevels;
-	PIXEL_FORMAT mFormat;
+	vk::Format mFormat;
 	size_t mId;
 };
 

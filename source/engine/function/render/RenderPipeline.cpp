@@ -5,12 +5,6 @@
 
 RenderPipeline::~RenderPipeline()
 {
-    for (auto& iter : mFrame.mAttachments)
-    {
-        gRuntimeGlobalContext.getRHI()->mDevice.freeMemory(iter.second.mMemory);
-        gRuntimeGlobalContext.getRHI()->mDevice.destroyImageView(iter.second.mImageView);
-        gRuntimeGlobalContext.getRHI()->mDevice.destroyImage(iter.second.mImage);
-    }
     gRuntimeGlobalContext.getRHI()->mDevice.destroyRenderPass(mFrame.mRenderPass);
     for (auto& framebuffer : mFrame.mFramebuffer)
     {
@@ -127,7 +121,6 @@ void RenderPipeline::initialize()
     * DescriptorSetLayout 是否可以优化一下框架，目前是分散销毁，创建。
     * 可能得通过SPIRV编译器在Editor中对Shader进行编译，然后获得相关的信息，因此得统一管理shader
     */
-    // image 的创建管理 ，目前是texture是带有数据然后有的是不带数据上传的 例如attachment
     // image 的 imagelayout 管理，image创建的时候默认是underfine的，然后会根据场景调整。但是我们需要是可以及时记录正确的imagelayout给后面使用
     // 然后得产出两篇文章，一篇是SPIRV编译器自动化生成各种信息的，一篇是subpass的理解笔记
 
@@ -178,59 +171,34 @@ void RenderPipeline::endDraw()
 
 void RenderPipeline::createAttachment()
 {
-    AttachmentBufferResource depthFrameBufferAttachment;
-    depthFrameBufferAttachment.mFormat = vk::Format::eD24UnormS8Uint;
-    VulkanUtil::createImage(
+    std::shared_ptr<ImageResource> depthFrameBufferAttachment = ImageResource::createAttachment(
         gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.width,
         gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.height,
-        depthFrameBufferAttachment.mFormat,
-        vk::ImageTiling::eOptimal,
         vk::ImageUsageFlagBits::eDepthStencilAttachment | vk::ImageUsageFlagBits::eInputAttachment,
-        vk::MemoryPropertyFlagBits::eDeviceLocal,
-        depthFrameBufferAttachment.mImage,
-        depthFrameBufferAttachment.mMemory);
-    depthFrameBufferAttachment.mImageView = VulkanUtil::createImageView(
         vk::ImageAspectFlagBits::eDepth,
-        depthFrameBufferAttachment.mFormat,
-        depthFrameBufferAttachment.mImage);
+        vk::Format::eD24UnormS8Uint
+    );
 
-    AttachmentBufferResource colorFrameBufferAttachment;
-    colorFrameBufferAttachment.mFormat = gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mFormat.format;
-    VulkanUtil::createImage(
+    std::shared_ptr<ImageResource> colorFrameBufferAttachment = ImageResource::createAttachment(
         gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.width,
         gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.height,
-        colorFrameBufferAttachment.mFormat,
-        vk::ImageTiling::eOptimal,
         vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eInputAttachment,
-        vk::MemoryPropertyFlagBits::eDeviceLocal,
-        colorFrameBufferAttachment.mImage,
-        colorFrameBufferAttachment.mMemory
-    );
-    colorFrameBufferAttachment.mImageView = VulkanUtil::createImageView(
         vk::ImageAspectFlagBits::eColor,
-        colorFrameBufferAttachment.mFormat,
-        colorFrameBufferAttachment.mImage);
+        gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mFormat.format
+    );
 
-    AttachmentBufferResource normalFrameBufferAttachment;
-    normalFrameBufferAttachment.mFormat = vk::Format::eR8G8B8A8Unorm;
-    VulkanUtil::createImage(
+    std::shared_ptr<ImageResource> normalFrameBufferAttachment = ImageResource::createAttachment(
         gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.width,
         gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.height,
-        normalFrameBufferAttachment.mFormat,
-        vk::ImageTiling::eOptimal,
         vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eInputAttachment,
-        vk::MemoryPropertyFlagBits::eDeviceLocal,
-        normalFrameBufferAttachment.mImage,
-        normalFrameBufferAttachment.mMemory
-    );
-    normalFrameBufferAttachment.mImageView = VulkanUtil::createImageView(
         vk::ImageAspectFlagBits::eColor,
-        normalFrameBufferAttachment.mFormat ,
-        normalFrameBufferAttachment.mImage);
+        vk::Format::eR8G8B8A8Unorm
+    );
 
-    mFrame.mAttachments[ATTACHMENT_TYPE::Depth] = depthFrameBufferAttachment;
-    mFrame.mAttachments[ATTACHMENT_TYPE::Color] = colorFrameBufferAttachment;
-    mFrame.mAttachments[ATTACHMENT_TYPE::Normal] = normalFrameBufferAttachment;
+    mFrame.mAttachments.resize(3);
+    mFrame.mAttachments[0] = depthFrameBufferAttachment;
+    mFrame.mAttachments[1] = colorFrameBufferAttachment;
+    mFrame.mAttachments[2] = normalFrameBufferAttachment;
 }
 
 void RenderPipeline::createRenderPass()
@@ -250,7 +218,7 @@ void RenderPipeline::createRenderPass()
 
     // color attachment
     vk::AttachmentDescription& colorAttachmentDesc = attachmentDesces[1];
-    colorAttachmentDesc.format = mFrame.mAttachments[ATTACHMENT_TYPE::Color].mFormat;
+    colorAttachmentDesc.format = mFrame.mAttachments[1]->mImageBufferResource.mFormat;
     colorAttachmentDesc.samples = vk::SampleCountFlagBits::e1;
     colorAttachmentDesc.loadOp = vk::AttachmentLoadOp::eClear;
     colorAttachmentDesc.storeOp = vk::AttachmentStoreOp::eDontCare;
@@ -261,7 +229,7 @@ void RenderPipeline::createRenderPass()
 
     // normal attachment
     vk::AttachmentDescription& normalAttachmentDesc = attachmentDesces[2];
-    normalAttachmentDesc.format = mFrame.mAttachments[ATTACHMENT_TYPE::Normal].mFormat;
+    normalAttachmentDesc.format = mFrame.mAttachments[2]->mImageBufferResource.mFormat;
     normalAttachmentDesc.samples = vk::SampleCountFlagBits::e1;
     normalAttachmentDesc.loadOp = vk::AttachmentLoadOp::eClear;
     normalAttachmentDesc.storeOp = vk::AttachmentStoreOp::eDontCare;
@@ -272,7 +240,7 @@ void RenderPipeline::createRenderPass()
 
     // depth stencil attachment
     vk::AttachmentDescription& depthAttachmentDesc = attachmentDesces[3];
-    depthAttachmentDesc.format = mFrame.mAttachments[ATTACHMENT_TYPE::Depth].mFormat;
+    depthAttachmentDesc.format = mFrame.mAttachments[0]->mImageBufferResource.mFormat;
     depthAttachmentDesc.samples = vk::SampleCountFlagBits::e1;
     depthAttachmentDesc.loadOp = vk::AttachmentLoadOp::eClear;
     depthAttachmentDesc.storeOp = vk::AttachmentStoreOp::eDontCare;
@@ -355,9 +323,9 @@ void RenderPipeline::createFrameBuffer()
     for (uint32_t i = 0; i < gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mImageCount; i++)
     {
         attachments[0] = gRuntimeGlobalContext.getRHI()->mSwapchainImageViews[i];
-        attachments[1] = mFrame.mAttachments[ATTACHMENT_TYPE::Color].mImageView;
-        attachments[2] = mFrame.mAttachments[ATTACHMENT_TYPE::Normal].mImageView;
-        attachments[3] = mFrame.mAttachments[ATTACHMENT_TYPE::Depth].mImageView;
+        attachments[1] = mFrame.mAttachments[1]->mImageBufferResource.mImageInfo.imageView;
+        attachments[2] = mFrame.mAttachments[2]->mImageBufferResource.mImageInfo.imageView;
+        attachments[3] = mFrame.mAttachments[0]->mImageBufferResource.mImageInfo.imageView;
 
         mFrame.mFramebuffer[i] = gRuntimeGlobalContext.getRHI()->mDevice.createFramebuffer(info);
         CHECK_NULL(mFrame.mFramebuffer[i]);

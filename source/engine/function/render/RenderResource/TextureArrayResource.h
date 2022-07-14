@@ -11,7 +11,7 @@ public:
 	void initialize(
 		uint32_t width,
 		uint32_t height,
-		PIXEL_FORMAT pixelFormat,
+		vk::Format pixelFormat,
 		bool mipLevels,
 		uint32_t maxLayerLevels);
 
@@ -27,7 +27,7 @@ private:
 private:
 	uint32_t mWidth;
 	uint32_t mHeight;
-	PIXEL_FORMAT mPixelFormat;
+	vk::Format mPixelFormat;
 	uint32_t mMipLevels;
 	uint32_t mMaxLayerLevels;
 	VkDeviceSize mMemoryOffset;

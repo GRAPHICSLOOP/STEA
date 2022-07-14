@@ -61,6 +61,9 @@
     <Filter Include="source\engine\function\render\renderResource">
       <UniqueIdentifier>{e298f2d2-c7d0-4aa1-b10e-945e2199628b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\engine\function\render\Helpler">
+      <UniqueIdentifier>{f4389f2f-f835-43f7-a768-e84804b61a04}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -90,10 +93,10 @@
     <ClCompile Include="source\engine\function\render\VulkanRHI.cpp">
       <Filter>source\engine\function\render</Filter>
     </ClCompile>
-    <ClCompile Include="source\engine\function\render\RenderResource\MeshResource.cpp">
+    <ClCompile Include="source\engine\function\render\renderResource\MeshResource.cpp">
       <Filter>source\engine\function\render\renderResource</Filter>
     </ClCompile>
-    <ClCompile Include="source\engine\function\render\RenderResource\ImageResource.cpp">
+    <ClCompile Include="source\engine\function\render\renderResource\ImageResource.cpp">
       <Filter>source\engine\function\render\renderResource</Filter>
     </ClCompile>
     <ClCompile Include="source\engine\function\render\RenderPipeline.cpp">
@@ -141,7 +144,7 @@
     <ClCompile Include="source\editor\SceneInputManager.cpp">
       <Filter>source\editor</Filter>
     </ClCompile>
-    <ClCompile Include="source\engine\function\render\RenderResource\RenderData.cpp">
+    <ClCompile Include="source\engine\function\render\renderResource\RenderData.cpp">
       <Filter>source\engine\function\render\renderResource</Filter>
     </ClCompile>
     <ClCompile Include="source\engine\function\render\pass\RenderPassBase.cpp">
@@ -168,20 +171,17 @@
     <ClCompile Include="3rdparty\imgui\imgui_widgets.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="source\engine\function\render\RenderResource\IndexResource.cpp">
+    <ClCompile Include="source\engine\function\render\renderResource\IndexResource.cpp">
       <Filter>source\engine\function\render\renderResource</Filter>
     </ClCompile>
-    <ClCompile Include="source\engine\function\render\RenderResource\VertexResource.cpp">
+    <ClCompile Include="source\engine\function\render\renderResource\VertexResource.cpp">
       <Filter>source\engine\function\render\renderResource</Filter>
     </ClCompile>
-    <ClCompile Include="source\engine\function\render\RenderResource\BufferResource.cpp">
+    <ClCompile Include="source\engine\function\render\renderResource\BufferResource.cpp">
       <Filter>source\engine\function\render\renderResource</Filter>
     </ClCompile>
     <ClCompile Include="source\engine\function\render\pass\PostProcessPass.cpp">
       <Filter>source\engine\function\render\pass</Filter>
-    </ClCompile>
-    <ClCompile Include="source\engine\function\render\RenderResource\TextureArrayResource.cpp">
-      <Filter>source\engine\function\render\renderResource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -212,13 +212,13 @@
     <ClInclude Include="source\engine\function\render\VulkanRHI.h">
       <Filter>source\engine\function\render</Filter>
     </ClInclude>
-    <ClInclude Include="source\engine\function\render\RenderResource\MeshResource.h">
+    <ClInclude Include="source\engine\function\render\renderResource\MeshResource.h">
       <Filter>source\engine\function\render\renderResource</Filter>
     </ClInclude>
-    <ClInclude Include="source\engine\function\render\RenderResource\RenderData.h">
+    <ClInclude Include="source\engine\function\render\renderResource\RenderData.h">
       <Filter>source\engine\function\render\renderResource</Filter>
     </ClInclude>
-    <ClInclude Include="source\engine\function\render\RenderResource\ImageResource.h">
+    <ClInclude Include="source\engine\function\render\renderResource\ImageResource.h">
       <Filter>source\engine\function\render\renderResource</Filter>
     </ClInclude>
     <ClInclude Include="source\engine\function\render\RenderPipeline.h">
@@ -293,20 +293,18 @@
     <ClInclude Include="3rdparty\imgui\imstb_truetype.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="source\engine\function\render\RenderResource\IndexResource.h">
+    <ClInclude Include="source\engine\function\render\renderResource\IndexResource.h">
       <Filter>source\engine\function\render\renderResource</Filter>
     </ClInclude>
-    <ClInclude Include="source\engine\function\render\RenderResource\VertexResource.h">
+    <ClInclude Include="source\engine\function\render\renderResource\VertexResource.h">
       <Filter>source\engine\function\render\renderResource</Filter>
     </ClInclude>
-    <ClInclude Include="source\engine\function\render\RenderResource\BufferResource.h">
+    <ClInclude Include="source\engine\function\render\renderResource\BufferResource.h">
       <Filter>source\engine\function\render\renderResource</Filter>
     </ClInclude>
     <ClInclude Include="source\engine\function\render\pass\PostProcessPass.h">
       <Filter>source\engine\function\render\renderResource</Filter>
     </ClInclude>
-    <ClInclude Include="source\engine\function\render\RenderResource\TextureArrayResource.h">
-      <Filter>source\engine\function\render\renderResource</Filter>
-    </ClInclude>
+    <ClInclude Include="source\engine\function\render\helpler\SpirvHelper.h" />
   </ItemGroup>
 </Project>

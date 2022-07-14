@@ -2,7 +2,6 @@
 #include "core/base/macro.h"
 #include "VulkanUtil.h"
 
-
 VulkanRHI::~VulkanRHI()
 {
     for (uint32_t i = 0; i < mSwapchainSupportDetails.mImageCount; i++)
@@ -303,11 +302,15 @@ void VulkanRHI::createSwapchainImageViews()
 {
     for (uint32_t i = 0; i < mSwapchainSupportDetails.mImageCount; i++)
     {
-        vk::ImageView imageView = VulkanUtil::createImageView(
-            vk::ImageAspectFlagBits::eColor,
-            mSwapchainSupportDetails.mFormat.format,
-            mSwapchainImages[i]);
-        CHECK_NULL(imageView);
+        vk::ImageViewCreateInfo viewInfo;
+        viewInfo.image = mSwapchainImages[i];
+        viewInfo.viewType = vk::ImageViewType::e2D;
+        viewInfo.format = mSwapchainSupportDetails.mFormat.format;
+        viewInfo.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
+        viewInfo.subresourceRange.aspectMask = vk::ImageAspectFlagBits::eColor;
+        viewInfo.subresourceRange.layerCount = 1;
+        viewInfo.subresourceRange.levelCount = 1;
+        vk::ImageView imageView = mDevice.createImageView(viewInfo);
 
         mSwapchainImageViews.push_back(imageView);
     }

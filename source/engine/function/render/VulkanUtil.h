@@ -9,24 +9,6 @@ public:
         uint32_t typeFilter,
         vk::MemoryPropertyFlags property);
 
-    static void createImage(
-        uint32_t imageWidth,
-        uint32_t imageHeight,
-        vk::Format format,
-        vk::ImageTiling tilling,
-        vk::ImageUsageFlags usage,
-        vk::MemoryPropertyFlags properties,
-        vk::Image& image,
-        vk::DeviceMemory& imageMemory,
-        uint32_t mipLevel = 1,
-        vk::SampleCountFlagBits numSamples = vk::SampleCountFlagBits::e1,
-        uint32_t layerLevel = 1);
-
-    static vk::ImageView createImageView(
-        vk::ImageAspectFlags aspectMask,
-        vk::Format fomat,
-        vk::Image image);
-
     static std::vector<char> readFile(const char* fileName);
 
     static vk::ShaderModule createShaderModule(const std::vector<char>& code);
@@ -40,34 +22,10 @@ public:
         vk::Buffer& buffer,
         vk::DeviceMemory& bufferMemory);
 
-    static void transitionImageLayout(
-        vk::Image& image,
-        vk::Format format,
-        vk::ImageLayout oldLayout,
-        vk::ImageLayout newLayout,
-        uint32_t mipLevel);
-
     static void copyBuffer(
         vk::Buffer srcBuffer,
         vk::Buffer dstBuffer,
         vk::DeviceSize size);
-
-    static struct ImageBufferResource createTextureBufferResource(
-        uint32_t width,
-        uint32_t height,
-        void* pixels,
-        PIXEL_FORMAT pixelFormat,
-        uint32_t miplevels);
-
-    static vk::Sampler createTextureSampler(uint32_t mipLevels);
-
-    static void copyBufferToImage(vk::Buffer buffer, vk::Image image, uint32_t width, uint32_t height);
-
-    static void generateMipmaps(vk::Image image, uint32_t width, uint32_t hegith, uint32_t miplevels);
-
-    static void imagePipelineBarrier(vk::CommandBuffer commandbuffer, vk::Image image, IMAGE_LAYOUT_BARRIER source, IMAGE_LAYOUT_BARRIER dest, const vk::ImageSubresourceRange& subresourceRange);
-
-    static void setImageBarrierInfo(IMAGE_LAYOUT_BARRIER target, vk::AccessFlags& accessFlags, vk::ImageLayout& layout, vk::PipelineStageFlags& stages);
 
 };
 

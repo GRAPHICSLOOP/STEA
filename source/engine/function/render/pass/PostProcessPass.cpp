@@ -55,7 +55,7 @@ void PostProcessPass::createDescriptorSet(Frame& frame)
 
 	// colorImageInfo
 	imageInfo.imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal;
-	imageInfo.imageView = frame.mAttachments[ATTACHMENT_TYPE::Color].mImageView;
+	imageInfo.imageView = frame.mAttachments[1]->mImageBufferResource.mImageInfo.imageView;
 	imageInfo.sampler = VK_NULL_HANDLE;
 		
 	// 更新描述符
@@ -71,7 +71,7 @@ void PostProcessPass::createDescriptorSet(Frame& frame)
 
 	// normalImageInfo
 	imageInfo.imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal;
-	imageInfo.imageView = frame.mAttachments[ATTACHMENT_TYPE::Normal].mImageView;
+	imageInfo.imageView = frame.mAttachments[2]->mImageBufferResource.mImageInfo.imageView;
 	imageInfo.sampler = VK_NULL_HANDLE;
 
 	// 更新描述符
@@ -87,7 +87,7 @@ void PostProcessPass::createDescriptorSet(Frame& frame)
 
 	// depthImageInfo
 	imageInfo.imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal;
-	imageInfo.imageView = frame.mAttachments[ATTACHMENT_TYPE::Depth].mImageView;
+	imageInfo.imageView = frame.mAttachments[0]->mImageBufferResource.mImageInfo.imageView;
 	imageInfo.sampler = VK_NULL_HANDLE;
 
 	// 更新描述符
