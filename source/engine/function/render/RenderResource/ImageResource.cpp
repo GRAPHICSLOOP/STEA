@@ -16,18 +16,6 @@ ImageResource::~ImageResource()
     gRuntimeGlobalContext.getRHI()->mDevice.destroySampler(mImageBufferResource.mImageInfo.sampler);
 }
 
-void ImageResource::initialize(
-    uint32_t width,
-    uint32_t height,
-    void* pixels,
-    vk::Format pixelFormat,
-    uint32_t miplevels)
-{
-    //mImageBufferResource = VulkanUtil::createTextureBufferResource(width, height, pixels, pixelFormat, miplevels);
-    //mImageBufferResource.mImageInfo.sampler = createTextureSampler(miplevels);
-    //createDescriptorSet();
-}
-
 void ImageResource::getPixelInfo(const vk::Format pixelFormat, const uint32_t width, const uint32_t height, size_t& pixelSize)
 {
     switch (pixelFormat)

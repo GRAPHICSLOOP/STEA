@@ -17,12 +17,6 @@ class ImageResource
 public:
 	ImageResource();
 	~ImageResource();
-	void initialize(
-		uint32_t width,
-		uint32_t height,
-		void* pixels,
-		vk::Format pixelFormat,
-		uint32_t miplevels);
 
 	static void getPixelInfo(const vk::Format pixelFormat,const uint32_t width,const uint32_t height, size_t& pixelSize);
 	static void setImageLayout(vk::CommandBuffer cmdBuffer, ImageBufferResource* image, vk::ImageLayout dstLayout, const vk::ImageSubresourceRange& subresourceRange);
