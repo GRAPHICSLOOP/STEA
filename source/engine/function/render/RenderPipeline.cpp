@@ -64,6 +64,7 @@ void RenderPipeline::initialize()
 
     // postprocesspass
     {
+
         // layout
         vk::DescriptorSetLayoutCreateInfo descriptorSetLayoutInfo;
         std::array<vk::DescriptorSetLayoutBinding, 3> bindings;
@@ -121,7 +122,6 @@ void RenderPipeline::initialize()
     * DescriptorSetLayout 是否可以优化一下框架，目前是分散销毁，创建。
     * 可能得通过SPIRV编译器在Editor中对Shader进行编译，然后获得相关的信息，因此得统一管理shader
     */
-    // image 的 imagelayout 管理，image创建的时候默认是underfine的，然后会根据场景调整。但是我们需要是可以及时记录正确的imagelayout给后面使用
     // 然后得产出两篇文章，一篇是SPIRV编译器自动化生成各种信息的，一篇是subpass的理解笔记
 
 	//mUIPass = std::make_shared<UIPass>();

@@ -67,7 +67,6 @@
     <ClInclude Include="3rdparty\imgui\imstb_rectpack.h" />
     <ClInclude Include="3rdparty\imgui\imstb_textedit.h" />
     <ClInclude Include="3rdparty\imgui\imstb_truetype.h" />
-    <ClInclude Include="source\engine\function\render\helpler\SpirvHelper.h" />
     <ClInclude Include="source\engine\function\render\pass\PostProcessPass.h" />
     <ClInclude Include="source\engine\function\render\renderResource\BufferResource.h" />
     <ClInclude Include="source\engine\function\render\renderResource\IndexResource.h" />
@@ -203,12 +202,12 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>F:\Jacson\Documents\Learning\STEA\3rdparty\glslang\include;F:\Jacson\Documents\Learning\STEA\3rdparty\imgui;F:\Jacson\Documents\Learning\STEA\source\engine;F:\Jacson\Documents\Learning\STEA\3rdparty\spdlog\include;F:\Jacson\Documents\Learning\STEA\3rdparty\assimp\include;F:\Jacson\Documents\Learning\STEA\3rdparty\glm;F:\Jacson\Documents\Learning\STEA\3rdparty\VulkanSDK\include;F:\Jacson\Documents\Learning\STEA\3rdparty\glfw\include;F:\Jacson\Documents\Learning\STEA\3rdparty\tool;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>F:\Jacson\Documents\Learning\STEA\3rdparty\imgui;F:\Jacson\Documents\Learning\STEA\source\engine;F:\Jacson\Documents\Learning\STEA\3rdparty\spdlog\include;F:\Jacson\Documents\Learning\STEA\3rdparty\assimp\include;F:\Jacson\Documents\Learning\STEA\3rdparty\glm;F:\Jacson\Documents\Learning\STEA\3rdparty\VulkanSDK\include;F:\Jacson\Documents\Learning\STEA\3rdparty\glfw\include;F:\Jacson\Documents\Learning\STEA\3rdparty\tool;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>F:\Jacson\Documents\Learning\STEA\3rdparty\glslang\lib;F:\Jacson\Documents\Learning\STEA\3rdparty\VulkanSDK\lib;F:\Jacson\Documents\Learning\STEA\3rdparty\glfw\lib;F:\Jacson\Documents\Learning\STEA\3rdparty\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>F:\Jacson\Documents\Learning\STEA\3rdparty\VulkanSDK\lib;F:\Jacson\Documents\Learning\STEA\3rdparty\glfw\lib;F:\Jacson\Documents\Learning\STEA\3rdparty\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>glfw3.lib;vulkan-1.lib;assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>MSVCRT</IgnoreSpecificDefaultLibraries>
       <DelayLoadDLLs>

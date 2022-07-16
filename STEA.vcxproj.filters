@@ -61,9 +61,6 @@
     <Filter Include="source\engine\function\render\renderResource">
       <UniqueIdentifier>{e298f2d2-c7d0-4aa1-b10e-945e2199628b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\engine\function\render\Helpler">
-      <UniqueIdentifier>{f4389f2f-f835-43f7-a768-e84804b61a04}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -305,6 +302,5 @@
     <ClInclude Include="source\engine\function\render\pass\PostProcessPass.h">
       <Filter>source\engine\function\render\renderResource</Filter>
     </ClInclude>
-    <ClInclude Include="source\engine\function\render\helpler\SpirvHelper.h" />
   </ItemGroup>
 </Project>
