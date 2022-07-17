@@ -61,6 +61,18 @@
     <Filter Include="source\engine\function\render\renderResource">
       <UniqueIdentifier>{e298f2d2-c7d0-4aa1-b10e-945e2199628b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\engine\function\platform">
+      <UniqueIdentifier>{c92368ca-384e-45d0-8fc2-bda0f550df18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\engine\function\platform\file">
+      <UniqueIdentifier>{14c75d49-333b-4b2f-b19f-a2bc83c3a4b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\engine\function\platform\path">
+      <UniqueIdentifier>{25602caf-5889-4066-9520-f6273ef746ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\engine\function\render\shader">
+      <UniqueIdentifier>{5384e869-24ad-40ff-9d4c-fa881daaf1e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -179,6 +191,15 @@
     </ClCompile>
     <ClCompile Include="source\engine\function\render\pass\PostProcessPass.cpp">
       <Filter>source\engine\function\render\pass</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\function\platform\path\PathManager.cpp">
+      <Filter>source\engine\function\platform\path</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\function\platform\file\FileManager.cpp">
+      <Filter>source\engine\function\platform\file</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\function\render\shader\Shader.cpp">
+      <Filter>source\engine\function\render\shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -301,6 +322,15 @@
     </ClInclude>
     <ClInclude Include="source\engine\function\render\pass\PostProcessPass.h">
       <Filter>source\engine\function\render\renderResource</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\platform\path\PathManager.h">
+      <Filter>source\engine\function\platform\path</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\platform\file\FileManager.h">
+      <Filter>source\engine\function\platform\file</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\render\shader\Shader.h">
+      <Filter>source\engine\function\render\shader</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
