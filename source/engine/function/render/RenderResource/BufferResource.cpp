@@ -5,7 +5,6 @@
 
 BufferResource::~BufferResource()
 {
-    gRuntimeGlobalContext.getRHI()->mDevice.destroyDescriptorSetLayout(mDescSetLayout);
     for (const auto& atrr : mBufferAttributes)
     {
         vkUnmapMemory(gRuntimeGlobalContext.getRHI()->mDevice, atrr.mBufferMemory);
@@ -15,7 +14,7 @@ BufferResource::~BufferResource()
 
 }
 
-std::shared_ptr<BufferResource> BufferResource::create(const std::vector<BufferAttributes>& bufferAttributes)
+std::shared_ptr<BufferResource> BufferResource::create(vk::DescriptorSetLayout setLayout,const std::vector<BufferAttributes>& bufferAttributes)
 {
     struct make_shared_enabler : public BufferResource {};
     std::shared_ptr<BufferResource> bufferResource = std::make_shared<make_shared_enabler>();
@@ -32,8 +31,7 @@ std::shared_ptr<BufferResource> BufferResource::create(const std::vector<BufferA
         vkMapMemory(gRuntimeGlobalContext.getRHI()->mDevice, atrr.mBufferMemory, 0, atrr.mBufferSize, 0, &atrr.mData);
     }
 
-    bufferResource->createDescriptorLayout();
-    bufferResource->createDescriptorSet();
+    bufferResource->createDescriptorSet(setLayout);
 
     return bufferResource;
 }
@@ -83,32 +81,12 @@ void BufferResource::setUpAlignment()
 
 }
 
-void BufferResource::createDescriptorLayout()
-{
-    // DynamicUniform DescriptorSetLayout
-    vk::DescriptorSetLayoutCreateInfo info;
-    std::vector< vk::DescriptorSetLayoutBinding> binding;
-    binding.resize(mBufferAttributes.size());
-
-    for (uint32_t i = 0; i < mBufferAttributes.size(); i++)
-    {
-        binding[i].binding = i;
-        binding[i].descriptorCount = 1;
-        binding[i].descriptorType = mBufferAttributes[i].mDescriptorType;
-        binding[i].stageFlags = mBufferAttributes[i].mShaderStage;
-    }
-
-    info.bindingCount = (uint32_t)binding.size();
-    info.pBindings = binding.data();
-    mDescSetLayout = gRuntimeGlobalContext.getRHI()->mDevice.createDescriptorSetLayout(info);
-}
-
-void BufferResource::createDescriptorSet()
+void BufferResource::createDescriptorSet(vk::DescriptorSetLayout setLayout)
 {
     vk::DescriptorSetAllocateInfo info;
     info.descriptorPool = gRuntimeGlobalContext.getRHI()->mDescriptorPool;
     info.descriptorSetCount = 1;
-    info.pSetLayouts = &mDescSetLayout;
+    info.pSetLayouts = &setLayout;
     mDescriptorSet = gRuntimeGlobalContext.getRHI()->mDevice.allocateDescriptorSets(info)[0];
 
 

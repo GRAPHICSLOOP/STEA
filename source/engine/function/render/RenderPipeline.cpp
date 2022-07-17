@@ -2,6 +2,7 @@
 #include "function/global/RuntimeGlobalContext.h"
 #include "VulkanUtil.h"
 #include "core/base/macro.h"
+#include "shader/Shader.h"
 
 RenderPipeline::~RenderPipeline()
 {
@@ -21,9 +22,6 @@ void RenderPipeline::initialize()
 
     // maincamerapass
     {
-        std::vector<vk::DescriptorSetLayout> descSetLayouts(2);
-        descSetLayouts[0] = gRuntimeGlobalContext.getRenderResource()->mUniformResource->mDescSetLayout;
-        descSetLayouts[1] = gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout(DESCRIPTOR_TYPE::DT_Sample);
 
         // vertex Descriptions
         vk::PipelineVertexInputStateCreateInfo vertexInfo;
@@ -56,7 +54,7 @@ void RenderPipeline::initialize()
         mCameraPass = std::make_shared<MainCameraPass>();
         mCameraPass->mColorBlendAttachmentCount = 2;
         mCameraPass->mPushRange.push_back(pushRange);
-        mCameraPass->initialize(vertexInfo, shaderStatus, descSetLayouts, mFrame.mRenderPass);
+        mCameraPass->initialize(vertexInfo, shaderStatus, gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout("obj"), mFrame.mRenderPass);
 
         gRuntimeGlobalContext.getRHI()->mDevice.destroyShaderModule(vertShaderModule);
         gRuntimeGlobalContext.getRHI()->mDevice.destroyShaderModule(fragShaderModule);
@@ -64,6 +62,7 @@ void RenderPipeline::initialize()
 
     // postprocesspass
     {
+
 
         // layout
         vk::DescriptorSetLayoutCreateInfo descriptorSetLayoutInfo;
@@ -176,7 +175,8 @@ void RenderPipeline::createAttachment()
         gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.height,
         vk::ImageUsageFlagBits::eDepthStencilAttachment | vk::ImageUsageFlagBits::eInputAttachment,
         vk::ImageAspectFlagBits::eDepth,
-        vk::Format::eD24UnormS8Uint
+        vk::Format::eD24UnormS8Uint,
+        gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout("quad")[0]
     );
 
     std::shared_ptr<ImageResource> colorFrameBufferAttachment = ImageResource::createAttachment(
@@ -184,7 +184,8 @@ void RenderPipeline::createAttachment()
         gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.height,
         vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eInputAttachment,
         vk::ImageAspectFlagBits::eColor,
-        gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mFormat.format
+        gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mFormat.format,
+        gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout("quad")[0]
     );
 
     std::shared_ptr<ImageResource> normalFrameBufferAttachment = ImageResource::createAttachment(
@@ -192,7 +193,8 @@ void RenderPipeline::createAttachment()
         gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.height,
         vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eInputAttachment,
         vk::ImageAspectFlagBits::eColor,
-        vk::Format::eR8G8B8A8Unorm
+        vk::Format::eR8G8B8A8Unorm,
+        gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout("quad")[0]
     );
 
     mFrame.mAttachments.resize(3);

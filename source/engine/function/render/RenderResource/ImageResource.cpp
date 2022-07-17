@@ -142,7 +142,8 @@ std::shared_ptr<ImageResource> ImageResource::createTextureResource(
     vk::ImageUsageFlags usage, 
     void* pixels, 
     vk::Format pixelFormat, 
-    bool miplevel)
+    bool miplevel,
+    vk::DescriptorSetLayout setLayout)
 {
     // 确定是否需要mipmap
     uint32_t miplevels = 1;
@@ -327,16 +328,17 @@ std::shared_ptr<ImageResource> ImageResource::createTextureResource(
     }
 
     // create set
-    imageResource->createDescriptorSet();
+    imageResource->createDescriptorSet(setLayout);
 
     // clear
     gRuntimeGlobalContext.getRHI()->mDevice.destroyBuffer(stagingBuffer);
     gRuntimeGlobalContext.getRHI()->mDevice.freeMemory(stagingBufferMemory);
 
+    imageBufferResource.mFormat = pixelFormat;
     return imageResource;
 }
 
-std::shared_ptr<ImageResource> ImageResource::createAttachment(uint32_t width, uint32_t height, vk::ImageUsageFlags usage, vk::ImageAspectFlags aspectFlags, vk::Format pixelFormat)
+std::shared_ptr<ImageResource> ImageResource::createAttachment(uint32_t width, uint32_t height, vk::ImageUsageFlags usage, vk::ImageAspectFlags aspectFlags, vk::Format pixelFormat,vk::DescriptorSetLayout setLayout)
 {
     uint32_t miplevels = 1;
     std::shared_ptr<ImageResource> imageResource = std::make_shared<ImageResource>();
@@ -410,20 +412,13 @@ std::shared_ptr<ImageResource> ImageResource::createAttachment(uint32_t width, u
     return imageResource;
 }
 
-void ImageResource::createDescriptorSet()
+void ImageResource::createDescriptorSet(vk::DescriptorSetLayout setLayout)
 {
-    vk::DescriptorSetLayout setLayout = gRuntimeGlobalContext.getRenderSystem()->mRenderResource->getDescriptorSetLayout(DT_Sample);
-
     vk::DescriptorSetAllocateInfo info;
     info.descriptorPool = gRuntimeGlobalContext.getRHI()->mDescriptorPool;
     info.descriptorSetCount = 1;
     info.pSetLayouts = &setLayout;
     mImageBufferResource.mDescriptorSet = gRuntimeGlobalContext.getRHI()->mDevice.allocateDescriptorSets(info)[0];
-
-    vk::DescriptorImageInfo imageInfo;
-    imageInfo.imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal;
-    imageInfo.imageView = mImageBufferResource.mImageInfo.imageView;
-    imageInfo.sampler = mImageBufferResource.mImageInfo.sampler;
 
     // 更新描述符
     std::array<vk::WriteDescriptorSet, 1> writeSet;
@@ -432,7 +427,7 @@ void ImageResource::createDescriptorSet()
     writeSet[0].dstSet = mImageBufferResource.mDescriptorSet;
     writeSet[0].descriptorType = vk::DescriptorType::eCombinedImageSampler;
     writeSet[0].descriptorCount = 1;
-    writeSet[0].pImageInfo = &imageInfo;
+    writeSet[0].pImageInfo = &mImageBufferResource.mImageInfo;
 
     gRuntimeGlobalContext.getRHI()->mDevice.updateDescriptorSets(writeSet, nullptr);
 }

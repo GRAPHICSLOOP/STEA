@@ -14,6 +14,7 @@ RenderResource::~RenderResource()
 
 void RenderResource::initialize()
 {
+    createShaders();
     createDescriptorSetLayout();
     createBufferResource();
 }
@@ -47,18 +48,49 @@ void RenderResource::addObjectBufferResource(size_t objectID, void* data, vk::De
     mObjectBufferData[objectID] = *(ObjectBufferData*)data;
 }
 
-vk::DescriptorSetLayout RenderResource::getDescriptorSetLayout(DESCRIPTOR_TYPE type)
+//vk::DescriptorSetLayout RenderResource::getDescriptorSetLayout(DESCRIPTOR_TYPE type)
+//{
+//    CHECK_NULL(mDescSetLayouts[type]);
+//    return mDescSetLayouts[type];
+//}
+
+std::vector<vk::DescriptorSetLayout> RenderResource::getDescriptorSetLayout(std::string shaderName)
 {
-    CHECK_NULL(mDescSetLayouts[type]);
-    return mDescSetLayouts[type];
+    auto iter = mGlobalShader.find(shaderName);
+    if (iter == mGlobalShader.end())
+    {
+        STEALOG_ERROR("null shader {} ", shaderName.c_str());
+        return std::vector<vk::DescriptorSetLayout>();
+    }
+    else
+    {
+        return iter->second->mDescriptorSetLayouts;
+    }
 }
 
 void RenderResource::createBufferResource()
 {
-    mUniformResource = BufferResource::create({
+    mUniformResource = BufferResource::create(getDescriptorSetLayout("obj")[0], {
         BufferAttributes(UNIFORMBUFFERTYPE::UBT_Camera, 1, sizeof(CameraBufferData), vk::DescriptorType::eUniformBuffer, vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment),
         BufferAttributes(UNIFORMBUFFERTYPE::UBT_Object, 2, sizeof(ObjectBufferData), vk::DescriptorType::eUniformBufferDynamic, vk::ShaderStageFlagBits::eVertex)
         });
+}
+
+void RenderResource::createShaders()
+{
+    std::shared_ptr<Shader> quadShader = Shader::create
+    ({
+        ShaderInfo("shaders/quad.vspv",vk::ShaderStageFlagBits::eVertex),
+        ShaderInfo("shaders/quad.fspv",vk::ShaderStageFlagBits::eFragment)
+    });
+    std::shared_ptr<Shader> objShader = Shader::create
+    ({
+        ShaderInfo("shaders/obj.vspv",vk::ShaderStageFlagBits::eVertex),
+        ShaderInfo("shaders/obj.fspv",vk::ShaderStageFlagBits::eFragment)
+    });
+
+    mGlobalShader["quad"] = quadShader;
+    mGlobalShader["obj"] = objShader;
 }
 
 void RenderResource::createDescriptorSetLayout()

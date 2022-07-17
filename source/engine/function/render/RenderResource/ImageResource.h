@@ -29,20 +29,22 @@ public:
 		vk::ImageUsageFlags usage,
 		void* pixels,
 		vk::Format pixelFormat,
-		bool miplevel);
+		bool miplevel,
+		vk::DescriptorSetLayout setLayout);
 
 	static std::shared_ptr<ImageResource> createAttachment(
 		uint32_t width,
 		uint32_t height,
 		vk::ImageUsageFlags usage,
 		vk::ImageAspectFlags aspectFlags,
-		vk::Format pixelFormat);
+		vk::Format pixelFormat,
+		vk::DescriptorSetLayout setLayout);
 
 public:
 	ImageBufferResource mImageBufferResource;
 	
 private:
-	void createDescriptorSet();
+	void createDescriptorSet(vk::DescriptorSetLayout setLayout);
 };
 
 

@@ -51,13 +51,15 @@ void Texture2D::loadTexture()
         //    pixels,
         //    mFormat,
         //    mMiplevels);
-        mTextureResource = ImageResource::createTextureResource(
+        mTextureResource = ImageResource::createTextureResource
+        (
             mWidth,
             mHeight,
             vk::ImageUsageFlagBits::eSampled,
             pixels,
             mFormat,
-            true
+            true,
+            gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout("obj")[1]
         );
 
         gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources[mId] = mTextureResource;

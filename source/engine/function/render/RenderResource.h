@@ -7,6 +7,7 @@
 #include "function/render/RenderCamera.h"
 #include "RenderResource/BufferResource.h"
 #include "RenderResource/TextureArrayResource.h"
+#include "shader/Shader.h"
 
 
 struct ModelRenderResource
@@ -23,7 +24,8 @@ public:
 	void initialize();
 	void updatePerFrameBuffer(std::shared_ptr<RenderCamera> camera);
 	void addObjectBufferResource(size_t objectID, void* data, vk::DeviceSize dataSize);
-	vk::DescriptorSetLayout getDescriptorSetLayout(DESCRIPTOR_TYPE type);
+	//vk::DescriptorSetLayout getDescriptorSetLayout(DESCRIPTOR_TYPE type);
+	std::vector<vk::DescriptorSetLayout> getDescriptorSetLayout(std::string shaderName);
 
 public:
 	CameraBufferData mCameraBufferData;
@@ -34,10 +36,12 @@ public:
 
 private:
 	void createBufferResource();
+	void createShaders();
 	void createDescriptorSetLayout();
 	void updateUniformBuffer();
 
 private:
 	std::vector<vk::DescriptorSetLayout> mDescSetLayouts;
+	std::unordered_map<std::string, std::shared_ptr<Shader>> mGlobalShader;
 };
 
