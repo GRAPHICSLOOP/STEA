@@ -68,6 +68,19 @@ std::vector<vk::DescriptorSetLayout> RenderResource::getDescriptorSetLayout(std:
     }
 }
 
+Shader* RenderResource::getShader(std::string shaderName)
+{
+    auto iter = mGlobalShader.find(shaderName);
+    if (iter == mGlobalShader.end())
+    {
+        return nullptr;
+    }
+    else
+    {
+        return iter->second.get();
+    }
+}
+
 void RenderResource::createBufferResource()
 {
     mUniformResource = BufferResource::create(getDescriptorSetLayout("obj")[0], {

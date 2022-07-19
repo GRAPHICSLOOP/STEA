@@ -22,7 +22,6 @@ void RenderPipeline::initialize()
 
     // maincamerapass
     {
-
         // vertex Descriptions
         vk::PipelineVertexInputStateCreateInfo vertexInfo;
         auto VertexAttributeDescriptions = VertexResource::getInputAttributes({ VertexAttribute::VA_Position,VertexAttribute::VA_Color,VertexAttribute::VA_UV0 });
@@ -31,19 +30,6 @@ void RenderPipeline::initialize()
         vertexInfo.vertexBindingDescriptionCount = (uint32_t)VertexBindingDescriptions.size();
         vertexInfo.pVertexAttributeDescriptions = VertexAttributeDescriptions.data();
         vertexInfo.pVertexBindingDescriptions = VertexBindingDescriptions.data();
-
-        // shaderStatus
-        std::vector<vk::PipelineShaderStageCreateInfo> shaderStatus(2);
-        vk::PipelineShaderStageCreateInfo& vertexShader = shaderStatus[0];
-        vk::ShaderModule vertShaderModule = VulkanUtil::loadShaderModuleFromFile("shaders/obj.vspv");
-        vk::ShaderModule fragShaderModule = VulkanUtil::loadShaderModuleFromFile("shaders/obj.fspv");
-        vertexShader.module = vertShaderModule;
-        vertexShader.pName = "main";
-        vertexShader.stage = vk::ShaderStageFlagBits::eVertex;
-        vk::PipelineShaderStageCreateInfo& fragShader = shaderStatus[1];
-        fragShader.module = fragShaderModule;
-        fragShader.pName = "main";
-        fragShader.stage = vk::ShaderStageFlagBits::eFragment;
 
         // pushConstants
         vk::PushConstantRange pushRange;
@@ -54,33 +40,11 @@ void RenderPipeline::initialize()
         mCameraPass = std::make_shared<MainCameraPass>();
         mCameraPass->mColorBlendAttachmentCount = 2;
         mCameraPass->mPushRange.push_back(pushRange);
-        mCameraPass->initialize(vertexInfo, shaderStatus, gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout("obj"), mFrame.mRenderPass);
-
-        gRuntimeGlobalContext.getRHI()->mDevice.destroyShaderModule(vertShaderModule);
-        gRuntimeGlobalContext.getRHI()->mDevice.destroyShaderModule(fragShaderModule);
+        mCameraPass->initialize(vertexInfo, gRuntimeGlobalContext.getRenderResource()->getShader("obj"),  mFrame.mRenderPass);
     }
 
     // postprocesspass
     {
-
-
-        // layout
-        vk::DescriptorSetLayoutCreateInfo descriptorSetLayoutInfo;
-        std::array<vk::DescriptorSetLayoutBinding, 3> bindings;
-        for (uint32_t i = 0; i < 3; i++)
-        {
-            bindings[i].binding = i;
-            bindings[i].descriptorCount = 1;
-            bindings[i].descriptorType = vk::DescriptorType::eInputAttachment;
-            bindings[i].stageFlags = vk::ShaderStageFlagBits::eFragment;
-
-        }
-        descriptorSetLayoutInfo.bindingCount = (uint32_t)bindings.size();
-        descriptorSetLayoutInfo.pBindings = bindings.data();
-        std::vector<vk::DescriptorSetLayout> descSetLayouts = {
-            gRuntimeGlobalContext.getRHI()->mDevice.createDescriptorSetLayout(descriptorSetLayoutInfo) 
-        };
-
         // vertex Descriptions
         vk::PipelineVertexInputStateCreateInfo vertexInfo;
         auto VertexAttributeDescriptions = VertexResource::getInputAttributes({ VertexAttribute::VA_Position,VertexAttribute::VA_UV0 });
@@ -90,29 +54,13 @@ void RenderPipeline::initialize()
         vertexInfo.pVertexAttributeDescriptions = VertexAttributeDescriptions.data();
         vertexInfo.pVertexBindingDescriptions = VertexBindingDescriptions.data();
 
-        // shaderStatus
-        std::vector<vk::PipelineShaderStageCreateInfo> shaderStatus(2);
-        vk::PipelineShaderStageCreateInfo& vertexShader = shaderStatus[0];
-        vk::ShaderModule vertShaderModule = VulkanUtil::loadShaderModuleFromFile("shaders/quad.vspv");
-        vk::ShaderModule fragShaderModule = VulkanUtil::loadShaderModuleFromFile("shaders/quad.fspv");
-        vertexShader.module = vertShaderModule;
-        vertexShader.pName = "main";
-        vertexShader.stage = vk::ShaderStageFlagBits::eVertex;
-        vk::PipelineShaderStageCreateInfo& fragShader = shaderStatus[1];
-        fragShader.module = fragShaderModule;
-        fragShader.pName = "main";
-        fragShader.stage = vk::ShaderStageFlagBits::eFragment;
-
         mPostProcessPass = std::make_shared<PostProcessPass>();
         mPostProcessPass->mSubpassIndex = 1;
         mPostProcessPass->mDepthInfo.depthTestEnable = VK_FALSE;
         mPostProcessPass->mDepthInfo.depthWriteEnable = VK_FALSE;
         mPostProcessPass->mDepthInfo.stencilTestEnable = VK_FALSE;
-        mPostProcessPass->initialize(vertexInfo, shaderStatus, descSetLayouts, mFrame.mRenderPass);
+        mPostProcessPass->initialize(vertexInfo, gRuntimeGlobalContext.getRenderResource()->getShader("quad"), mFrame.mRenderPass);
         mPostProcessPass->createDescriptorSet(mFrame);
-
-        gRuntimeGlobalContext.getRHI()->mDevice.destroyShaderModule(vertShaderModule);
-        gRuntimeGlobalContext.getRHI()->mDevice.destroyShaderModule(fragShaderModule);
     }
 	
     // 待优化项

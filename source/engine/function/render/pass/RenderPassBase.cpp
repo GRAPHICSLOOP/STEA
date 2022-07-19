@@ -73,11 +73,20 @@ RenderPassBase::~RenderPassBase()
 
 vk::Pipeline RenderPassBase::initialize(
     const vk::PipelineVertexInputStateCreateInfo& vertexInfo,
-    const std::vector<vk::PipelineShaderStageCreateInfo>& shaderStatus,
-    std::vector<vk::DescriptorSetLayout> descriptorSetLayout,
+    const Shader* shader,
     const vk::RenderPass renderPass)
 {
-    mDescSetLayout = descriptorSetLayout;
+    mDescSetLayout = shader->mDescriptorSetLayouts;
+
+    // shaderStatus
+    std::vector<vk::PipelineShaderStageCreateInfo> shaderStatus(shader->mShaderModule.size());
+    for (uint32_t i = 0; i < shader->mShaderModule.size(); i++)
+    {
+        vk::PipelineShaderStageCreateInfo& info = shaderStatus[i];
+        info.module = shader->mShaderModule[i].mShaderModule;
+        info.pName = "main";
+        info.stage = shader->mShaderModule[i].mStage;
+    }
 
     // pipeline layout
     vk::PipelineLayoutCreateInfo pipelineLayoutInfo;
@@ -112,6 +121,11 @@ vk::Pipeline RenderPassBase::initialize(
     info.subpass = mSubpassIndex;
     mPipeline = gRuntimeGlobalContext.getRHI()->mDevice.createGraphicsPipeline(VK_NULL_HANDLE, info).value;
     CHECK_NULL(mPipeline);
+
+    //for (uint32_t i = 0; i < shader->mShaderModule.size(); i++)
+    //{
+    //    gRuntimeGlobalContext.getRHI()->mDevice.destroyShaderModule(shader->mShaderModule[i].mShaderModule);
+    //}
 
     return mPipeline;
 }

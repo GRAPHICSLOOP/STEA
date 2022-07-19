@@ -5,14 +5,14 @@
 
 struct ShaderInfo
 {
-	ShaderInfo(const char* filePath, vk::ShaderStageFlags stage)
+	ShaderInfo(const char* filePath, vk::ShaderStageFlagBits stage)
 		:mFilePath(filePath),mStage(stage)
 	{
 
 	}
 
 	const char* mFilePath;
-	vk::ShaderStageFlags mStage;
+	vk::ShaderStageFlagBits mStage;
 };
 
 struct ShaderModule
@@ -22,7 +22,7 @@ struct ShaderModule
 		delete[] mData;
 	}
 
-	vk::ShaderStageFlags mStage;
+	vk::ShaderStageFlagBits mStage;
 	vk::ShaderModule mShaderModule;
 	uint8_t* mData;
 	uint32_t mCount;
@@ -45,6 +45,7 @@ public:
 	
 public:
 	std::vector<vk::DescriptorSetLayout> mDescriptorSetLayouts;
+	std::vector<ShaderModule> mShaderModule;
 
 private:
 	void refractionInfo();
@@ -59,6 +60,5 @@ private:
 private:
 	std::unordered_map<std::string, DescriptorSetLayoutInfo> mBindgMap;
 	uint32_t mMaxSet;
-	std::vector<ShaderModule> mShaderModule;
 };
 

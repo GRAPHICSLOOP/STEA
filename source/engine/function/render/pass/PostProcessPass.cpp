@@ -3,11 +3,10 @@
 
 vk::Pipeline PostProcessPass::initialize(
 	const vk::PipelineVertexInputStateCreateInfo& vertexInfo,
-	const std::vector<vk::PipelineShaderStageCreateInfo>& shaderStatus,
-	std::vector<vk::DescriptorSetLayout> descriptorSetLayout,
+	const Shader* shader,
 	const vk::RenderPass renderPass)
 {
-	RenderPassBase::initialize(vertexInfo, shaderStatus, descriptorSetLayout, renderPass);
+	RenderPassBase::initialize(vertexInfo, shader, renderPass);
 
 	{
 		std::vector<float> vertices =

@@ -8,8 +8,7 @@ class PostProcessPass : public RenderPassBase
 public:
 	virtual vk::Pipeline initialize(
 		const vk::PipelineVertexInputStateCreateInfo& vertexInfo,
-		const std::vector<vk::PipelineShaderStageCreateInfo>& shaderStatus,
-		std::vector<vk::DescriptorSetLayout> descriptorSetLayout,
+		const Shader* shader,
 		const vk::RenderPass renderPass) override;
 
 	virtual void drawPass(vk::CommandBuffer cmdBuffer) override;

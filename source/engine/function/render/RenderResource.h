@@ -26,6 +26,7 @@ public:
 	void addObjectBufferResource(size_t objectID, void* data, vk::DeviceSize dataSize);
 	//vk::DescriptorSetLayout getDescriptorSetLayout(DESCRIPTOR_TYPE type);
 	std::vector<vk::DescriptorSetLayout> getDescriptorSetLayout(std::string shaderName);
+	Shader* getShader(std::string shaderName);
 
 public:
 	CameraBufferData mCameraBufferData;
