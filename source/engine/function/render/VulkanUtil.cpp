@@ -21,43 +21,6 @@ uint32_t VulkanUtil::findMemoryType(uint32_t typeFilter, vk::MemoryPropertyFlags
     throw std::runtime_error("find memory faild");
 }
 
-std::vector<char> VulkanUtil::readFile(const char* fileName)
-{
-    std::ifstream file(fileName, std::ios::ate | std::ios::binary); // 末尾且二进制读取
-
-    if (!file.is_open())
-    {
-        throw std::runtime_error("open file error");
-    }
-
-    size_t size = file.tellg();
-    std::vector<char> buffer(size);
-    file.seekg(0); // 回到头部
-    file.read(buffer.data(), size);
-
-    file.close();
-    return buffer;
-}
-
-vk::ShaderModule VulkanUtil::createShaderModule(const std::vector<char>& code)
-{
-    vk::Device device = gRuntimeGlobalContext.getRHI()->mDevice;
-
-    vk::ShaderModuleCreateInfo shaderInfo;
-    shaderInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
-    shaderInfo.codeSize = code.size();
-
-    vk::ShaderModule shaderModule = device.createShaderModule(shaderInfo);
-    CHECK_NULL(shaderModule);
-    return shaderModule;
-}
-
-vk::ShaderModule VulkanUtil::loadShaderModuleFromFile(const char* fileName)
-{
-    std::vector<char> code = readFile(fileName);
-    return createShaderModule(code);
-}
-
 void VulkanUtil::createBuffer(
     vk::DeviceSize size,
     vk::BufferUsageFlags usage,

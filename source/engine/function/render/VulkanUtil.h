@@ -9,12 +9,6 @@ public:
         uint32_t typeFilter,
         vk::MemoryPropertyFlags property);
 
-    static std::vector<char> readFile(const char* fileName);
-
-    static vk::ShaderModule createShaderModule(const std::vector<char>& code);
-
-    static vk::ShaderModule loadShaderModuleFromFile(const char* fileName);
-
     static void createBuffer(
         vk::DeviceSize size,
         vk::BufferUsageFlags usage,
