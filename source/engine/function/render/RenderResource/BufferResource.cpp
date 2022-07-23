@@ -14,7 +14,7 @@ BufferResource::~BufferResource()
 
 }
 
-std::shared_ptr<BufferResource> BufferResource::create(vk::DescriptorSetLayout setLayout,const std::vector<BufferAttributes>& bufferAttributes)
+std::shared_ptr<BufferResource> BufferResource::create(Shader* shader, const std::vector<BufferAttributes>& bufferAttributes)
 {
     struct make_shared_enabler : public BufferResource {};
     std::shared_ptr<BufferResource> bufferResource = std::make_shared<make_shared_enabler>();
@@ -31,7 +31,7 @@ std::shared_ptr<BufferResource> BufferResource::create(vk::DescriptorSetLayout s
         vkMapMemory(gRuntimeGlobalContext.getRHI()->mDevice, atrr.mBufferMemory, 0, atrr.mBufferSize, 0, &atrr.mData);
     }
 
-    bufferResource->createDescriptorSet(setLayout);
+    bufferResource->updateDescriptorSet(shader);
 
     return bufferResource;
 }
@@ -81,15 +81,8 @@ void BufferResource::setUpAlignment()
 
 }
 
-void BufferResource::createDescriptorSet(vk::DescriptorSetLayout setLayout)
+void BufferResource::updateDescriptorSet(Shader* shader)
 {
-    vk::DescriptorSetAllocateInfo info;
-    info.descriptorPool = gRuntimeGlobalContext.getRHI()->mDescriptorPool;
-    info.descriptorSetCount = 1;
-    info.pSetLayouts = &setLayout;
-    mDescriptorSet = gRuntimeGlobalContext.getRHI()->mDevice.allocateDescriptorSets(info)[0];
-
-
     for (uint32_t i = 0; i < mBufferAttributes.size(); i++)
     {
         vk::WriteDescriptorSet writeSet;
@@ -98,16 +91,7 @@ void BufferResource::createDescriptorSet(vk::DescriptorSetLayout setLayout)
         info.offset = 0;
         info.range = mBufferAttributes[i].mSize;
 
-
-        // 更新描述符
-        writeSet.dstArrayElement = 0;
-        writeSet.dstBinding = i;
-        writeSet.dstSet = mDescriptorSet;
-        writeSet.descriptorType = mBufferAttributes[i].mDescriptorType;
-        writeSet.descriptorCount = 1;
-        writeSet.pBufferInfo = &info;
-
-        gRuntimeGlobalContext.getRHI()->mDevice.updateDescriptorSets(writeSet, nullptr);
+        shader->updateDescriptorSet(mBufferAttributes[i].mVarName, nullptr, &info);
     }
 
 }

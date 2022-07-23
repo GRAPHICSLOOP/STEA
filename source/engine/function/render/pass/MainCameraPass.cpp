@@ -25,7 +25,7 @@ void MainCameraPass::drawPass(vk::CommandBuffer cmdBuffer)
         // 更新模型位置
         cmdBuffer.bindDescriptorSets(
             vk::PipelineBindPoint::eGraphics, mPipelineLayout,
-            0, 1, &gRuntimeGlobalContext.getRenderResource()->mUniformResource->mDescriptorSet,
+            0, 1, &mShader->mDescriptorSets[0],
             (uint32_t)offsetDynamic.size(), offsetDynamic.data());
 
 

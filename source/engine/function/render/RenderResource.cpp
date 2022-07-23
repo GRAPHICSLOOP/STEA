@@ -79,9 +79,9 @@ Shader* RenderResource::getShader(std::string shaderName)
 
 void RenderResource::createBufferResource()
 {
-    mUniformResource = BufferResource::create(getDescriptorSetLayout("obj")[0], {
-        BufferAttributes(UNIFORMBUFFERTYPE::UBT_Camera, 1, sizeof(CameraBufferData), vk::DescriptorType::eUniformBuffer, vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment),
-        BufferAttributes(UNIFORMBUFFERTYPE::UBT_Object, 2, sizeof(ObjectBufferData), vk::DescriptorType::eUniformBufferDynamic, vk::ShaderStageFlagBits::eVertex)
+    mUniformResource = BufferResource::create(getShader("obj"), {
+        BufferAttributes(UNIFORMBUFFERTYPE::UBT_Camera, 1, sizeof(CameraBufferData), vk::DescriptorType::eUniformBuffer, vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment,"CameraBuffer"),
+        BufferAttributes(UNIFORMBUFFERTYPE::UBT_Object, 2, sizeof(ObjectBufferData), vk::DescriptorType::eUniformBufferDynamic, vk::ShaderStageFlagBits::eVertex,"ObjectDynamicBuffer")
         });
 }
 

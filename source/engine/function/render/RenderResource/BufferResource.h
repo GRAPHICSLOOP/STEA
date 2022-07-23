@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <memory>
 #include <vulkan/vulkan.hpp>
+#include "../shader/Shader.h"
 
 enum class UNIFORMBUFFERTYPE
 {
@@ -16,8 +17,8 @@ public:
 
 	}
 
-	BufferAttributes(UNIFORMBUFFERTYPE type, uint32_t count, uint32_t size, vk::DescriptorType descriptorType, vk::ShaderStageFlags shaderStage)
-		:mType(type), mSize(size), mCount(count), mOffset(0), mDescriptorType(descriptorType), mShaderStage(shaderStage)
+	BufferAttributes(UNIFORMBUFFERTYPE type, uint32_t count, uint32_t size, vk::DescriptorType descriptorType, vk::ShaderStageFlags shaderStage, std::string varName)
+		:mType(type), mSize(size), mCount(count), mOffset(0), mDescriptorType(descriptorType), mShaderStage(shaderStage), mVarName(varName)
 	{
 
 	}
@@ -30,6 +31,7 @@ public:
 	uint32_t mAlignments;		// 内存上的对齐大小
 	vk::DescriptorType mDescriptorType;
 	vk::ShaderStageFlags mShaderStage;
+	std::string mVarName;
 
 	void* mData;
 	vk::Buffer mBuffer;
@@ -48,17 +50,16 @@ private:
 public:
 	~BufferResource();
 
-	static std::shared_ptr<BufferResource> create(vk::DescriptorSetLayout setLayout,const std::vector<BufferAttributes>& bufferAttributes);
+	static std::shared_ptr<BufferResource> create(Shader* shader,const std::vector<BufferAttributes>& bufferAttributes);
 	void* getData(UNIFORMBUFFERTYPE type);
 	void getDynamicOffsets(std::vector<uint32_t>& offset,const uint32_t index);
 
 public:
-	vk::DescriptorSet mDescriptorSet;
-
 	std::vector<BufferAttributes> mBufferAttributes;
+
 private:
 	void setUpAlignment();
-	void createDescriptorSet(vk::DescriptorSetLayout setLayout);
+	void updateDescriptorSet(Shader* shader);
 
 private:
 
