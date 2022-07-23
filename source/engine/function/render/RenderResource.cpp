@@ -69,6 +69,7 @@ Shader* RenderResource::getShader(std::string shaderName)
     auto iter = mGlobalShader.find(shaderName);
     if (iter == mGlobalShader.end())
     {
+        STEALOG_ERROR("null shader {} ", shaderName.c_str());
         return nullptr;
     }
     else
