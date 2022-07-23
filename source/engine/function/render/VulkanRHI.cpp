@@ -230,9 +230,9 @@ void VulkanRHI::createDescriptorPool()
     std::array<vk::DescriptorPoolSize, 4> poolSize;
     poolSize[0].descriptorCount = DESCRIPTORMAXCOUNT_BUFFER;
     poolSize[0].type = vk::DescriptorType::eUniformBuffer;
-    poolSize[1].descriptorCount = DESCRIPTORMAXCOUNT_SAMPLE;
+    poolSize[1].descriptorCount = 1;
     poolSize[1].type = vk::DescriptorType::eCombinedImageSampler;
-    poolSize[2].descriptorCount = 2; // 1
+    poolSize[2].descriptorCount = 2;
     poolSize[2].type = vk::DescriptorType::eUniformBufferDynamic;
     poolSize[3].descriptorCount = 3;
     poolSize[3].type = vk::DescriptorType::eInputAttachment;

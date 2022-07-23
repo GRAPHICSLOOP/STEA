@@ -6,16 +6,12 @@
 
 RenderResource::~RenderResource()
 {
-    for (uint32_t i = 0; i < mDescSetLayouts.size(); i++)
-    {
-        gRuntimeGlobalContext.getRHI()->mDevice.destroyDescriptorSetLayout(mDescSetLayouts[i]);
-    }
+
 }
 
 void RenderResource::initialize()
 {
     createShaders();
-    createDescriptorSetLayout();
     createBufferResource();
 }
 
@@ -104,43 +100,6 @@ void RenderResource::createShaders()
 
     mGlobalShader["quad"] = quadShader;
     mGlobalShader["obj"] = objShader;
-}
-
-void RenderResource::createDescriptorSetLayout()
-{
-    mDescSetLayouts.resize(DESCRIPTOR_TYPE::DT_Count);
-    vk::DescriptorSetLayoutCreateInfo info;
-
-    // mesh固定的uniform DescriptorSetLayout
-    vk::DescriptorSetLayoutBinding objectUniformBinding;
-    objectUniformBinding.binding = 0;
-    objectUniformBinding.descriptorCount = 1;
-    objectUniformBinding.descriptorType = vk::DescriptorType::eUniformBuffer;
-    objectUniformBinding.stageFlags = vk::ShaderStageFlagBits::eVertex;
-    info.bindingCount = 1;
-    info.pBindings = &objectUniformBinding;
-    mDescSetLayouts[DESCRIPTOR_TYPE::DT_ObjectUniform] = gRuntimeGlobalContext.getRHI()->mDevice.createDescriptorSetLayout(info);
-
-    // 相机观察中不变的buffer
-    vk::DescriptorSetLayoutBinding cameraUniformBinding;
-    cameraUniformBinding.binding = 0;
-    cameraUniformBinding.descriptorCount = 1;
-    cameraUniformBinding.descriptorType = vk::DescriptorType::eUniformBuffer;
-    cameraUniformBinding.stageFlags = vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment;
-    info.bindingCount = 1;
-    info.pBindings = &cameraUniformBinding;
-    mDescSetLayouts[DESCRIPTOR_TYPE::DT_CamearUniform] = gRuntimeGlobalContext.getRHI()->mDevice.createDescriptorSetLayout(info);
-
-    // 变动较多的 sample DescriptorSetLayout
-    vk::DescriptorSetLayoutBinding sampleBinding;
-    sampleBinding.binding = 0;
-    sampleBinding.descriptorCount = 1;
-    sampleBinding.descriptorType = vk::DescriptorType::eCombinedImageSampler;
-    sampleBinding.stageFlags = vk::ShaderStageFlagBits::eFragment;
-    info.bindingCount = 1;
-    info.pBindings = &sampleBinding;
-    mDescSetLayouts[DESCRIPTOR_TYPE::DT_Sample] = gRuntimeGlobalContext.getRHI()->mDevice.createDescriptorSetLayout(info);
-
 }
 
 void RenderResource::updateUniformBuffer()

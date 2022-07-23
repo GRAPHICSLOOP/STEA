@@ -38,11 +38,9 @@ public:
 private:
 	void createBufferResource();
 	void createShaders();
-	void createDescriptorSetLayout();
 	void updateUniformBuffer();
 
 private:
-	std::vector<vk::DescriptorSetLayout> mDescSetLayouts;
 	std::unordered_map<std::string, std::shared_ptr<Shader>> mGlobalShader;
 };
 
