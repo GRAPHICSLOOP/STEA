@@ -228,7 +228,7 @@ void VulkanRHI::createCommandBuffers()
 void VulkanRHI::createDescriptorPool()
 {
     std::array<vk::DescriptorPoolSize, 4> poolSize;
-    poolSize[0].descriptorCount = 2;
+    poolSize[0].descriptorCount = 1;
     poolSize[0].type = vk::DescriptorType::eUniformBuffer;
     poolSize[1].descriptorCount = 1;
     poolSize[1].type = vk::DescriptorType::eCombinedImageSampler;
