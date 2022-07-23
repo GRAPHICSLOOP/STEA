@@ -43,6 +43,6 @@ protected:
 	vk::PipelineLayout mPipelineLayout;
 	vk::Pipeline mPipeline;
 	std::vector<vk::DescriptorSetLayout> mDescSetLayout;
-
+	const Shader* mShader;
 };
 

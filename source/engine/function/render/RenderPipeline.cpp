@@ -60,7 +60,7 @@ void RenderPipeline::initialize()
         mPostProcessPass->mDepthInfo.depthWriteEnable = VK_FALSE;
         mPostProcessPass->mDepthInfo.stencilTestEnable = VK_FALSE;
         mPostProcessPass->initialize(vertexInfo, gRuntimeGlobalContext.getRenderResource()->getShader("quad"), mFrame.mRenderPass);
-        mPostProcessPass->createDescriptorSet(mFrame);
+        //mPostProcessPass->createDescriptorSet(mFrame);
     }
 	
     // 待优化项
@@ -124,7 +124,8 @@ void RenderPipeline::createAttachment()
         vk::ImageUsageFlagBits::eDepthStencilAttachment | vk::ImageUsageFlagBits::eInputAttachment,
         vk::ImageAspectFlagBits::eDepth,
         vk::Format::eD24UnormS8Uint,
-        gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout("quad")[0]
+        gRuntimeGlobalContext.getRenderResource()->getShader("quad"),
+        "inputDepth"
     );
 
     std::shared_ptr<ImageResource> colorFrameBufferAttachment = ImageResource::createAttachment(
@@ -133,7 +134,8 @@ void RenderPipeline::createAttachment()
         vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eInputAttachment,
         vk::ImageAspectFlagBits::eColor,
         gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mFormat.format,
-        gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout("quad")[0]
+        gRuntimeGlobalContext.getRenderResource()->getShader("quad"),
+        "inputColor"
     );
 
     std::shared_ptr<ImageResource> normalFrameBufferAttachment = ImageResource::createAttachment(
@@ -142,7 +144,8 @@ void RenderPipeline::createAttachment()
         vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eInputAttachment,
         vk::ImageAspectFlagBits::eColor,
         vk::Format::eR8G8B8A8Unorm,
-        gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout("quad")[0]
+        gRuntimeGlobalContext.getRenderResource()->getShader("quad"),
+        "inputNormal"
     );
 
     mFrame.mAttachments.resize(3);

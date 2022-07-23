@@ -1,6 +1,7 @@
 ﻿#include "Shader.h"
 #include "../../platform/file/FileManager.h"
 #include "../../global/RuntimeGlobalContext.h"
+#include "core/base/macro.h"
 
 inline Shader::Shader()
 {
@@ -37,6 +38,30 @@ void Shader::createShaderModule(const ShaderInfo& info, ShaderModule* module)
     module->mCount = dataSize;
 }
 
+void Shader::updateDescriptorSet(std::string varName, const vk::DescriptorImageInfo* imageInfo, const vk::DescriptorBufferInfo* bufferInfo)
+{
+    const DescriptorSetLayoutInfo* info;
+    auto iter = mBindgMap.find(varName);
+    if (iter == mBindgMap.end())
+    {
+        STEALOG_ERROR("error null varname : {}", varName.c_str());
+        return;
+    }
+    info = &iter->second;
+    
+    // 更新描述符
+    std::array<vk::WriteDescriptorSet, 1> writeSet;
+    writeSet[0].dstArrayElement = 0;
+    writeSet[0].dstBinding = info->mBinding.binding;
+    writeSet[0].dstSet = mDescriptorSets[info->mSet];
+    writeSet[0].descriptorType = info->mBinding.descriptorType;
+    writeSet[0].descriptorCount = info->mBinding.descriptorCount;
+    writeSet[0].pImageInfo = imageInfo;
+    writeSet[0].pBufferInfo = bufferInfo,
+
+    gRuntimeGlobalContext.getRHI()->mDevice.updateDescriptorSets(writeSet, nullptr);
+}
+
 void Shader::refractionInfo()
 {
     for (const auto& module : mShaderModule)
@@ -45,6 +70,7 @@ void Shader::refractionInfo()
     }
 
     GenerateLayout();
+    GenerateSet();
 }
 
 void Shader::ProcessShaderModule(const ShaderModule* module)
@@ -157,5 +183,14 @@ void Shader::GenerateLayout()
         info.pBindings = binding.data();
         mDescriptorSetLayouts.push_back(gRuntimeGlobalContext.getRHI()->mDevice.createDescriptorSetLayout(info));
     }
+}
+
+void Shader::GenerateSet()
+{
+    vk::DescriptorSetAllocateInfo allocateInfo;
+    allocateInfo.descriptorPool = gRuntimeGlobalContext.getRHI()->mDescriptorPool;
+    allocateInfo.descriptorSetCount = (uint32_t)mDescriptorSetLayouts.size();
+    allocateInfo.pSetLayouts = mDescriptorSetLayouts.data();
+    mDescriptorSets = gRuntimeGlobalContext.getRHI()->mDevice.allocateDescriptorSets(allocateInfo);
 }
 

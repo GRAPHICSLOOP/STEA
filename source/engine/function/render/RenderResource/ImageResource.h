@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <vulkan/vulkan.hpp>
+#include "../shader/Shader.h"
 
 struct ImageBufferResource
 {
@@ -10,7 +11,6 @@ public:
 	vk::DescriptorImageInfo mImageInfo;
 	vk::DescriptorSet mDescriptorSet;
 };
-
 
 class ImageResource
 {
@@ -38,7 +38,8 @@ public:
 		vk::ImageUsageFlags usage,
 		vk::ImageAspectFlags aspectFlags,
 		vk::Format pixelFormat,
-		vk::DescriptorSetLayout setLayout);
+		Shader* shader,
+		std::string varName);
 
 public:
 	ImageBufferResource mImageBufferResource;

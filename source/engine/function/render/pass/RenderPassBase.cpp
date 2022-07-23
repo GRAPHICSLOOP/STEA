@@ -87,6 +87,7 @@ vk::Pipeline RenderPassBase::initialize(
         info.pName = "main";
         info.stage = shader->mShaderModule[i].mStage;
     }
+    mShader = shader;
 
     // pipeline layout
     vk::PipelineLayoutCreateInfo pipelineLayoutInfo;

@@ -320,9 +320,6 @@
     <ClInclude Include="source\engine\function\render\renderResource\BufferResource.h">
       <Filter>source\engine\function\render\renderResource</Filter>
     </ClInclude>
-    <ClInclude Include="source\engine\function\render\pass\PostProcessPass.h">
-      <Filter>source\engine\function\render\renderResource</Filter>
-    </ClInclude>
     <ClInclude Include="source\engine\function\platform\path\PathManager.h">
       <Filter>source\engine\function\platform\path</Filter>
     </ClInclude>
@@ -331,6 +328,9 @@
     </ClInclude>
     <ClInclude Include="source\engine\function\render\shader\Shader.h">
       <Filter>source\engine\function\render\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\render\pass\PostProcessPass.h">
+      <Filter>source\engine\function\render\pass</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -338,7 +338,14 @@ std::shared_ptr<ImageResource> ImageResource::createTextureResource(
     return imageResource;
 }
 
-std::shared_ptr<ImageResource> ImageResource::createAttachment(uint32_t width, uint32_t height, vk::ImageUsageFlags usage, vk::ImageAspectFlags aspectFlags, vk::Format pixelFormat,vk::DescriptorSetLayout setLayout)
+std::shared_ptr<ImageResource> ImageResource::createAttachment(
+    uint32_t width,
+    uint32_t height,
+    vk::ImageUsageFlags usage,
+    vk::ImageAspectFlags aspectFlags,
+    vk::Format pixelFormat,
+    Shader* shader,
+    std::string varName)
 {
     uint32_t miplevels = 1;
     std::shared_ptr<ImageResource> imageResource = std::make_shared<ImageResource>();
@@ -408,7 +415,13 @@ std::shared_ptr<ImageResource> ImageResource::createAttachment(uint32_t width, u
         CHECK_NULL(imageBufferResource.mImageInfo.imageView);
     }
 
+    // image format
     imageBufferResource.mFormat = pixelFormat;
+    imageBufferResource.mImageInfo.imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal; // 这里后面有个隐性转化
+
+    // image set
+    shader->updateDescriptorSet(varName, &imageBufferResource.mImageInfo,nullptr);
+
     return imageResource;
 }
 
