@@ -13,12 +13,6 @@ void MainCameraPass::drawPass(vk::CommandBuffer cmdBuffer)
     uint32_t count = 0;
     for (const auto& iter : gRuntimeGlobalContext.getRenderResource()->mModelRenderResources)
     {
-        ObjectBufferData model;
-        model.mModel = glm::translate(glm::mat4(1.f), glm::vec3((float)count));
-        cmdBuffer.pushConstants(
-            mPipelineLayout, vk::ShaderStageFlagBits::eVertex, 0,sizeof(ObjectBufferData),
-            &model);
-
         std::vector<uint32_t> offsetDynamic;
         gRuntimeGlobalContext.getRenderResource()->mUniformResource->getDynamicOffsets(offsetDynamic, count);
 

@@ -5,16 +5,20 @@
 
 void Level::initialize()
 {
-	for (uint32_t i = 0; i < 2; i++)
+	uint32_t numb = 4;
+	for (uint32_t i = 0; i < numb; i++)
 	{
-		std::shared_ptr<Object> newObject = createObject();
-		std::shared_ptr<MeshComponent> meshComponent = std::make_shared<MeshComponent>(newObject);
-		std::shared_ptr<TransformComponent> transformComponent = std::make_shared<TransformComponent>(newObject);
-		meshComponent->attachToComponent(newObject->mRootComponent);
-		transformComponent->attachToComponent(newObject->mRootComponent);
-		newObject->showMeshTemp();
-
-		transformComponent->setScale(glm::vec3(0.1f + i * 0.1f, 0.1f + i * 0.1f, 0.1f + i * 0.1f));
+		for (uint32_t j = 0; j < numb; j++)
+		{
+			std::shared_ptr<Object> newObject = createObject();
+			std::shared_ptr<MeshComponent> meshComponent = std::make_shared<MeshComponent>(newObject);
+			std::shared_ptr<TransformComponent> transformComponent = std::make_shared<TransformComponent>(newObject);
+			meshComponent->attachToComponent(newObject->mRootComponent);
+			transformComponent->attachToComponent(newObject->mRootComponent);
+			newObject->showMeshTemp();
+			transformComponent->setScale(glm::vec3(0.2f));
+			transformComponent->setPosistion(glm::vec3(i * 1.5f, 0, j * 1.5f));
+		}
 	}
 
 }

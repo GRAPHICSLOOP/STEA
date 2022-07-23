@@ -31,15 +31,8 @@ void RenderPipeline::initialize()
         vertexInfo.pVertexAttributeDescriptions = VertexAttributeDescriptions.data();
         vertexInfo.pVertexBindingDescriptions = VertexBindingDescriptions.data();
 
-        // pushConstants
-        vk::PushConstantRange pushRange;
-        pushRange.offset = 0;
-        pushRange.size = sizeof(ObjectBufferData);
-        pushRange.stageFlags = vk::ShaderStageFlagBits::eVertex;
-
         mCameraPass = std::make_shared<MainCameraPass>();
         mCameraPass->mColorBlendAttachmentCount = 2;
-        mCameraPass->mPushRange.push_back(pushRange);
         mCameraPass->initialize(vertexInfo, gRuntimeGlobalContext.getRenderResource()->getShader("obj"),  mFrame.mRenderPass);
     }
 

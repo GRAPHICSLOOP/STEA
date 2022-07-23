@@ -82,7 +82,7 @@ void RenderResource::createBufferResource()
 {
     mUniformResource = BufferResource::create(getShader("obj"), {
         BufferAttributes(UNIFORMBUFFERTYPE::UBT_Camera, 1, sizeof(CameraBufferData), vk::DescriptorType::eUniformBuffer, vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment,"CameraBuffer"),
-        BufferAttributes(UNIFORMBUFFERTYPE::UBT_Object, 2, sizeof(ObjectBufferData), vk::DescriptorType::eUniformBufferDynamic, vk::ShaderStageFlagBits::eVertex,"ObjectDynamicBuffer")
+        BufferAttributes(UNIFORMBUFFERTYPE::UBT_Object, 16, sizeof(ObjectBufferData), vk::DescriptorType::eUniformBufferDynamic, vk::ShaderStageFlagBits::eVertex,"ObjectDynamicBuffer")
         });
 }
 
@@ -108,13 +108,14 @@ void RenderResource::updateUniformBuffer()
     void* cameraData = mUniformResource->getData(UNIFORMBUFFERTYPE::UBT_Camera);
     memcpy(cameraData, &mCameraBufferData, sizeof(CameraBufferData));
     
-    
-    ObjectBufferData* bufferData = (ObjectBufferData*)mUniformResource->getData(UNIFORMBUFFERTYPE::UBT_Object);
+    std::vector<ObjectBufferData> objectData(mObjectBufferData.size());
     uint32_t count = 0;
     for (const auto& iter : mObjectBufferData)
     {
-        bufferData += count;
-        *bufferData = mObjectBufferData[iter.first];
+        objectData[count] = iter.second;
         count++;
     }
+
+    void* bufferData = mUniformResource->getData(UNIFORMBUFFERTYPE::UBT_Object);
+    memcpy(bufferData, objectData.data(), sizeof(ObjectBufferData) * mObjectBufferData.size());
 }
