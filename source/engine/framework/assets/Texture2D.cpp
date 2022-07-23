@@ -59,7 +59,8 @@ void Texture2D::loadTexture()
             pixels,
             mFormat,
             true,
-            gRuntimeGlobalContext.getRenderResource()->getDescriptorSetLayout("obj")[1]
+            gRuntimeGlobalContext.getRenderResource()->getShader("obj"),
+            "texSampler"
         );
 
         gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources[mId] = mTextureResource;

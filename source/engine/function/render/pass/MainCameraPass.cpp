@@ -33,7 +33,7 @@ void MainCameraPass::drawPass(vk::CommandBuffer cmdBuffer)
         for (const auto& resource : iter.second)
         {
             cmdBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics,mPipelineLayout,
-                1, 1, &resource.mTextureResource.lock()->mImageBufferResource.mDescriptorSet,
+                1, 1, &mShader->mDescriptorSets[1],
                 0, nullptr);
             cmdBuffer.bindVertexBuffers(0, 1, &resource.mMeshResource.lock()->mMeshBufferResource.mVertexResource->mBuffer, &offset);
             cmdBuffer.bindIndexBuffer(resource.mMeshResource.lock()->mMeshBufferResource.mIndexResource->mBuffer, offset, vk::IndexType::eUint32);

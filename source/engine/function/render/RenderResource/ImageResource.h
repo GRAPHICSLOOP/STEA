@@ -9,7 +9,6 @@ public:
 	vk::Image mImage;
 	vk::DeviceMemory mMemory;
 	vk::DescriptorImageInfo mImageInfo;
-	vk::DescriptorSet mDescriptorSet;
 };
 
 class ImageResource
@@ -30,7 +29,8 @@ public:
 		void* pixels,
 		vk::Format pixelFormat,
 		bool miplevel,
-		vk::DescriptorSetLayout setLayout);
+		Shader* shader,
+		std::string varName);
 
 	static std::shared_ptr<ImageResource> createAttachment(
 		uint32_t width,
@@ -43,9 +43,6 @@ public:
 
 public:
 	ImageBufferResource mImageBufferResource;
-	
-private:
-	void createDescriptorSet(vk::DescriptorSetLayout setLayout);
 };
 
 

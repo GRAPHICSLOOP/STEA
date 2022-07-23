@@ -143,7 +143,8 @@ std::shared_ptr<ImageResource> ImageResource::createTextureResource(
     void* pixels, 
     vk::Format pixelFormat, 
     bool miplevel,
-    vk::DescriptorSetLayout setLayout)
+    Shader* shader,
+    std::string varName)
 {
     // 确定是否需要mipmap
     uint32_t miplevels = 1;
@@ -327,8 +328,8 @@ std::shared_ptr<ImageResource> ImageResource::createTextureResource(
         CHECK_NULL(imageBufferResource.mImageInfo.imageView);
     }
 
-    // create set
-    imageResource->createDescriptorSet(setLayout);
+    // image set
+    shader->updateDescriptorSet(varName, &imageBufferResource.mImageInfo, nullptr);
 
     // clear
     gRuntimeGlobalContext.getRHI()->mDevice.destroyBuffer(stagingBuffer);
@@ -424,24 +425,3 @@ std::shared_ptr<ImageResource> ImageResource::createAttachment(
 
     return imageResource;
 }
-
-void ImageResource::createDescriptorSet(vk::DescriptorSetLayout setLayout)
-{
-    vk::DescriptorSetAllocateInfo info;
-    info.descriptorPool = gRuntimeGlobalContext.getRHI()->mDescriptorPool;
-    info.descriptorSetCount = 1;
-    info.pSetLayouts = &setLayout;
-    mImageBufferResource.mDescriptorSet = gRuntimeGlobalContext.getRHI()->mDevice.allocateDescriptorSets(info)[0];
-
-    // 更新描述符
-    std::array<vk::WriteDescriptorSet, 1> writeSet;
-    writeSet[0].dstArrayElement = 0;
-    writeSet[0].dstBinding = 0;
-    writeSet[0].dstSet = mImageBufferResource.mDescriptorSet;
-    writeSet[0].descriptorType = vk::DescriptorType::eCombinedImageSampler;
-    writeSet[0].descriptorCount = 1;
-    writeSet[0].pImageInfo = &mImageBufferResource.mImageInfo;
-
-    gRuntimeGlobalContext.getRHI()->mDevice.updateDescriptorSets(writeSet, nullptr);
-}
-
