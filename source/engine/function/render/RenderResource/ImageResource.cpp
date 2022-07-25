@@ -142,9 +142,7 @@ std::shared_ptr<ImageResource> ImageResource::createTextureResource(
     vk::ImageUsageFlags usage, 
     void* pixels, 
     vk::Format pixelFormat, 
-    bool miplevel,
-    Shader* shader,
-    std::string varName)
+    bool miplevel)
 {
     // 确定是否需要mipmap
     uint32_t miplevels = 1;
@@ -328,9 +326,6 @@ std::shared_ptr<ImageResource> ImageResource::createTextureResource(
         CHECK_NULL(imageBufferResource.mImageInfo.imageView);
     }
 
-    // image set
-    shader->updateDescriptorSet(varName, &imageBufferResource.mImageInfo, nullptr);
-
     // clear
     gRuntimeGlobalContext.getRHI()->mDevice.destroyBuffer(stagingBuffer);
     gRuntimeGlobalContext.getRHI()->mDevice.freeMemory(stagingBufferMemory);
@@ -344,9 +339,7 @@ std::shared_ptr<ImageResource> ImageResource::createAttachment(
     uint32_t height,
     vk::ImageUsageFlags usage,
     vk::ImageAspectFlags aspectFlags,
-    vk::Format pixelFormat,
-    Shader* shader,
-    std::string varName)
+    vk::Format pixelFormat)
 {
     uint32_t miplevels = 1;
     std::shared_ptr<ImageResource> imageResource = std::make_shared<ImageResource>();
@@ -419,9 +412,6 @@ std::shared_ptr<ImageResource> ImageResource::createAttachment(
     // image format
     imageBufferResource.mFormat = pixelFormat;
     imageBufferResource.mImageInfo.imageLayout = vk::ImageLayout::eShaderReadOnlyOptimal; // 这里后面有个隐性转化
-
-    // image set
-    shader->updateDescriptorSet(varName, &imageBufferResource.mImageInfo,nullptr);
 
     return imageResource;
 }

@@ -12,12 +12,11 @@ public:
 		const vk::RenderPass renderPass) override;
 
 	virtual void drawPass(vk::CommandBuffer cmdBuffer) override;
-
-	void createDescriptorSet(Frame& frame);
+	void setDescriptorSet(vk::DescriptorSet descriptorSet);
 
 private:
 	std::shared_ptr<VertexResource> mQuadVertexResource;
 	std::shared_ptr<IndexResource> mQuadIndexResource;
-	vk::DescriptorSet mDescSet;
+	vk::DescriptorSet mDescriptorSet;
 };
 

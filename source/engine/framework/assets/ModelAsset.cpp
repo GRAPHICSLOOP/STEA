@@ -14,11 +14,11 @@ ModelAsset::ModelAsset(std::string name, std::string path)
 std::vector<ModelRenderResource> ModelAsset::getMeshResource()
 {
 	std::vector<ModelRenderResource> modelRenderResource;
-	for (const auto& mesh : mMeshParts)
+	for (auto& mesh : mMeshParts)
 	{
 		ModelRenderResource resource;
-		resource.mMeshResource = mesh.mMeshResource;
-		resource.mTextureResource = mesh.mTexture2D->getTextureResource();
+		resource.mMeshResource = mesh.mMeshResource.get();
+		resource.mMaterial = mesh.mMaterial;
 		modelRenderResource.push_back(resource);
 	}
 	return modelRenderResource;
@@ -109,7 +109,13 @@ void ModelAsset::processMesh(aiMesh* mesh, const aiScene* scene)
 	if (mesh->mMaterialIndex >= 0)
 	{
 		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+		const char* name = material->GetName().C_Str();
 		meshPart.mTexture2D = loadMaterialTextures(material,aiTextureType_DIFFUSE, "texture_diffuse");
+		std::vector<MaterialAttribute> materialAttribute =
+		{
+			MaterialAttribute("texSampler",meshPart.mTexture2D.get()->getId())
+		};	
+		meshPart.mMaterial = gRuntimeGlobalContext.getRenderResource()->createMaterial(name, gRuntimeGlobalContext.getRenderResource()->getShader("obj"), materialAttribute);
 	}
 	else
 	{

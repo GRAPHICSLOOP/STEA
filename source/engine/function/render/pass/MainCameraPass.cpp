@@ -19,19 +19,21 @@ void MainCameraPass::drawPass(vk::CommandBuffer cmdBuffer)
         // 更新模型位置
         cmdBuffer.bindDescriptorSets(
             vk::PipelineBindPoint::eGraphics, mPipelineLayout,
-            0, 1, &mShader->mDescriptorSets[0],
+            0, 1, &gRuntimeGlobalContext.getRenderResource()->mUniformResource->mDescriptorSet,
             (uint32_t)offsetDynamic.size(), offsetDynamic.data());
 
 
         // 绑定相关数据和绘制
         for (const auto& resource : iter.second)
         {
-            cmdBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics,mPipelineLayout,
-                1, 1, &mShader->mDescriptorSets[1],
+            // 更新不同部位的set
+            cmdBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPipelineLayout,
+                1, 1, &resource.mMaterial->mDescriptorSet,
                 0, nullptr);
-            cmdBuffer.bindVertexBuffers(0, 1, &resource.mMeshResource.lock()->mMeshBufferResource.mVertexResource->mBuffer, &offset);
-            cmdBuffer.bindIndexBuffer(resource.mMeshResource.lock()->mMeshBufferResource.mIndexResource->mBuffer, offset, vk::IndexType::eUint32);
-            cmdBuffer.drawIndexed(resource.mMeshResource.lock()->mMeshBufferResource.mIndexResource->mIndexCount, 1, 0, 0, 0);
+
+            cmdBuffer.bindVertexBuffers(0, 1, &resource.mMeshResource->mMeshBufferResource.mVertexResource->mBuffer, &offset);
+            cmdBuffer.bindIndexBuffer(resource.mMeshResource->mMeshBufferResource.mIndexResource->mBuffer, offset, vk::IndexType::eUint32);
+            cmdBuffer.drawIndexed(resource.mMeshResource->mMeshBufferResource.mIndexResource->mIndexCount, 1, 0, 0, 0);
         }
 
         count++;

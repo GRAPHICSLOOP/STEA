@@ -26,6 +26,8 @@
     <ClCompile Include="3rdparty\imgui\imgui_draw.cpp" />
     <ClCompile Include="3rdparty\imgui\imgui_tables.cpp" />
     <ClCompile Include="3rdparty\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="source\engine\function\render\renderResource\AttachmentResource.cpp" />
+    <ClCompile Include="source\engine\function\render\shader\Material.cpp" />
     <ClCompile Include="source\engine\function\platform\path\PathManager.cpp" />
     <ClCompile Include="source\engine\function\platform\file\FileManager.cpp" />
     <ClCompile Include="source\engine\function\render\shader\Shader.cpp" />
@@ -70,6 +72,8 @@
     <ClInclude Include="3rdparty\imgui\imstb_rectpack.h" />
     <ClInclude Include="3rdparty\imgui\imstb_textedit.h" />
     <ClInclude Include="3rdparty\imgui\imstb_truetype.h" />
+    <ClInclude Include="source\engine\function\render\renderResource\AttachmentResource.h" />
+    <ClInclude Include="source\engine\function\render\shader\Material.h" />
     <ClInclude Include="source\engine\function\platform\path\PathManager.h" />
     <ClInclude Include="source\engine\function\platform\file\FileManager.h" />
     <ClInclude Include="source\engine\function\render\shader\Shader.h" />

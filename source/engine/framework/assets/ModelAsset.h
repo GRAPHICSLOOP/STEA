@@ -2,12 +2,15 @@
 #include <vector>
 #include "function/render/renderResource/MeshResource.h"
 #include "Texture2D.h"
+#include "../../function/render/shader/Material.h"
 
 
 struct MeshPart
 {
+public:
 	std::shared_ptr<MeshResource> mMeshResource;
 	std::shared_ptr<Texture2D> mTexture2D;
+	Material* mMaterial;
 };
 
 class ModelAsset

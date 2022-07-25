@@ -8,13 +8,13 @@
 #include "RenderResource/BufferResource.h"
 #include "RenderResource/TextureArrayResource.h"
 #include "shader/Shader.h"
-
+#include "shader/Material.h"
 
 struct ModelRenderResource
 {
 public:
-	std::weak_ptr<MeshResource> mMeshResource;
-	std::weak_ptr<ImageResource> mTextureResource;
+	MeshResource* mMeshResource;
+	Material* mMaterial;
 };
 
 class RenderResource
@@ -24,7 +24,7 @@ public:
 	void initialize();
 	void updatePerFrameBuffer(std::shared_ptr<RenderCamera> camera);
 	void addObjectBufferResource(size_t objectID, void* data, vk::DeviceSize dataSize);
-	//vk::DescriptorSetLayout getDescriptorSetLayout(DESCRIPTOR_TYPE type);
+	Material* createMaterial(std::string name, Shader* shader, const std::vector<MaterialAttribute>& attribute);
 	std::vector<vk::DescriptorSetLayout> getDescriptorSetLayout(std::string shaderName);
 	Shader* getShader(std::string shaderName);
 
@@ -32,7 +32,7 @@ public:
 	CameraBufferData mCameraBufferData;
 	std::unordered_map<size_t, ObjectBufferData> mObjectBufferData;
 	std::unordered_map<size_t, std::vector<ModelRenderResource>> mModelRenderResources;
-	std::unordered_map<size_t, std::weak_ptr<ImageResource>> mGlobalTextureResources;
+	std::unordered_map<size_t, ImageResource*> mGlobalTextureResources;
 	std::shared_ptr<BufferResource> mUniformResource;
 
 private:
@@ -42,5 +42,6 @@ private:
 
 private:
 	std::unordered_map<std::string, std::shared_ptr<Shader>> mGlobalShader;
+	std::unordered_map<std::string, std::shared_ptr<Material>> mGlobalMaterials;
 };
 

@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <vulkan/vulkan.hpp>
 #include "../RenderResource/RenderData.h"
-#include "../RenderResource/ImageResource.h"
+#include "../RenderResource/AttachmentResource.h"
 #include "../shader/Shader.h"
 
 struct Frame
@@ -9,7 +9,7 @@ struct Frame
 public:
 	std::vector<vk::Framebuffer> mFramebuffer;
 	vk::RenderPass mRenderPass;
-	std::vector<std::shared_ptr<ImageResource>> mAttachments;
+	std::shared_ptr<AttachmentResource> mAttachment;
 };
 
 class RenderPassBase

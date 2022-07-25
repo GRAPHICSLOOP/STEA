@@ -44,6 +44,16 @@ void RenderResource::addObjectBufferResource(size_t objectID, void* data, vk::De
     mObjectBufferData[objectID] = *(ObjectBufferData*)data;
 }
 
+Material* RenderResource::createMaterial(std::string name, Shader* shader, const std::vector<MaterialAttribute>& attribute)
+{
+    auto iter = mGlobalMaterials.find(name);
+    if (iter != mGlobalMaterials.end())
+        return iter->second.get();
+
+    mGlobalMaterials[name] = std::make_shared<Material>(name,shader, attribute);
+    return mGlobalMaterials[name].get();
+}
+
 //vk::DescriptorSetLayout RenderResource::getDescriptorSetLayout(DESCRIPTOR_TYPE type)
 //{
 //    CHECK_NULL(mDescSetLayouts[type]);

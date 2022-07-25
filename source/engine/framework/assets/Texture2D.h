@@ -7,7 +7,7 @@ public:
 	~Texture2D();
 	void initialize(std::string path);
 	void loadTexture();
-	std::shared_ptr<ImageResource> getTextureResource();
+	ImageResource* getTextureResource();
 	size_t getId() { return mId; }
 public:
 	uint32_t mWidth;

@@ -42,12 +42,13 @@ public:
 	Shader();
 	static std::shared_ptr<Shader> create(const std::vector<ShaderInfo>& info);
 	static void createShaderModule(const ShaderInfo& info,ShaderModule* module);
-	void updateDescriptorSet(std::string varName,const vk::DescriptorImageInfo* imageInfo,const vk::DescriptorBufferInfo* bufferInfo);
+	void updateDescriptorSet(const std::string& varName, vk::DescriptorSet descriptorSet, const vk::DescriptorImageInfo* imageInfo, const vk::DescriptorBufferInfo* bufferInfo);
+	const DescriptorSetLayoutInfo* getBindding(std::string varName);
+	std::vector<vk::DescriptorSet> generateSet(const std::vector<std::string>& varNames);
 
 public:
 	std::vector<vk::DescriptorSetLayout> mDescriptorSetLayouts;
 	std::vector<ShaderModule> mShaderModule;
-	std::vector<vk::DescriptorSet> mDescriptorSets;
 
 private:
 	void refractionInfo();
@@ -57,9 +58,8 @@ private:
 	void ProcessAttachment(spirv_cross::Compiler& compiler, spirv_cross::ShaderResources& resources, vk::ShaderStageFlags stage);
 	void addSetLayoutBinding(uint32_t set, const std::string& typeName, vk::DescriptorSetLayoutBinding binding);
 
-	void GenerateLayout();
-	void GenerateSet();
-
+	void generateLayout();
+	
 private:
 	std::unordered_map<std::string, DescriptorSetLayoutInfo> mBindgMap;
 	uint32_t mMaxSet;

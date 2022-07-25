@@ -44,13 +44,6 @@ void Texture2D::loadTexture()
     }
     else
     {
-        //mTextureResource = std::make_shared<ImageResource>();
-        //mTextureResource->initialize(
-        //    mWidth,
-        //    mHeight,
-        //    pixels,
-        //    mFormat,
-        //    mMiplevels);
         mTextureResource = ImageResource::createTextureResource
         (
             mWidth,
@@ -58,19 +51,17 @@ void Texture2D::loadTexture()
             vk::ImageUsageFlagBits::eSampled,
             pixels,
             mFormat,
-            true,
-            gRuntimeGlobalContext.getRenderResource()->getShader("obj"),
-            "texSampler"
+            true
         );
 
-        gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources[mId] = mTextureResource;
+        gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources[mId] = mTextureResource.get();
     }
 
     stbi_image_free(pixels);
     return;
 }
 
-std::shared_ptr<ImageResource> Texture2D::getTextureResource()
+ImageResource* Texture2D::getTextureResource()
 {
-    return gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources[mId].lock();
+    return gRuntimeGlobalContext.getRenderResource()->mGlobalTextureResources[mId];
 }

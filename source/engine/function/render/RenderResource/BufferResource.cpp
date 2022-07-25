@@ -31,7 +31,7 @@ std::shared_ptr<BufferResource> BufferResource::create(Shader* shader, const std
         vkMapMemory(gRuntimeGlobalContext.getRHI()->mDevice, atrr.mBufferMemory, 0, atrr.mBufferSize, 0, &atrr.mData);
     }
 
-    bufferResource->updateDescriptorSet(shader);
+    bufferResource->createDescriptorSet(shader);
 
     return bufferResource;
 }
@@ -81,18 +81,24 @@ void BufferResource::setUpAlignment()
 
 }
 
-void BufferResource::updateDescriptorSet(Shader* shader)
+void BufferResource::createDescriptorSet(Shader* shader)
 {
+    // 创建set
+    std::vector<std::string> varNames;
+    for (const auto& at : mBufferAttributes)
+    {
+        varNames.push_back(at.mVarName);
+    }
+    mDescriptorSet = shader->generateSet(varNames)[0];
+
+    // 更新set
     for (uint32_t i = 0; i < mBufferAttributes.size(); i++)
     {
-        vk::WriteDescriptorSet writeSet;
         vk::DescriptorBufferInfo info;
         info.buffer = mBufferAttributes[i].mBuffer;
         info.offset = 0;
         info.range = mBufferAttributes[i].mSize;
-
-        shader->updateDescriptorSet(mBufferAttributes[i].mVarName, nullptr, &info);
+        shader->updateDescriptorSet(mBufferAttributes[i].mVarName, mDescriptorSet, nullptr, &info);
     }
-
 }
 

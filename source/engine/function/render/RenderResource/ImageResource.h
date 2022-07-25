@@ -28,18 +28,14 @@ public:
 		vk::ImageUsageFlags usage,
 		void* pixels,
 		vk::Format pixelFormat,
-		bool miplevel,
-		Shader* shader,
-		std::string varName);
+		bool miplevel);
 
 	static std::shared_ptr<ImageResource> createAttachment(
 		uint32_t width,
 		uint32_t height,
 		vk::ImageUsageFlags usage,
 		vk::ImageAspectFlags aspectFlags,
-		vk::Format pixelFormat,
-		Shader* shader,
-		std::string varName);
+		vk::Format pixelFormat);
 
 public:
 	ImageBufferResource mImageBufferResource;

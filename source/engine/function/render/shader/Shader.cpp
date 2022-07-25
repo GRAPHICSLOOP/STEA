@@ -38,28 +38,69 @@ void Shader::createShaderModule(const ShaderInfo& info, ShaderModule* module)
     module->mCount = dataSize;
 }
 
-void Shader::updateDescriptorSet(std::string varName, const vk::DescriptorImageInfo* imageInfo, const vk::DescriptorBufferInfo* bufferInfo)
+void Shader::updateDescriptorSet(const std::string& varName, vk::DescriptorSet descriptorSet, const vk::DescriptorImageInfo* imageInfo, const vk::DescriptorBufferInfo* bufferInfo)
 {
-    const DescriptorSetLayoutInfo* info;
-    auto iter = mBindgMap.find(varName);
-    if (iter == mBindgMap.end())
-    {
-        STEALOG_ERROR("error null varname : {}", varName.c_str());
-        return;
-    }
-    info = &iter->second;
-    
+    const DescriptorSetLayoutInfo* info = getBindding(varName);
+
     // 更新描述符
     std::array<vk::WriteDescriptorSet, 1> writeSet;
     writeSet[0].dstArrayElement = 0;
     writeSet[0].dstBinding = info->mBinding.binding;
-    writeSet[0].dstSet = mDescriptorSets[info->mSet];
+    writeSet[0].dstSet = descriptorSet;
     writeSet[0].descriptorType = info->mBinding.descriptorType;
     writeSet[0].descriptorCount = info->mBinding.descriptorCount;
     writeSet[0].pImageInfo = imageInfo;
     writeSet[0].pBufferInfo = bufferInfo,
 
     gRuntimeGlobalContext.getRHI()->mDevice.updateDescriptorSets(writeSet, nullptr);
+}
+
+const DescriptorSetLayoutInfo* Shader::getBindding(std::string varName)
+{
+    auto iter = mBindgMap.find(varName);
+    if (iter == mBindgMap.end())
+    {
+        STEALOG_ERROR("error null varname : {}", varName.c_str());
+        return nullptr;
+    }
+    return &iter->second;
+}
+
+std::vector<vk::DescriptorSet> Shader::generateSet(const std::vector<std::string>& varNames)
+{
+    // 先通过名称获取排序好的layout索引 从小到大
+    std::vector<uint32_t> sets;
+    for (const auto& name : varNames)
+    {
+        const DescriptorSetLayoutInfo* binding = getBindding(name);
+        for (auto& s : sets)
+        {
+            if (s != binding->mSet)
+            {
+                sets.push_back(binding->mSet);
+                break;
+            }
+        }
+        if (sets.size() == 0)
+        {
+            sets.push_back(binding->mSet);
+        }
+    }
+    std::sort(sets.begin(), sets.end());
+
+    // 在获取实际的layout
+    std::vector<vk::DescriptorSetLayout> layout(sets.size());
+    for (uint32_t i = 0; i < sets.size(); i++)
+    {
+        layout[i] = mDescriptorSetLayouts[sets[i]];
+    }
+
+    // 创建set
+    vk::DescriptorSetAllocateInfo allocateInfo;
+    allocateInfo.descriptorPool = gRuntimeGlobalContext.getRHI()->mDescriptorPool;
+    allocateInfo.descriptorSetCount = (uint32_t)layout.size();
+    allocateInfo.pSetLayouts = layout.data();
+    return gRuntimeGlobalContext.getRHI()->mDevice.allocateDescriptorSets(allocateInfo);
 }
 
 void Shader::refractionInfo()
@@ -69,8 +110,7 @@ void Shader::refractionInfo()
         ProcessShaderModule(&module);
     }
 
-    GenerateLayout();
-    GenerateSet();
+    generateLayout();
 }
 
 void Shader::ProcessShaderModule(const ShaderModule* module)
@@ -165,7 +205,7 @@ void Shader::addSetLayoutBinding(uint32_t set, const std::string& typeName, vk::
     mMaxSet = set > mMaxSet ? set : mMaxSet;
 }
 
-void Shader::GenerateLayout()
+void Shader::generateLayout()
 {
     for (uint32_t i = 0; i <= mMaxSet; i++)
     {
@@ -184,13 +224,3 @@ void Shader::GenerateLayout()
         mDescriptorSetLayouts.push_back(gRuntimeGlobalContext.getRHI()->mDevice.createDescriptorSetLayout(info));
     }
 }
-
-void Shader::GenerateSet()
-{
-    vk::DescriptorSetAllocateInfo allocateInfo;
-    allocateInfo.descriptorPool = gRuntimeGlobalContext.getRHI()->mDescriptorPool;
-    allocateInfo.descriptorSetCount = (uint32_t)mDescriptorSetLayouts.size();
-    allocateInfo.pSetLayouts = mDescriptorSetLayouts.data();
-    mDescriptorSets = gRuntimeGlobalContext.getRHI()->mDevice.allocateDescriptorSets(allocateInfo);
-}
-

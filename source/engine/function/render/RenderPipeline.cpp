@@ -53,7 +53,7 @@ void RenderPipeline::initialize()
         mPostProcessPass->mDepthInfo.depthWriteEnable = VK_FALSE;
         mPostProcessPass->mDepthInfo.stencilTestEnable = VK_FALSE;
         mPostProcessPass->initialize(vertexInfo, gRuntimeGlobalContext.getRenderResource()->getShader("quad"), mFrame.mRenderPass);
-        //mPostProcessPass->createDescriptorSet(mFrame);
+        mPostProcessPass->setDescriptorSet(mFrame.mAttachment->mDescriptorSet);
     }
 	
     // 待优化项
@@ -111,40 +111,37 @@ void RenderPipeline::endDraw()
 
 void RenderPipeline::createAttachment()
 {
-    std::shared_ptr<ImageResource> depthFrameBufferAttachment = ImageResource::createAttachment(
+    std::shared_ptr<ImageResource> depthImageResource = ImageResource::createAttachment(
         gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.width,
         gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.height,
         vk::ImageUsageFlagBits::eDepthStencilAttachment | vk::ImageUsageFlagBits::eInputAttachment,
         vk::ImageAspectFlagBits::eDepth,
-        vk::Format::eD24UnormS8Uint,
-        gRuntimeGlobalContext.getRenderResource()->getShader("quad"),
-        "inputDepth"
+        vk::Format::eD24UnormS8Uint
     );
-
-    std::shared_ptr<ImageResource> colorFrameBufferAttachment = ImageResource::createAttachment(
+    std::shared_ptr<ImageResource> colorImageResource = ImageResource::createAttachment(
         gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.width,
         gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.height,
         vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eInputAttachment,
         vk::ImageAspectFlagBits::eColor,
-        gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mFormat.format,
-        gRuntimeGlobalContext.getRenderResource()->getShader("quad"),
-        "inputColor"
+        gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mFormat.format
     );
-
-    std::shared_ptr<ImageResource> normalFrameBufferAttachment = ImageResource::createAttachment(
+    std::shared_ptr<ImageResource> normalImageResource = ImageResource::createAttachment(
         gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.width,
         gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.height,
         vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eInputAttachment,
         vk::ImageAspectFlagBits::eColor,
-        vk::Format::eR8G8B8A8Unorm,
-        gRuntimeGlobalContext.getRenderResource()->getShader("quad"),
-        "inputNormal"
+        vk::Format::eR8G8B8A8Unorm
     );
 
-    mFrame.mAttachments.resize(3);
-    mFrame.mAttachments[0] = depthFrameBufferAttachment;
-    mFrame.mAttachments[1] = colorFrameBufferAttachment;
-    mFrame.mAttachments[2] = normalFrameBufferAttachment;
+    std::vector<AttachmentAttribute> attachmentAttribute =
+    {
+        AttachmentAttribute(depthImageResource, "inputDepth"),
+        AttachmentAttribute(colorImageResource, "inputColor"),
+        AttachmentAttribute(normalImageResource, "inputNormal")
+    };
+
+    std::shared_ptr<AttachmentResource> attachment = std::make_shared<AttachmentResource>(gRuntimeGlobalContext.getRenderResource()->getShader("quad"), attachmentAttribute);
+    mFrame.mAttachment = attachment;
 }
 
 void RenderPipeline::createRenderPass()
@@ -164,7 +161,7 @@ void RenderPipeline::createRenderPass()
 
     // color attachment
     vk::AttachmentDescription& colorAttachmentDesc = attachmentDesces[1];
-    colorAttachmentDesc.format = mFrame.mAttachments[1]->mImageBufferResource.mFormat;
+    colorAttachmentDesc.format = mFrame.mAttachment->getImageResource("inputColor")->mImageBufferResource.mFormat;
     colorAttachmentDesc.samples = vk::SampleCountFlagBits::e1;
     colorAttachmentDesc.loadOp = vk::AttachmentLoadOp::eClear;
     colorAttachmentDesc.storeOp = vk::AttachmentStoreOp::eDontCare;
@@ -175,7 +172,7 @@ void RenderPipeline::createRenderPass()
 
     // normal attachment
     vk::AttachmentDescription& normalAttachmentDesc = attachmentDesces[2];
-    normalAttachmentDesc.format = mFrame.mAttachments[2]->mImageBufferResource.mFormat;
+    normalAttachmentDesc.format = mFrame.mAttachment->getImageResource("inputNormal")->mImageBufferResource.mFormat;
     normalAttachmentDesc.samples = vk::SampleCountFlagBits::e1;
     normalAttachmentDesc.loadOp = vk::AttachmentLoadOp::eClear;
     normalAttachmentDesc.storeOp = vk::AttachmentStoreOp::eDontCare;
@@ -186,7 +183,7 @@ void RenderPipeline::createRenderPass()
 
     // depth stencil attachment
     vk::AttachmentDescription& depthAttachmentDesc = attachmentDesces[3];
-    depthAttachmentDesc.format = mFrame.mAttachments[0]->mImageBufferResource.mFormat;
+    depthAttachmentDesc.format = mFrame.mAttachment->getImageResource("inputDepth")->mImageBufferResource.mFormat;
     depthAttachmentDesc.samples = vk::SampleCountFlagBits::e1;
     depthAttachmentDesc.loadOp = vk::AttachmentLoadOp::eClear;
     depthAttachmentDesc.storeOp = vk::AttachmentStoreOp::eDontCare;
@@ -269,9 +266,9 @@ void RenderPipeline::createFrameBuffer()
     for (uint32_t i = 0; i < gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mImageCount; i++)
     {
         attachments[0] = gRuntimeGlobalContext.getRHI()->mSwapchainImageViews[i];
-        attachments[1] = mFrame.mAttachments[1]->mImageBufferResource.mImageInfo.imageView;
-        attachments[2] = mFrame.mAttachments[2]->mImageBufferResource.mImageInfo.imageView;
-        attachments[3] = mFrame.mAttachments[0]->mImageBufferResource.mImageInfo.imageView;
+        attachments[1] = mFrame.mAttachment->getImageResource("inputColor")->mImageBufferResource.mImageInfo.imageView;
+        attachments[2] = mFrame.mAttachment->getImageResource("inputNormal")->mImageBufferResource.mImageInfo.imageView;
+        attachments[3] = mFrame.mAttachment->getImageResource("inputDepth")->mImageBufferResource.mImageInfo.imageView;
 
         mFrame.mFramebuffer[i] = gRuntimeGlobalContext.getRHI()->mDevice.createFramebuffer(info);
         CHECK_NULL(mFrame.mFramebuffer[i]);

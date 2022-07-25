@@ -201,6 +201,12 @@
     <ClCompile Include="source\engine\function\render\shader\Shader.cpp">
       <Filter>source\engine\function\render\shader</Filter>
     </ClCompile>
+    <ClCompile Include="source\engine\function\render\shader\Material.cpp">
+      <Filter>source\engine\function\render\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="source\engine\function\render\renderResource\AttachmentResource.cpp">
+      <Filter>source\engine\function\render\renderResource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\engine\Engine.h">
@@ -331,6 +337,12 @@
     </ClInclude>
     <ClInclude Include="source\engine\function\render\pass\PostProcessPass.h">
       <Filter>source\engine\function\render\pass</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\render\shader\Material.h">
+      <Filter>source\engine\function\render\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\render\renderResource\AttachmentResource.h">
+      <Filter>source\engine\function\render\renderResource</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

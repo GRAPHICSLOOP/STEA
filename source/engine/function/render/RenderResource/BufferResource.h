@@ -56,12 +56,10 @@ public:
 
 public:
 	std::vector<BufferAttributes> mBufferAttributes;
+	vk::DescriptorSet mDescriptorSet;
 
 private:
 	void setUpAlignment();
-	void updateDescriptorSet(Shader* shader);
-
-private:
-
+	void createDescriptorSet(Shader* shader);
 };
 
