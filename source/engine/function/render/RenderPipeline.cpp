@@ -64,8 +64,8 @@ void RenderPipeline::initialize()
     */
     // 然后得产出两篇文章，一篇是SPIRV编译器自动化生成各种信息的，一篇是subpass的理解笔记
 
-	//mUIPass = std::make_shared<UIPass>();
-	//mUIPass->initialize(UIPassConfigParam(mFrame.mRenderPass));
+	mUIPass = std::make_shared<UIPass>();
+	mUIPass->initialize(UIPassConfigParam(mFrame.mRenderPass));
 }
 
 void RenderPipeline::draw()
@@ -76,7 +76,7 @@ void RenderPipeline::draw()
 	mCameraPass->drawPass(cmdBuffer);
     cmdBuffer.nextSubpass(vk::SubpassContents::eInline);
     mPostProcessPass->drawPass(cmdBuffer);
-	//mUIPass->drawPass();
+	mUIPass->drawPass();
     
     endDraw();
 }

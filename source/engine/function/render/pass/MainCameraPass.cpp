@@ -38,6 +38,5 @@ void MainCameraPass::drawPass(vk::CommandBuffer cmdBuffer)
 
         count++;
     }
-    //cmdBuffer.endRenderPass();
 }
 

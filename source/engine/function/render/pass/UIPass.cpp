@@ -31,7 +31,7 @@ void UIPass::initializeUIRenderBackend()
     init_info.QueueFamily = gRuntimeGlobalContext.getRHI()->mQueueFamilyIndices.graphicsIndices.value();
     init_info.Queue = gRuntimeGlobalContext.getRHI()->mGraphicsQueue;
     init_info.DescriptorPool = gRuntimeGlobalContext.getRHI()->mDescriptorPool;
-    init_info.Subpass = 0; //init_info.Subpass = _main_camera_subpass_ui;
+    init_info.Subpass = 1; //init_info.Subpass = _main_camera_subpass_ui;
     
 
     // may be different from the real swapchain image count
