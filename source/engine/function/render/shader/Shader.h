@@ -40,6 +40,7 @@ class Shader
 {
 public:
 	Shader();
+	~Shader();
 	static std::shared_ptr<Shader> create(const std::vector<ShaderInfo>& info);
 	static void createShaderModule(const ShaderInfo& info,ShaderModule* module);
 	void updateDescriptorSet(const std::string& varName, vk::DescriptorSet descriptorSet, const vk::DescriptorImageInfo* imageInfo, const vk::DescriptorBufferInfo* bufferInfo);

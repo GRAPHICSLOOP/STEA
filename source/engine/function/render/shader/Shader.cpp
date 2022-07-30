@@ -8,6 +8,14 @@ inline Shader::Shader()
     mMaxSet = 0;
 }
 
+Shader::~Shader()
+{
+    for (auto& layout : mDescriptorSetLayouts)
+    {
+        gRuntimeGlobalContext.getRHI()->mDevice.destroyDescriptorSetLayout(layout);
+    }
+}
+
 std::shared_ptr<Shader> Shader::create(const std::vector<ShaderInfo>& info)
 {
     std::shared_ptr<Shader> shader = std::make_shared<Shader>();

@@ -123,10 +123,10 @@ vk::Pipeline RenderPassBase::initialize(
     mPipeline = gRuntimeGlobalContext.getRHI()->mDevice.createGraphicsPipeline(VK_NULL_HANDLE, info).value;
     CHECK_NULL(mPipeline);
 
-    //for (uint32_t i = 0; i < shader->mShaderModule.size(); i++)
-    //{
-    //    gRuntimeGlobalContext.getRHI()->mDevice.destroyShaderModule(shader->mShaderModule[i].mShaderModule);
-    //}
+    for (uint32_t i = 0; i < shader->mShaderModule.size(); i++)
+    {
+        gRuntimeGlobalContext.getRHI()->mDevice.destroyShaderModule(shader->mShaderModule[i].mShaderModule);
+    }
 
     return mPipeline;
 }
