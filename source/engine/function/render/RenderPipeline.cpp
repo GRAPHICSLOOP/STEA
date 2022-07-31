@@ -20,6 +20,24 @@ void RenderPipeline::initialize()
     createRenderPass();
     createFrameBuffer();
 
+    // debuglightpass
+    {
+        // vertex Descriptions
+        vk::PipelineVertexInputStateCreateInfo vertexInfo;
+        auto VertexAttributeDescriptions = VertexResource::getInputAttributes({ VertexAttribute::VA_Position});
+        auto VertexBindingDescriptions = VertexResource::getBindingDescription({ VertexAttribute::VA_Position});
+        vertexInfo.vertexAttributeDescriptionCount = (uint32_t)VertexAttributeDescriptions.size();
+        vertexInfo.vertexBindingDescriptionCount = (uint32_t)VertexBindingDescriptions.size();
+        vertexInfo.pVertexAttributeDescriptions = VertexAttributeDescriptions.data();
+        vertexInfo.pVertexBindingDescriptions = VertexBindingDescriptions.data();
+
+        mDebugLightPass = std::make_shared<DebugLightPass>();
+        mDebugLightPass->mSubpassIndex = 0;
+        mDebugLightPass->mColorBlendAttachmentCount = 2;
+        mDebugLightPass->mRasterInfo.frontFace = vk::FrontFace::eClockwise;
+        mDebugLightPass->initialize(vertexInfo, gRuntimeGlobalContext.getRenderResource()->getShader("light"), mFrame.mRenderPass);
+    }
+
     // maincamerapass
     {
         // vertex Descriptions
@@ -32,6 +50,7 @@ void RenderPipeline::initialize()
         vertexInfo.pVertexBindingDescriptions = VertexBindingDescriptions.data();
 
         mCameraPass = std::make_shared<MainCameraPass>();
+        mCameraPass->mSubpassIndex = 0;
         mCameraPass->mColorBlendAttachmentCount = 2;
         mCameraPass->initialize(vertexInfo, gRuntimeGlobalContext.getRenderResource()->getShader("obj"),  mFrame.mRenderPass);
     }
@@ -73,10 +92,11 @@ void RenderPipeline::draw()
     beginDraw();
     vk::CommandBuffer cmdBuffer = gRuntimeGlobalContext.getRHI()->mCommandBuffer;
 
+    mDebugLightPass->drawPass(cmdBuffer);
 	mCameraPass->drawPass(cmdBuffer);
     cmdBuffer.nextSubpass(vk::SubpassContents::eInline);
     mPostProcessPass->drawPass(cmdBuffer);
-	mUIPass->drawPass();
+    mUIPass->drawPass();
     
     endDraw();
 }
@@ -234,7 +254,7 @@ void RenderPipeline::createRenderPass()
     subpassDependency[0].srcAccessMask = vk::AccessFlagBits::eNone;
     subpassDependency[0].dstAccessMask = vk::AccessFlagBits::eColorAttachmentWrite;
 
-    subpassDependency[1].srcSubpass = 0; // 因为我们不依赖任何subpass
+    subpassDependency[1].srcSubpass = 0; // 因为依赖第一个
     subpassDependency[1].dstSubpass = 1;
     subpassDependency[1].srcStageMask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
     subpassDependency[1].dstStageMask = vk::PipelineStageFlagBits::eFragmentShader;

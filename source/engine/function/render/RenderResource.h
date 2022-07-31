@@ -22,7 +22,7 @@ class RenderResource
 public:
 	~RenderResource();
 	void initialize();
-	void updatePerFrameBuffer(std::shared_ptr<RenderCamera> camera);
+	void updatePerFrameBuffer(float deltaTime, std::shared_ptr<RenderCamera> camera);
 	void addObjectBufferResource(size_t objectID, void* data, vk::DeviceSize dataSize);
 	Material* createMaterial(std::string name, Shader* shader, const std::vector<MaterialAttribute>& attribute);
 	std::vector<vk::DescriptorSetLayout> getDescriptorSetLayout(std::string shaderName);
@@ -34,14 +34,20 @@ public:
 	std::unordered_map<size_t, std::vector<ModelRenderResource>> mModelRenderResources;
 	std::unordered_map<size_t, ImageResource*> mGlobalTextureResources;
 	std::shared_ptr<BufferResource> mUniformResource;
+	std::shared_ptr<BufferResource> mLightUniformResource;
 
 private:
 	void createBufferResource();
 	void createShaders();
-	void updateUniformBuffer();
+	void createLight();
+	void updateUniformBuffer(float deltaTime);
 
 private:
 	std::unordered_map<std::string, std::shared_ptr<Shader>> mGlobalShader;
 	std::unordered_map<std::string, std::shared_ptr<Material>> mGlobalMaterials;
+
+	std::array<LightBufferData, LIGHT_MAXNUMB> mLightDatas;
+	std::array<LightInfo,LIGHT_MAXNUMB> mLightInfos;
+
 };
 

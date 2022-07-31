@@ -54,7 +54,7 @@ void Engine::logicalTick(float deltaTime)
 
 void Engine::rendererTick(float deltaTime)
 {
-	gRuntimeGlobalContext.getRenderSystem()->tick();
+	gRuntimeGlobalContext.getRenderSystem()->tick(deltaTime);
 }
 
 void Engine::calculateFPS(float deltaTime)

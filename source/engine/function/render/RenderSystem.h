@@ -9,7 +9,7 @@ class RenderSystem
 {
 public:
 	void initialize();
-	void tick();
+	void tick(float deltaTime);
 
 public:
 	std::shared_ptr<VulkanRHI> mVulkanRHI;

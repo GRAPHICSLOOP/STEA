@@ -36,11 +36,11 @@ std::shared_ptr<BufferResource> BufferResource::create(Shader* shader, const std
     return bufferResource;
 }
 
-void* BufferResource::getData(UNIFORMBUFFERTYPE type)
+void* BufferResource::getData(std::string type)
 {
     for (auto& aligment : mBufferAttributes)
     {
-        if(aligment.mType == type)
+        if(aligment.mVarName == type)
             return aligment.mData;
     }
     
@@ -76,7 +76,8 @@ void BufferResource::setUpAlignment()
             mBufferAttributes[i].mOffset = mBufferAttributes[i - 1].mAlignments;
 
         alignmentSize *= mBufferAttributes[i].mCount;
-        mBufferAttributes[i].mBufferSize = alignmentSize;
+        mBufferAttributes[i].mBufferSize = (vk::DeviceSize)mBufferAttributes[i].mSize * mBufferAttributes[i].mCount;
+        mBufferAttributes[i].mRange = mBufferAttributes[i].mDescriptorType == vk::DescriptorType::eUniformBufferDynamic ? mBufferAttributes[i].mSize : mBufferAttributes[i].mSize * mBufferAttributes[i].mCount;
     }
 
 }
@@ -97,7 +98,7 @@ void BufferResource::createDescriptorSet(Shader* shader)
         vk::DescriptorBufferInfo info;
         info.buffer = mBufferAttributes[i].mBuffer;
         info.offset = 0;
-        info.range = mBufferAttributes[i].mSize;
+        info.range = mBufferAttributes[i].mRange;
         shader->updateDescriptorSet(mBufferAttributes[i].mVarName, mDescriptorSet, nullptr, &info);
     }
 }

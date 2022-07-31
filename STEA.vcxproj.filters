@@ -207,6 +207,9 @@
     <ClCompile Include="source\engine\function\render\renderResource\AttachmentResource.cpp">
       <Filter>source\engine\function\render\renderResource</Filter>
     </ClCompile>
+    <ClCompile Include="source\engine\function\render\pass\DebugLightPass.cpp">
+      <Filter>source\engine\function\render\pass</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\engine\Engine.h">
@@ -343,6 +346,9 @@
     </ClInclude>
     <ClInclude Include="source\engine\function\render\renderResource\AttachmentResource.h">
       <Filter>source\engine\function\render\renderResource</Filter>
+    </ClInclude>
+    <ClInclude Include="source\engine\function\render\pass\DebugLightPass.h">
+      <Filter>source\engine\function\render\pass</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
