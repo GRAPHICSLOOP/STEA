@@ -35,6 +35,7 @@ public:
 	std::unordered_map<size_t, ImageResource*> mGlobalTextureResources;
 	std::shared_ptr<BufferResource> mUniformResource;
 	std::shared_ptr<BufferResource> mLightUniformResource;
+	std::shared_ptr<BufferResource>	mQuadUniformResource;
 
 private:
 	void createBufferResource();

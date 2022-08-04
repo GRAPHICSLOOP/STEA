@@ -35,6 +35,9 @@ void ImageResource::getPixelInfo(const vk::Format pixelFormat, const uint32_t wi
     case vk::Format::eR8G8B8A8Srgb:
         pixelSize = (size_t)width * height * 4;
         break;
+    case vk::Format::eR16G16B16A16Sfloat:
+        pixelSize = (size_t)width * height * 2 * 4;
+        break;
     case vk::Format::eR32G32Sfloat:
         pixelSize = (size_t)width * height * 4 * 2;
         break;

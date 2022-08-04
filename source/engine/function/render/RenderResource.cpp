@@ -87,14 +87,18 @@ Shader* RenderResource::getShader(std::string shaderName)
 void RenderResource::createBufferResource()
 {
     mUniformResource = BufferResource::create(getShader("obj"), {
-        BufferAttributes(1, sizeof(CameraBufferData), vk::DescriptorType::eUniformBuffer, vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment,"CameraBuffer"),
+        BufferAttributes(1, sizeof(CameraBufferData), vk::DescriptorType::eUniformBuffer, vk::ShaderStageFlagBits::eVertex,"CameraBuffer"),
         BufferAttributes(16, sizeof(ObjectBufferData), vk::DescriptorType::eUniformBufferDynamic, vk::ShaderStageFlagBits::eVertex,"ObjectDynamicBuffer"),
-        BufferAttributes(LIGHT_MAXNUMB, sizeof(LightBufferData), vk::DescriptorType::eUniformBuffer, vk::ShaderStageFlagBits::eFragment,"LightBuffer")
         });
 
     mLightUniformResource = BufferResource::create(getShader("light"), {
         BufferAttributes(1, sizeof(CameraBufferData), vk::DescriptorType::eUniformBuffer, vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment,"CameraBuffer"),
         BufferAttributes(LIGHT_MAXNUMB, sizeof(LightBufferData), vk::DescriptorType::eUniformBuffer, vk::ShaderStageFlagBits::eVertex,"LightBuffer"),
+    });
+
+    mQuadUniformResource = BufferResource::create(getShader("quad"), {
+        BufferAttributes(1, sizeof(CameraBufferData), vk::DescriptorType::eUniformBuffer, vk::ShaderStageFlagBits::eVertex,"CameraBuffer"),
+        BufferAttributes(LIGHT_MAXNUMB, sizeof(LightBufferData), vk::DescriptorType::eUniformBuffer, vk::ShaderStageFlagBits::eFragment,"LightBuffer"),
     });
 }
 
@@ -171,13 +175,15 @@ void RenderResource::updateUniformBuffer(float deltaTime)
         mLightDatas[i].mPosition.z = mLightInfos[i].mPosition.z + bias * mLightInfos[i].mDirection.z * 10.0f;
     }
 
-    void* lightData = mUniformResource->getData("LightBuffer");
-    memcpy(lightData, mLightDatas.data(), sizeof(mLightDatas));
-
+    void* lightData;
 
     // 更新lightcameraData
     cameraData = mLightUniformResource->getData("CameraBuffer");
     memcpy(cameraData, &mCameraBufferData, sizeof(CameraBufferData));
     lightData = mLightUniformResource->getData("LightBuffer");
+    memcpy(lightData, mLightDatas.data(), sizeof(mLightDatas));
+
+    // 更新quadData
+    lightData = mQuadUniformResource->getData("LightBuffer");
     memcpy(lightData, mLightDatas.data(), sizeof(mLightDatas));
 }

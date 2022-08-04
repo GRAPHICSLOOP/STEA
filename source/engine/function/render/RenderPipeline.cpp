@@ -33,7 +33,7 @@ void RenderPipeline::initialize()
 
         mDebugLightPass = std::make_shared<DebugLightPass>();
         mDebugLightPass->mSubpassIndex = 0;
-        mDebugLightPass->mColorBlendAttachmentCount = 2;
+        mDebugLightPass->mColorBlendAttachmentCount = 3;
         mDebugLightPass->mRasterInfo.frontFace = vk::FrontFace::eClockwise;
         mDebugLightPass->initialize(vertexInfo, gRuntimeGlobalContext.getRenderResource()->getShader("light"), mFrame.mRenderPass);
     }
@@ -51,7 +51,7 @@ void RenderPipeline::initialize()
 
         mCameraPass = std::make_shared<MainCameraPass>();
         mCameraPass->mSubpassIndex = 0;
-        mCameraPass->mColorBlendAttachmentCount = 2;
+        mCameraPass->mColorBlendAttachmentCount = 3;
         mCameraPass->initialize(vertexInfo, gRuntimeGlobalContext.getRenderResource()->getShader("obj"),  mFrame.mRenderPass);
     }
 
@@ -111,11 +111,12 @@ void RenderPipeline::beginDraw()
     area.extent = gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D;
     passBegineInfo.setRenderArea(area);
 
-    std::array<vk::ClearValue, 4> clearValues;
+    std::array<vk::ClearValue, 5> clearValues;
     clearValues[0].color = std::array<float, 4>{1, 1, 1, 1.f};
     clearValues[1].color = std::array<float, 4>{0, 0, 0, 0};
     clearValues[2].color = std::array<float, 4>{0, 0, 0, 0};
     clearValues[3].depthStencil = 1.f;
+    clearValues[4].color = std::array<float, 4>{0, 0, 0, 0};
     passBegineInfo.pClearValues = clearValues.data();
     passBegineInfo.clearValueCount = (uint32_t)clearValues.size();
 
@@ -152,12 +153,20 @@ void RenderPipeline::createAttachment()
         vk::ImageAspectFlagBits::eColor,
         vk::Format::eR8G8B8A8Unorm
     );
+    std::shared_ptr<ImageResource> positionImageResource = ImageResource::createAttachment(
+        gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.width,
+        gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.height,
+        vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eInputAttachment,
+        vk::ImageAspectFlagBits::eColor,
+        vk::Format::eR16G16B16A16Sfloat
+    );
 
     std::vector<AttachmentAttribute> attachmentAttribute =
     {
         AttachmentAttribute(depthImageResource, "inputDepth"),
         AttachmentAttribute(colorImageResource, "inputColor"),
-        AttachmentAttribute(normalImageResource, "inputNormal")
+        AttachmentAttribute(normalImageResource, "inputNormal"),
+        AttachmentAttribute(positionImageResource, "inputPosition")
     };
 
     std::shared_ptr<AttachmentResource> attachment = std::make_shared<AttachmentResource>(gRuntimeGlobalContext.getRenderResource()->getShader("quad"), attachmentAttribute);
@@ -166,7 +175,7 @@ void RenderPipeline::createAttachment()
 
 void RenderPipeline::createRenderPass()
 {
-    std::array<vk::AttachmentDescription, 4> attachmentDesces;
+    std::array<vk::AttachmentDescription, 5> attachmentDesces;
 
     // swap chain attachment
     vk::AttachmentDescription& swapAttachmentDesc = attachmentDesces[0];
@@ -212,11 +221,24 @@ void RenderPipeline::createRenderPass()
     depthAttachmentDesc.stencilLoadOp = vk::AttachmentLoadOp::eDontCare;
     depthAttachmentDesc.stencilStoreOp = vk::AttachmentStoreOp::eDontCare;
 
-    vk::AttachmentReference colorAttachmentRef[2];
+    // position attachment
+    vk::AttachmentDescription& positionAttachmentDesc = attachmentDesces[4];
+    positionAttachmentDesc.format = mFrame.mAttachment->getImageResource("inputPosition")->mImageBufferResource.mFormat;
+    positionAttachmentDesc.samples = vk::SampleCountFlagBits::e1;
+    positionAttachmentDesc.loadOp = vk::AttachmentLoadOp::eClear;
+    positionAttachmentDesc.storeOp = vk::AttachmentStoreOp::eDontCare;
+    positionAttachmentDesc.initialLayout = vk::ImageLayout::eUndefined;
+    positionAttachmentDesc.finalLayout = vk::ImageLayout::eColorAttachmentOptimal;
+    positionAttachmentDesc.stencilLoadOp = vk::AttachmentLoadOp::eDontCare;
+    positionAttachmentDesc.stencilStoreOp = vk::AttachmentStoreOp::eDontCare;
+
+    vk::AttachmentReference colorAttachmentRef[3];
     colorAttachmentRef[0].attachment = 1;
     colorAttachmentRef[0].layout = vk::ImageLayout::eColorAttachmentOptimal;
     colorAttachmentRef[1].attachment = 2;
     colorAttachmentRef[1].layout = vk::ImageLayout::eColorAttachmentOptimal;
+    colorAttachmentRef[2].attachment = 4;
+    colorAttachmentRef[2].layout = vk::ImageLayout::eColorAttachmentOptimal;
 
     vk::AttachmentReference swapAttachmentRef[1];
     swapAttachmentRef[0].attachment = 0;
@@ -226,24 +248,26 @@ void RenderPipeline::createRenderPass()
     depthAttachmentRef[0].attachment = 3;
     depthAttachmentRef[0].layout = vk::ImageLayout::eDepthStencilAttachmentOptimal;
 
-    vk::AttachmentReference inputAttachmentRef[3];
+    vk::AttachmentReference inputAttachmentRef[4];
     inputAttachmentRef[0].attachment = 1;
     inputAttachmentRef[0].layout = vk::ImageLayout::eShaderReadOnlyOptimal;
     inputAttachmentRef[1].attachment = 2;
     inputAttachmentRef[1].layout = vk::ImageLayout::eShaderReadOnlyOptimal;
     inputAttachmentRef[2].attachment = 3;
     inputAttachmentRef[2].layout = vk::ImageLayout::eShaderReadOnlyOptimal;
+    inputAttachmentRef[3].attachment = 4;
+    inputAttachmentRef[3].layout = vk::ImageLayout::eShaderReadOnlyOptimal;
 
     std::vector<vk::SubpassDescription> subpassDesc(2);
     subpassDesc[0].pipelineBindPoint = vk::PipelineBindPoint::eGraphics;
-    subpassDesc[0].colorAttachmentCount = 2;
+    subpassDesc[0].colorAttachmentCount = 3;
     subpassDesc[0].pColorAttachments = colorAttachmentRef;
     subpassDesc[0].pDepthStencilAttachment = depthAttachmentRef;
 
     subpassDesc[1].pipelineBindPoint = vk::PipelineBindPoint::eGraphics;
     subpassDesc[1].colorAttachmentCount = 1;
     subpassDesc[1].pColorAttachments = swapAttachmentRef;
-    subpassDesc[1].inputAttachmentCount = 3;
+    subpassDesc[1].inputAttachmentCount = 4;
     subpassDesc[1].pInputAttachments = inputAttachmentRef;
 
     std::vector<vk::SubpassDependency> subpassDependency(2);
@@ -274,7 +298,7 @@ void RenderPipeline::createFrameBuffer()
 {
     mFrame.mFramebuffer.resize(gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mImageCount);
     
-    std::array<vk::ImageView, 4> attachments;
+    std::array<vk::ImageView, 5> attachments;
     vk::FramebufferCreateInfo info;
     info.renderPass = mFrame.mRenderPass;
     info.pAttachments = attachments.data();
@@ -289,6 +313,7 @@ void RenderPipeline::createFrameBuffer()
         attachments[1] = mFrame.mAttachment->getImageResource("inputColor")->mImageBufferResource.mImageInfo.imageView;
         attachments[2] = mFrame.mAttachment->getImageResource("inputNormal")->mImageBufferResource.mImageInfo.imageView;
         attachments[3] = mFrame.mAttachment->getImageResource("inputDepth")->mImageBufferResource.mImageInfo.imageView;
+        attachments[4] = mFrame.mAttachment->getImageResource("inputPosition")->mImageBufferResource.mImageInfo.imageView;
 
         mFrame.mFramebuffer[i] = gRuntimeGlobalContext.getRHI()->mDevice.createFramebuffer(info);
         CHECK_NULL(mFrame.mFramebuffer[i]);

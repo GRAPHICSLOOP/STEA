@@ -35,6 +35,7 @@ void PostProcessPass::drawPass(vk::CommandBuffer cmdBuffer)
 	vk::DeviceSize offset = 0;
 
 	cmdBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPipelineLayout, 0, 1, &mDescriptorSet, 0, nullptr);
+	cmdBuffer.bindDescriptorSets(vk::PipelineBindPoint::eGraphics, mPipelineLayout, 1, 1, &gRuntimeGlobalContext.getRenderResource()->mQuadUniformResource->mDescriptorSet, 0, nullptr);
 	cmdBuffer.bindVertexBuffers(0, 1, &mQuadVertexResource->mBuffer, &offset);
 	cmdBuffer.bindIndexBuffer(mQuadIndexResource->mBuffer, offset, vk::IndexType::eUint32);
 	cmdBuffer.drawIndexed(mQuadIndexResource->mIndexCount, 1, 0, 0, 0);
