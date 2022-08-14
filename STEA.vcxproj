@@ -113,6 +113,9 @@
     <ClInclude Include="source\engine\function\render\pass\UIPass.h" />
     <ClInclude Include="source\engine\function\render\renderResource\VertexResource.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\quad.frag" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

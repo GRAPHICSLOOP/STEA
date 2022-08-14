@@ -25,13 +25,7 @@ public:
 struct CameraBufferData
 {
 public:
-	glm::mat4 mView;
-	glm::mat4 mProj;
 	glm::mat4 mViewPorj;
-	glm::vec3 mLightPos;
-	float mPaddingSpecularStrengthl;
-	glm::vec3 mEyePos;
-	float mPaddingPow;
 };
 
 struct ObjectBufferData

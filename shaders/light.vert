@@ -16,13 +16,7 @@ layout(set = 0 , binding = 1) uniform LightBuffer {
 }lightBuffer;
 
 layout(set = 0 , binding = 0) uniform CameraBuffer {
-    mat4 view;
-    mat4 proj;
 	mat4 porjView;
-    vec3 lightPos;
-	float padding_specularStrengthl;
-	vec3 viewPos;
-	float padding_pow;
 }cmo;
 
 void main()

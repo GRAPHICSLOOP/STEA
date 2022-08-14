@@ -19,17 +19,25 @@ void RenderResource::initialize()
 
 void RenderResource::updatePerFrameBuffer(float deltaTime , std::shared_ptr<RenderCamera> camera)
 {
-    mCameraBufferData.mView = camera->getViewMatrix();
-    mCameraBufferData.mProj = glm::perspectiveRH(glm::radians(45.f),
+    glm::mat4 view = camera->getViewMatrix();
+    glm::mat4 proj = glm::perspectiveRH(glm::radians(45.f),
         gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.width / (float)gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.height,
         0.1f,
         100.f);
-    mCameraBufferData.mProj[1][1] *= -1;
-    mCameraBufferData.mViewPorj = mCameraBufferData.mProj * mCameraBufferData.mView;
-    mCameraBufferData.mLightPos = glm::vec3(1.f);
-    mCameraBufferData.mEyePos = camera->getPosition();
-    mCameraBufferData.mPaddingPow = 32.f;
-    mCameraBufferData.mPaddingSpecularStrengthl = 0.5f;
+    proj[1][1] *= -1;
+    mCameraBufferData.mViewPorj = proj * view;
+
+    //mCameraBufferData.mView = camera->getViewMatrix();
+    //mCameraBufferData.mProj = glm::perspectiveRH(glm::radians(45.f),
+    //    gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.width / (float)gRuntimeGlobalContext.getRHI()->mSwapchainSupportDetails.mExtent2D.height,
+    //    0.1f,
+    //    100.f);
+    //mCameraBufferData.mProj[1][1] *= -1;
+    //mCameraBufferData.mViewPorj = mCameraBufferData.mProj * mCameraBufferData.mView;
+    //mCameraBufferData.mLightPos = glm::vec3(1.f);
+    //mCameraBufferData.mEyePos = camera->getPosition();
+    //mCameraBufferData.mPaddingPow = 32.f;
+    //mCameraBufferData.mPaddingSpecularStrengthl = 0.5f;
 
     updateUniformBuffer(deltaTime);
 }
@@ -97,7 +105,6 @@ void RenderResource::createBufferResource()
     });
 
     mQuadUniformResource = BufferResource::create(getShader("quad"), {
-        BufferAttributes(1, sizeof(CameraBufferData), vk::DescriptorType::eUniformBuffer, vk::ShaderStageFlagBits::eVertex,"CameraBuffer"),
         BufferAttributes(LIGHT_MAXNUMB, sizeof(LightBufferData), vk::DescriptorType::eUniformBuffer, vk::ShaderStageFlagBits::eFragment,"LightBuffer"),
     });
 }

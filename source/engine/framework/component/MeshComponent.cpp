@@ -25,7 +25,7 @@ void MeshComponent::TempLoadMeshAsset(std::string name, std::string path)
 	std::shared_ptr<ModelAsset> asset = std::make_shared<ModelAsset>(name, path);
 	asset->loadModel();
 	setMeshAsset(asset);
-	gRuntimeGlobalContext.getRenderResource()->mModelRenderResources.insert(std::make_pair(mObject.lock()->getID(),asset->getMeshResource()));
+	gRuntimeGlobalContext.getRenderResource()->mModelRenderResources[mObject.lock()->getID()] = asset->getMeshResource();
 }
 
 void MeshComponent::setMeshAsset(std::shared_ptr<ModelAsset> asset)

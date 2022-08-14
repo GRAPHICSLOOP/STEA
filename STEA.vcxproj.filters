@@ -351,4 +351,7 @@
       <Filter>source\engine\function\render\pass</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\quad.frag" />
+  </ItemGroup>
 </Project>

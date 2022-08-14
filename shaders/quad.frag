@@ -14,17 +14,7 @@ layout (input_attachment_index = 3, set = 0, binding = 3) uniform subpassInput i
 layout (location = 0) in vec2 inUV0;
 layout (location = 0) out vec4 outFragColor;
 
-layout(set = 1 , binding = 0) uniform CameraBuffer {
-    mat4 view;
-    mat4 proj;
-	mat4 porjView;
-    vec3 lightPos;
-	float padding_specularStrengthl;
-	vec3 viewPos;
-	float padding_pow;
-}cmo;
-
-layout(set = 1 , binding = 1) uniform LightBuffer {
+layout(set = 1 , binding = 0) uniform LightBuffer {
     PointLight lights[NUM_LIGHTS];
 }lightBuffer;
 
@@ -52,7 +42,6 @@ void main()
 	vec4 texDiffuse = subpassLoad(inputColor);
     vec3 norm = subpassLoad(inputNormal).xyz;
 	vec3 fragPos = subpassLoad(inputPosition).xyz;
-	vec3 viewDir = normalize(cmo.viewPos - fragPos);
 	vec3 ambient =  vec3(0.2f);
 	
 	vec3 result = vec3(0.f);// + ambient;
@@ -71,5 +60,5 @@ void main()
 	}
 	
 	result *= texDiffuse.rgb;
-	outFragColor = vec4(result,1.f);
+	outFragColor = vec4(texDiffuse.xyz,1.f);
 }
