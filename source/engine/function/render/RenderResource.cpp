@@ -129,9 +129,16 @@ void RenderResource::createShaders()
         ShaderInfo("shaders/light.fspv",vk::ShaderStageFlagBits::eFragment)
     });
 
+    std::shared_ptr<Shader> rayShader = Shader::create
+    ({
+        ShaderInfo("shaders/ray.vspv",vk::ShaderStageFlagBits::eVertex),
+        ShaderInfo("shaders/ray.fspv",vk::ShaderStageFlagBits::eFragment)
+    });
+
     mGlobalShader["quad"] = quadShader;
     mGlobalShader["obj"] = objShader;
     mGlobalShader["light"] = lightShader;
+    mGlobalShader["ray"] = rayShader;
 }
 
 void RenderResource::createLight()

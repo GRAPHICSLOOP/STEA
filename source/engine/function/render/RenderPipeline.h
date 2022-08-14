@@ -24,6 +24,7 @@ private:
 	std::shared_ptr<MainCameraPass>		mCameraPass;
 	std::shared_ptr<PostProcessPass>	mPostProcessPass;
 	std::shared_ptr<DebugLightPass>		mDebugLightPass;
+	std::shared_ptr<DebugLightPass>		mRayLightPass;
 	std::shared_ptr<UIPass> mUIPass;
 	Frame mFrame;
 };

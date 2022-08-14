@@ -35,6 +35,7 @@ void RenderPipeline::initialize()
         mDebugLightPass->mSubpassIndex = 0;
         mDebugLightPass->mColorBlendAttachmentCount = 3;
         mDebugLightPass->mRasterInfo.frontFace = vk::FrontFace::eClockwise;
+
         mDebugLightPass->initialize(vertexInfo, gRuntimeGlobalContext.getRenderResource()->getShader("light"), mFrame.mRenderPass);
     }
 
@@ -52,7 +53,50 @@ void RenderPipeline::initialize()
         mCameraPass = std::make_shared<MainCameraPass>();
         mCameraPass->mSubpassIndex = 0;
         mCameraPass->mColorBlendAttachmentCount = 3;
+
+        // depthStencilState
+        mCameraPass->mDepthInfo.stencilTestEnable = VK_TRUE;
+        mCameraPass->mDepthInfo.back.reference = 1;
+        mCameraPass->mDepthInfo.back.writeMask = 0xFF;
+        mCameraPass->mDepthInfo.back.compareMask = 0xFF;
+        mCameraPass->mDepthInfo.back.compareOp = vk::CompareOp::eAlways;
+        mCameraPass->mDepthInfo.back.failOp = vk::StencilOp::eReplace;
+        mCameraPass->mDepthInfo.back.depthFailOp = vk::StencilOp::eReplace;
+        mCameraPass->mDepthInfo.back.passOp = vk::StencilOp::eReplace;
+        mCameraPass->mDepthInfo.front = mCameraPass->mDepthInfo.back;
+
         mCameraPass->initialize(vertexInfo, gRuntimeGlobalContext.getRenderResource()->getShader("obj"),  mFrame.mRenderPass);
+    }
+
+    // raylightpass
+    {
+        // vertex Descriptions
+        vk::PipelineVertexInputStateCreateInfo vertexInfo;
+        auto VertexAttributeDescriptions = VertexResource::getInputAttributes({ VertexAttribute::VA_Position });
+        auto VertexBindingDescriptions = VertexResource::getBindingDescription({ VertexAttribute::VA_Position });
+        vertexInfo.vertexAttributeDescriptionCount = (uint32_t)VertexAttributeDescriptions.size();
+        vertexInfo.vertexBindingDescriptionCount = (uint32_t)VertexBindingDescriptions.size();
+        vertexInfo.pVertexAttributeDescriptions = VertexAttributeDescriptions.data();
+        vertexInfo.pVertexBindingDescriptions = VertexBindingDescriptions.data();
+
+        mRayLightPass = std::make_shared<DebugLightPass>();
+        mRayLightPass->mSubpassIndex = 0;
+        mRayLightPass->mColorBlendAttachmentCount = 3;
+        mRayLightPass->mRasterInfo.frontFace = vk::FrontFace::eClockwise;
+
+        // depthStencilState
+        mRayLightPass->mDepthInfo.stencilTestEnable = VK_TRUE;
+        mRayLightPass->mDepthInfo.back.reference = 1;
+        mRayLightPass->mDepthInfo.back.writeMask = 0xFF;
+        mRayLightPass->mDepthInfo.back.compareMask = 0xFF;
+        mRayLightPass->mDepthInfo.back.compareOp = vk::CompareOp::eEqual;
+        mRayLightPass->mDepthInfo.back.failOp = vk::StencilOp::eKeep;
+        mRayLightPass->mDepthInfo.back.depthFailOp = vk::StencilOp::eKeep;
+        mRayLightPass->mDepthInfo.back.passOp = vk::StencilOp::eReplace;
+        mRayLightPass->mDepthInfo.front = mRayLightPass->mDepthInfo.back;
+        mRayLightPass->mDepthInfo.depthTestEnable = VK_FALSE;
+
+        mRayLightPass->initialize(vertexInfo, gRuntimeGlobalContext.getRenderResource()->getShader("ray"), mFrame.mRenderPass);
     }
 
     // postprocesspass
@@ -93,7 +137,8 @@ void RenderPipeline::draw()
     vk::CommandBuffer cmdBuffer = gRuntimeGlobalContext.getRHI()->mCommandBuffer;
 
     mDebugLightPass->drawPass(cmdBuffer);
-	mCameraPass->drawPass(cmdBuffer);
+    mCameraPass->drawPass(cmdBuffer);
+    mRayLightPass->drawPass(cmdBuffer);
     cmdBuffer.nextSubpass(vk::SubpassContents::eInline);
     mPostProcessPass->drawPass(cmdBuffer);
     mUIPass->drawPass();
@@ -218,7 +263,7 @@ void RenderPipeline::createRenderPass()
     depthAttachmentDesc.storeOp = vk::AttachmentStoreOp::eDontCare;
     depthAttachmentDesc.initialLayout = vk::ImageLayout::eUndefined;
     depthAttachmentDesc.finalLayout = vk::ImageLayout::eDepthStencilAttachmentOptimal;
-    depthAttachmentDesc.stencilLoadOp = vk::AttachmentLoadOp::eDontCare;
+    depthAttachmentDesc.stencilLoadOp = vk::AttachmentLoadOp::eClear; // 模板测试需要在开始的时候清理掉
     depthAttachmentDesc.stencilStoreOp = vk::AttachmentStoreOp::eDontCare;
 
     // position attachment
